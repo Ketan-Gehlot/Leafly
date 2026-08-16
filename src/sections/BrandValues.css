@@ -1,0 +1,570 @@
+/* =========================================================
+   LEAFLY — BRAND VALUES
+   Compact Ivory Editorial Section
+   ========================================================= */
+
+.brand-values-section {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 42px 14px;
+
+  background: #f7f3ec;
+  color: #0b2b1e;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.brand-values-container {
+  width: 100%;
+  max-width: 1450px;
+
+  margin: 0 auto;
+
+  padding: 42px 42px 32px;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fbf7ef 0%,
+      #f5ecdf 100%
+    );
+
+  border:
+    1px solid
+    rgba(201, 162, 75, 0.32);
+
+  border-radius: 18px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.brand-values-header {
+  max-width: 850px;
+
+  margin: 0 auto 34px;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   EYEBROW
+   ========================================================= */
+
+.brand-values-eyebrow {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  margin-bottom: 14px;
+}
+
+.brand-values-eyebrow span {
+  width: 30px;
+  height: 1px;
+
+  background: #c9a24b;
+}
+
+.brand-values-eyebrow p {
+  margin: 0;
+
+  color: #a27c38;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.brand-values-header h2 {
+  margin: 0;
+
+  color: #0b2b1e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      38px,
+      4.2vw,
+      62px
+    );
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  letter-spacing: -2px;
+}
+
+.brand-values-header h2 em {
+  color: #bd8e37;
+
+  font-style: italic;
+}
+
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.brand-values-intro {
+  max-width: 650px;
+
+  margin: 17px auto 0;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.62
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   VALUES GRID
+   ========================================================= */
+
+.brand-values-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   VALUE CARD
+   ========================================================= */
+
+.brand-value-card {
+  min-width: 0;
+
+  min-height: 275px;
+
+  padding: 28px 22px 25px;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+  text-align: center;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.28
+    );
+
+  border:
+    1px solid
+    rgba(
+      11,
+      43,
+      30,
+      0.09
+    );
+
+  border-radius: 12px;
+
+  transition:
+    transform 350ms ease,
+    border-color 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.brand-value-card:hover {
+  transform: translateY(-4px);
+
+  border-color:
+    rgba(
+      201,
+      162,
+      75,
+      0.5
+    );
+
+  box-shadow:
+    0 14px 35px
+    rgba(
+      11,
+      43,
+      30,
+      0.07
+    );
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.brand-value-icon {
+  width: 76px;
+  height: 76px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+
+  border:
+    1px solid
+    rgba(
+      166,
+      129,
+      67,
+      0.6
+    );
+
+  border-radius: 50%;
+
+  color: #0b2b1e;
+
+  font-size: 28px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.25
+    );
+
+  transition:
+    transform 350ms ease,
+    background 350ms ease;
+}
+
+.brand-value-card:hover
+.brand-value-icon {
+  transform: scale(1.05);
+
+  background:
+    rgba(
+      201,
+      162,
+      75,
+      0.1
+    );
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.brand-value-card h3 {
+  margin: 0;
+
+  color: #0b2b1e;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.2px;
+
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   GOLD LINE
+   ========================================================= */
+
+.brand-value-line {
+  width: 34px;
+  height: 1px;
+
+  margin: 14px 0 17px;
+
+  background: #c9a24b;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.brand-value-card p {
+  max-width: 230px;
+
+  margin: 0;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.62
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 12px;
+
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   FOOTER STATEMENT
+   ========================================================= */
+
+.brand-values-footer {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 16px;
+
+  margin-top: 28px;
+}
+
+.brand-values-footer span {
+  width: 70px;
+  height: 1px;
+
+  background:
+    rgba(
+      201,
+      162,
+      75,
+      0.6
+    );
+}
+
+.brand-values-footer p {
+  margin: 0;
+
+  color: #9b7738;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 2.5px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+  .brand-values-container {
+    padding: 38px 28px 30px;
+  }
+
+  .brand-values-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+  }
+
+  .brand-value-card {
+    min-height: 240px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  .brand-values-section {
+    padding: 25px 10px;
+  }
+
+  .brand-values-container {
+    padding: 32px 18px 25px;
+
+    border-radius: 15px;
+  }
+
+  .brand-values-header {
+    margin-bottom: 28px;
+  }
+
+  .brand-values-eyebrow {
+    gap: 9px;
+  }
+
+  .brand-values-eyebrow span {
+    width: 22px;
+  }
+
+  .brand-values-eyebrow p {
+    font-size: 7px;
+    letter-spacing: 2px;
+  }
+
+  .brand-values-header h2 {
+    font-size:
+      clamp(
+        34px,
+        10vw,
+        48px
+      );
+
+    letter-spacing: -1.5px;
+  }
+
+  .brand-values-intro {
+    margin-top: 15px;
+
+    font-size: 12px;
+  }
+
+  .brand-values-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .brand-value-card {
+    min-height: auto;
+
+    padding: 25px 20px;
+  }
+
+  .brand-value-icon {
+    width: 65px;
+    height: 65px;
+
+    margin-bottom: 17px;
+
+    font-size: 24px;
+  }
+
+  .brand-value-card h3 {
+    font-size: 13px;
+  }
+
+  .brand-value-card p {
+    max-width: 280px;
+
+    font-size: 11px;
+  }
+
+  .brand-values-footer {
+    margin-top: 24px;
+
+    gap: 8px;
+  }
+
+  .brand-values-footer span {
+    width: 25px;
+  }
+
+  .brand-values-footer p {
+    font-size: 6px;
+
+    letter-spacing: 1.5px;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .brand-values-section {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .brand-values-container {
+    padding:
+      28px
+      15px
+      22px;
+  }
+
+  .brand-values-header h2 {
+    font-size: 33px;
+  }
+
+  .brand-value-card {
+    padding: 22px 16px;
+  }
+
+}

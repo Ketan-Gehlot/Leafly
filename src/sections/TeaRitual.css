@@ -1,0 +1,747 @@
+/* =========================================================
+   LEAFLY — TEA RITUAL
+   Compact Ivory + Warm Gold Editorial Section
+   ========================================================= */
+
+.tea-ritual-section {
+  width: 100%;
+  padding: 22px 14px;
+
+  box-sizing: border-box;
+
+  background: #f7f3ec;
+  color: #0b2b1e;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   MAIN CARD
+   ========================================================= */
+
+.tea-ritual-container {
+  position: relative;
+
+  width: 100%;
+  max-width: 1250px;
+
+  margin: 0 auto;
+
+  padding: 28px 32px 24px;
+
+  box-sizing: border-box;
+
+  /*
+    Ivory → warm gold cream
+    Very subtle so it still feels premium
+  */
+  background:
+    linear-gradient(
+      135deg,
+      #fbf7ef 0%,
+      #f7efe0 48%,
+      #f3e4c9 100%
+    );
+
+  border: 1px solid
+    rgba(201, 162, 75, 0.38);
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 8px 28px
+    rgba(11, 43, 30, 0.045);
+}
+
+
+/*
+   Soft gold atmospheric glow
+*/
+
+.tea-ritual-container::before {
+  content: "";
+
+  position: absolute;
+
+  width: 300px;
+  height: 300px;
+
+  top: -170px;
+  right: -100px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(201, 162, 75, 0.12),
+      transparent 70%
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.tea-ritual-header {
+  position: relative;
+
+  z-index: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(230px, 0.7fr);
+
+  align-items: end;
+
+  gap: 35px;
+
+  margin-bottom: 24px;
+}
+
+
+/* =========================================================
+   EYEBROW
+   ========================================================= */
+
+.tea-ritual-eyebrow {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  width: fit-content;
+
+  margin: 0 0 11px;
+}
+
+.tea-ritual-eyebrow span {
+  display: block;
+
+  width: 27px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #a67b2b,
+      #d8b45c
+    );
+}
+
+.tea-ritual-eyebrow p {
+  margin: 0;
+
+  color: #9a773b;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 2.8px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.tea-ritual-heading h2 {
+  margin: 0;
+
+  color: #0b2b1e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      34px,
+      3.5vw,
+      52px
+    );
+
+  font-weight: 400;
+
+  line-height: 0.98;
+
+  letter-spacing: -2px;
+}
+
+.tea-ritual-heading h2 em {
+  color: #c49637;
+
+  font-style: italic;
+
+  background:
+    linear-gradient(
+      100deg,
+      #a97820,
+      #d4a846,
+      #b98328
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.tea-ritual-intro {
+  max-width: 360px;
+
+  margin: 0 0 3px auto;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.63
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 11px;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   RITUAL GRID
+   ========================================================= */
+
+.tea-ritual-grid {
+  position: relative;
+
+  z-index: 1;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  width: 100%;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(
+      11,
+      43,
+      30,
+      0.10
+    );
+
+  border-radius: 12px;
+
+  /*
+    Slight cream/gold glass effect
+  */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.38),
+      rgba(229, 210, 169, 0.20)
+    );
+}
+
+
+/* =========================================================
+   STEP CARD
+   ========================================================= */
+
+.tea-ritual-card {
+  position: relative;
+
+  min-width: 0;
+
+  min-height: 145px;
+
+  padding: 17px 20px 19px;
+
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.34),
+      rgba(245, 231, 203, 0.18)
+    );
+
+  transition:
+    background 300ms ease,
+    transform 300ms ease;
+}
+
+
+/* Vertical divider */
+
+.tea-ritual-card:not(:last-child) {
+  border-right:
+    1px solid
+    rgba(
+      11,
+      43,
+      30,
+      0.10
+    );
+}
+
+
+/* Hover */
+
+.tea-ritual-card:hover {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.62),
+      rgba(236, 214, 171, 0.30)
+    );
+}
+
+
+/* =========================================================
+   TOP ROW
+   ========================================================= */
+
+.tea-ritual-card-top {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+
+/* Number */
+
+.tea-ritual-number {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  background: #0b2b1e;
+
+  color: #f7f3ec;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
+
+/* Icon */
+
+.tea-ritual-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  border:
+    1px solid
+    rgba(
+      166,
+      126,
+      48,
+      0.48
+    );
+
+  border-radius: 50%;
+
+  color: #9b7738;
+
+  font-size: 10px;
+
+  transition:
+    transform 300ms ease,
+    background 300ms ease;
+}
+
+.tea-ritual-card:hover
+.tea-ritual-icon {
+  transform: rotate(8deg);
+
+  background:
+    rgba(
+      201,
+      162,
+      75,
+      0.08
+    );
+}
+
+
+/* =========================================================
+   GOLD LINE
+   ========================================================= */
+
+.tea-ritual-card-line {
+  width: 27px;
+  height: 1px;
+
+  margin-bottom: 11px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #a97924,
+      #d8b45c
+    );
+}
+
+
+/* =========================================================
+   STEP TITLE
+   ========================================================= */
+
+.tea-ritual-card h3 {
+  margin: 0 0 6px;
+
+  color: #0b2b1e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 23px;
+
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   STEP DESCRIPTION
+   ========================================================= */
+
+.tea-ritual-card p {
+  max-width: 240px;
+
+  margin: 0;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.58
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 10px;
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   FOOTER STATEMENT
+   ========================================================= */
+
+.tea-ritual-footer {
+  position: relative;
+
+  z-index: 1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-top: 19px;
+}
+
+.tea-ritual-footer span {
+  width: 55px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(201, 162, 75, 0.65)
+    );
+}
+
+.tea-ritual-footer span:last-child {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(201, 162, 75, 0.65),
+      transparent
+    );
+}
+
+.tea-ritual-footer p {
+  margin: 0;
+
+  color: #92713a;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 7px;
+
+  font-weight: 700;
+
+  letter-spacing: 2.2px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+  .tea-ritual-container {
+    padding: 26px 26px 23px;
+  }
+
+  .tea-ritual-header {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+  }
+
+  .tea-ritual-intro {
+    margin: 0;
+
+    max-width: 560px;
+  }
+
+  .tea-ritual-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .tea-ritual-card {
+    min-height: 140px;
+  }
+
+  .tea-ritual-card:nth-child(2) {
+    border-right: none;
+  }
+
+  .tea-ritual-card:nth-child(-n + 2) {
+    border-bottom:
+      1px solid
+      rgba(
+        11,
+        43,
+        30,
+        0.10
+      );
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+  .tea-ritual-section {
+    padding: 16px 8px;
+  }
+
+  .tea-ritual-container {
+    padding: 24px 16px 20px;
+
+    border-radius: 15px;
+  }
+
+  .tea-ritual-header {
+    margin-bottom: 22px;
+  }
+
+  .tea-ritual-eyebrow {
+    gap: 8px;
+
+    margin-bottom: 10px;
+  }
+
+  .tea-ritual-eyebrow span {
+    width: 22px;
+  }
+
+  .tea-ritual-eyebrow p {
+    font-size: 7px;
+
+    letter-spacing: 2px;
+  }
+
+  .tea-ritual-heading h2 {
+    font-size: 34px;
+
+    line-height: 1;
+
+    letter-spacing: -1.6px;
+  }
+
+  .tea-ritual-intro {
+    margin-top: 15px;
+
+    font-size: 10.5px;
+
+    line-height: 1.6;
+  }
+
+  .tea-ritual-grid {
+    grid-template-columns: 1fr;
+
+    border-radius: 10px;
+  }
+
+  .tea-ritual-card {
+    min-height: 0;
+
+    padding: 17px;
+  }
+
+  .tea-ritual-card:not(:last-child) {
+    border-right: none;
+
+    border-bottom:
+      1px solid
+      rgba(
+        11,
+        43,
+        30,
+        0.10
+      );
+  }
+
+  .tea-ritual-card-top {
+    margin-bottom: 14px;
+  }
+
+  .tea-ritual-card h3 {
+    font-size: 23px;
+  }
+
+  .tea-ritual-card p {
+    max-width: 100%;
+
+    font-size: 10px;
+  }
+
+  .tea-ritual-footer {
+    margin-top: 18px;
+
+    gap: 7px;
+  }
+
+  .tea-ritual-footer span {
+    width: 25px;
+  }
+
+  .tea-ritual-footer p {
+    font-size: 6px;
+
+    letter-spacing: 1.5px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .tea-ritual-section {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .tea-ritual-container {
+    padding: 21px 14px 18px;
+  }
+
+  .tea-ritual-heading h2 {
+    font-size: 32px;
+  }
+
+  .tea-ritual-card {
+    padding: 15px;
+  }
+
+  .tea-ritual-card h3 {
+    font-size: 21px;
+  }
+
+  .tea-ritual-footer {
+    display: none;
+  }
+}

@@ -1,0 +1,741 @@
+/* =========================================================
+   LEAFLY
+   FEATURED TEA COLLECTIONS
+   ========================================================= */
+
+.featured-teas-section {
+  position: relative;
+
+  width: 100%;
+  max-width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #f7f3ec;
+  color: #0b2b1e;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.featured-teas-container {
+  position: relative;
+
+  width: 100%;
+  max-width: 1500px;
+
+  margin: 0 auto;
+
+  padding:
+    clamp(75px, 7vw, 115px)
+    clamp(20px, 4vw, 55px)
+    60px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.featured-teas-heading {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(280px, 0.75fr);
+
+  align-items: end;
+
+  column-gap: 70px;
+
+  margin-bottom: 48px;
+}
+
+.featured-teas-heading-main {
+  min-width: 0;
+}
+
+
+/* =========================================================
+   EYEBROW
+   ========================================================= */
+
+.featured-teas-eyebrow {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 18px;
+
+  width: fit-content;
+
+  margin:
+    0 auto
+    22px;
+}
+
+.featured-teas-eyebrow span {
+  display: block;
+
+  width: 42px;
+  height: 1px;
+
+  background: #c9a24b;
+}
+
+.featured-teas-eyebrow p {
+  margin: 0;
+
+  color: #b98428;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 4px;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.featured-teas-heading h2 {
+  margin: 0;
+
+  color: #0b2b1e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      48px,
+      5.8vw,
+      82px
+    );
+
+  font-weight: 400;
+
+  line-height: 0.96;
+
+  letter-spacing: -3px;
+
+  text-align: center;
+}
+
+.featured-teas-heading h2 em {
+  color: #c99636;
+
+  font-style: italic;
+}
+
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.featured-teas-intro {
+  width: 100%;
+  max-width: 470px;
+
+  margin:
+    0
+    0
+    6px
+    auto;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.68
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 14px;
+
+  line-height: 1.75;
+}
+
+
+/* =========================================================
+   CARD GRID
+   ========================================================= */
+
+.featured-teas-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 12px;
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.featured-tea-card {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(
+      11,
+      43,
+      30,
+      0.08
+    );
+
+  border-radius: 15px;
+
+  background: #eee9df;
+
+  box-shadow:
+    0 3px 12px
+    rgba(
+      11,
+      43,
+      30,
+      0.045
+    );
+
+  transition:
+    transform 450ms
+      cubic-bezier(
+        0.22,
+        1,
+        0.36,
+        1
+      ),
+    box-shadow 450ms ease;
+}
+
+.featured-tea-card:hover {
+  transform:
+    translateY(-7px);
+
+  box-shadow:
+    0 24px 55px
+    rgba(
+      11,
+      43,
+      30,
+      0.13
+    );
+}
+
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
+
+.featured-tea-image {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 0.9;
+
+  overflow: hidden;
+
+  background: #d8d3c7;
+}
+
+.featured-tea-image img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+
+  object-fit: cover;
+
+  object-position: center;
+
+  transition:
+    transform 850ms
+      cubic-bezier(
+        0.22,
+        1,
+        0.36,
+        1
+      );
+}
+
+.featured-tea-card:hover
+.featured-tea-image img {
+  transform:
+    scale(1.045);
+}
+
+
+/* =========================================================
+   IMAGE SHADE
+   ========================================================= */
+
+.featured-tea-image-shade {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(11, 43, 30, 0.02) 45%,
+      rgba(11, 43, 30, 0.20) 100%
+    );
+}
+
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.featured-tea-content {
+  padding:
+    19px
+    20px
+    22px;
+}
+
+
+/* Category */
+
+.featured-tea-category {
+  margin:
+    0
+    0
+    9px;
+
+  color: #b98428;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.7px;
+
+  line-height: 1.3;
+}
+
+
+/* Name */
+
+.featured-tea-content h3 {
+  margin: 0;
+
+  color: #0b2b1e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 28px;
+
+  font-weight: 400;
+
+  line-height: 1.05;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* Subtitle */
+
+.featured-tea-subtitle {
+  margin:
+    5px
+    0
+    9px;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.52
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+
+  line-height: 1.3;
+}
+
+
+/* Description */
+
+.featured-tea-description {
+  min-height: 78px;
+
+  margin:
+    0
+    0
+    19px;
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.68
+    );
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 11.5px;
+
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   EXPLORE LINK
+   ========================================================= */
+
+.featured-tea-link {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  padding-bottom: 6px;
+
+  border-bottom:
+    1px solid
+    #c9a24b;
+
+  color: #0b2b1e;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 1.6px;
+
+  text-decoration: none;
+
+  transition:
+    color 250ms ease,
+    border-color 250ms ease;
+}
+
+.featured-tea-link strong {
+  display: inline-block;
+
+  font-size: 15px;
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  transition:
+    transform 300ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    );
+}
+
+.featured-tea-link:hover {
+  color: #c9a24b;
+
+  border-color: #0b2b1e;
+}
+
+.featured-tea-link:hover strong {
+  transform:
+    translateX(5px);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.featured-teas-footer {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 18px;
+
+  margin-top: 38px;
+}
+
+.featured-teas-footer span {
+  display: block;
+
+  width: min(150px, 12vw);
+
+  height: 1px;
+
+  background: #c9a24b;
+}
+
+.featured-teas-footer p {
+  margin: 0;
+
+  color: #0b2b1e;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 4px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   LARGE TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .featured-teas-container {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .featured-teas-heading {
+    grid-template-columns: 1fr;
+
+    gap: 25px;
+  }
+
+  .featured-teas-intro {
+    margin: 0 auto;
+
+    text-align: center;
+  }
+
+  .featured-teas-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+  .featured-teas-container {
+    padding:
+      70px
+      24px
+      55px;
+  }
+
+  .featured-teas-heading {
+    margin-bottom: 42px;
+  }
+
+  .featured-teas-heading h2 {
+    font-size:
+      clamp(
+        45px,
+        9vw,
+        68px
+      );
+
+    letter-spacing: -2px;
+  }
+
+  .featured-teas-intro {
+    max-width: 560px;
+
+    font-size: 13px;
+  }
+
+  .featured-tea-content {
+    padding: 20px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .featured-teas-container {
+    padding:
+      65px
+      18px
+      48px;
+  }
+
+  .featured-teas-eyebrow {
+    gap: 10px;
+
+    margin-bottom: 20px;
+  }
+
+  .featured-teas-eyebrow span {
+    width: 25px;
+  }
+
+  .featured-teas-eyebrow p {
+    font-size: 8px;
+
+    letter-spacing: 2.5px;
+  }
+
+  .featured-teas-heading h2 {
+    font-size:
+      clamp(
+        42px,
+        13vw,
+        62px
+      );
+
+    line-height: 0.96;
+
+    letter-spacing: -2px;
+  }
+
+  .featured-teas-intro {
+    margin-top: 22px;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+  }
+
+  .featured-teas-grid {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+  .featured-tea-image {
+    aspect-ratio: 1 / 0.95;
+  }
+
+  .featured-tea-content {
+    padding:
+      20px
+      20px
+      24px;
+  }
+
+  .featured-tea-content h3 {
+    font-size: 30px;
+  }
+
+  .featured-tea-description {
+    min-height: auto;
+
+    font-size: 12px;
+  }
+
+  .featured-teas-footer {
+    gap: 10px;
+
+    margin-top: 35px;
+  }
+
+  .featured-teas-footer span {
+    width: 35px;
+  }
+
+  .featured-teas-footer p {
+    font-size: 7px;
+
+    letter-spacing: 2px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .featured-teas-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .featured-teas-heading h2 {
+    font-size: 42px;
+  }
+
+}

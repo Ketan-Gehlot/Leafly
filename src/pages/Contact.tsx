@@ -1,0 +1,295 @@
+import { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Contact.css";
+
+type ContactForm = {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+};
+
+type ContactErrors = Partial<Record<keyof ContactForm, string>>;
+
+type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+const contactDetails = [
+  {
+    label: "CUSTOMER CARE",
+    detail: "For questions about orders, products and delivery.",
+    value: "hello@leafly.com",
+    type: "email",
+  },
+  {
+    label: "EMAIL",
+    detail: "hello@leafly.com",
+    value: "hello@leafly.com",
+    type: "email",
+  },
+  {
+    label: "TEA GUIDANCE",
+    detail: "Need help choosing a tea? Tell us what you enjoy and we'll help.",
+    value: "hello@leafly.com",
+    type: "guidance",
+  },
+];
+
+const faqItems: FaqItem[] = [
+  {
+    question: "How can I get help choosing a tea?",
+    answer:
+      "Tell us what kind of tea you usually enjoy, the mood you want, or the time of day you plan to drink it. We can suggest a few leaves that match your taste and routine.",
+  },
+  {
+    question: "Where can I ask about my order?",
+    answer:
+      "Send a note through the form below with your order details and we’ll guide you through any delivery, product, or timing questions you may have.",
+  },
+  {
+    question: "How quickly will I receive a response?",
+    answer:
+      "We aim to reply as soon as possible, generally within one to two business days depending on volume and seasonal inquiries.",
+  },
+  {
+    question: "Can I ask about a specific tea?",
+    answer:
+      "Absolutely. Mention the tea name, the tasting notes you’re looking for, or the cup you prefer, and we’ll help point you toward the right selection.",
+  },
+];
+
+const initialForm: ContactForm = {
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+};
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export default function Contact() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<ContactForm>(initialForm);
+  const [errors, setErrors] = useState<ContactErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+
+    setFormData((current) => ({
+      ...current,
+      [name]: value,
+    }));
+
+    setErrors((current) => ({
+      ...current,
+      [name]: undefined,
+    }));
+
+    if (isSubmitted) {
+      setIsSubmitted(false);
+    }
+  };
+
+  const validateForm = () => {
+    const nextErrors: ContactErrors = {};
+
+    if (!formData.name.trim()) {
+      nextErrors.name = "Please enter your name.";
+    }
+
+    if (!formData.email.trim()) {
+      nextErrors.email = "Please enter your email address.";
+    } else if (!emailRegex.test(formData.email.trim())) {
+      nextErrors.email = "Please enter a valid email address.";
+    }
+
+    if (!formData.subject.trim()) {
+      nextErrors.subject = "Please enter a subject.";
+    }
+
+    if (!formData.message.trim()) {
+      nextErrors.message = "Please enter your message.";
+    }
+
+    return nextErrors;
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const nextErrors = validateForm();
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      setIsSubmitted(false);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrors({});
+
+    window.setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      setFormData(initialForm);
+    }, 450);
+  };
+
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <main className="contact-page">
+      <section className="contact-hero">
+        <div className="contact-hero-copy">
+          <p className="contact-eyebrow">CONTACT LEAFLY</p>
+          <h1>
+            Let&apos;s talk
+            <span>about tea.</span>
+          </h1>
+          <p className="contact-hero-text">
+            Questions about an order, choosing a tea, or simply want to say hello? We&apos;d love to hear from you.
+          </p>
+        </div>
+      </section>
+
+      <section className="contact-info">
+        <div className="contact-info-grid">
+          {contactDetails.map((item) => (
+            <article key={item.label} className="contact-card">
+              <p className="contact-card-label">{item.label}</p>
+              <h2>{item.detail}</h2>
+              {item.label === "EMAIL" ? (
+                <a href={`mailto:${item.value}`} className="contact-link">
+                  {item.value}
+                </a>
+              ) : (
+                <p className="contact-card-meta">{item.value}</p>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="contact-panel">
+        <div className="contact-form-wrap">
+          <div className="contact-panel-header">
+            <p className="contact-eyebrow">WRITE TO US</p>
+            <h2>Send a note.</h2>
+          </div>
+
+          <form className="contact-form" onSubmit={handleSubmit} noValidate>
+            <div className="field-row">
+              <label className="field">
+                <span>Name</span>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.name)}
+                />
+                {errors.name && <small>{errors.name}</small>}
+              </label>
+
+              <label className="field">
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.email)}
+                />
+                {errors.email && <small>{errors.email}</small>}
+              </label>
+            </div>
+
+            <label className="field">
+              <span>Subject</span>
+              <input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.subject)}
+              />
+              {errors.subject && <small>{errors.subject}</small>}
+            </label>
+
+            <label className="field">
+              <span>Message</span>
+              <textarea
+                name="message"
+                rows={6}
+                value={formData.message}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.message)}
+              />
+              {errors.message && <small>{errors.message}</small>}
+            </label>
+
+            <div className="form-actions">
+              <button type="submit" className="contact-submit" disabled={isSubmitting}>
+                {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
+              </button>
+            </div>
+
+            {isSubmitted && (
+              <p className="form-success">Thank you. Your message has been received.</p>
+            )}
+          </form>
+        </div>
+
+        <aside className="faq-wrap">
+          <div className="faq-header">
+            <p className="contact-eyebrow">FAQ</p>
+            <h2>Helpful answers.</h2>
+          </div>
+
+          <div className="faq-list">
+            {faqItems.map((item, index) => {
+              const isOpen = openFaq === index;
+
+              return (
+                <div key={item.question} className={`faq-item ${isOpen ? "open" : ""}`}>
+                  <button
+                    type="button"
+                    className="faq-question"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    aria-expanded={isOpen}
+                  >
+                    <span>{item.question}</span>
+                    <span className="faq-plus">{isOpen ? "−" : "+"}</span>
+                  </button>
+                  {isOpen && <p className="faq-answer">{item.answer}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </aside>
+      </section>
+
+      <section className="contact-cta">
+        <p className="contact-eyebrow">READY TO EXPLORE?</p>
+        <h2>Find your next ritual.</h2>
+        <button type="button" className="contact-cta-button" onClick={() => navigate("/shop")}>
+          EXPLORE THE TEA COLLECTION
+        </button>
+      </section>
+
+      <button type="button" className="back-to-top" onClick={handleBackToTop} aria-label="Back to top">
+        ↑
+      </button>
+    </main>
+  );
+}

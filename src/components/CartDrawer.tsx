@@ -1,0 +1,169 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import "./CartDrawer.css";
+
+export default function CartDrawer() {
+  const navigate = useNavigate();
+
+  const {
+    items,
+    cartCount,
+    subtotal,
+    isCartOpen,
+    closeCart,
+    increaseQuantity,
+    decreaseQuantity,
+    removeFromCart,
+    clearCart,
+  } = useCart();
+
+  useEffect(() => {
+    if (!isCartOpen) {
+      return;
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeCart();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
+    };
+  }, [isCartOpen, closeCart]);
+
+  if (!isCartOpen) {
+    return null;
+  }
+
+  return (
+    <div className="leafly-cart-overlay" onClick={closeCart}>
+      <aside
+        className="leafly-cart-drawer"
+        onClick={(event) => event.stopPropagation()}
+        aria-label="Shopping cart"
+      >
+        <div className="leafly-cart-header">
+          <div>
+            <p className="leafly-cart-eyebrow">YOUR LEAFLY</p>
+            <h2>Shopping cart</h2>
+            <span>{cartCount} {cartCount === 1 ? "item" : "items"}</span>
+          </div>
+
+          <button
+            type="button"
+            className="leafly-cart-close"
+            onClick={closeCart}
+            aria-label="Close cart"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="leafly-cart-content">
+          {items.length === 0 ? (
+            <div className="leafly-cart-empty">
+              <div className="leafly-cart-empty-leaf">❧</div>
+
+              <h3>Your cart is waiting.</h3>
+
+              <p>Add a beautiful tea to begin your ritual.</p>
+
+              <button type="button" onClick={closeCart}>
+                CONTINUE SHOPPING
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="leafly-cart-items">
+                {items.map(({ product, quantity }) => (
+                  <article className="leafly-cart-item" key={product.id}>
+                    <div className="leafly-cart-item-image">
+                      <img src={product.image} alt={product.name} />
+                    </div>
+
+                    <div className="leafly-cart-item-info">
+                      <p>{product.origin} · {product.category}</p>
+                      <h3>{product.name}</h3>
+                      <span>{product.weight} · {product.caffeine} caffeine</span>
+                      <strong>₹{(product.price * quantity).toLocaleString("en-IN")}</strong>
+
+                      <div className="leafly-cart-item-bottom">
+                        <div className="leafly-quantity">
+                          <button
+                            type="button"
+                            onClick={() => decreaseQuantity(product.id)}
+                            aria-label={`Decrease ${product.name}`}
+                          >
+                            −
+                          </button>
+
+                          <span>{quantity}</span>
+
+                          <button
+                            type="button"
+                            onClick={() => increaseQuantity(product.id)}
+                            aria-label={`Increase ${product.name}`}
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="leafly-remove-item"
+                          onClick={() => removeFromCart(product.id)}
+                        >
+                          REMOVE
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="leafly-cart-actions">
+                <button type="button" className="leafly-clear-cart" onClick={clearCart}>
+                  CLEAR CART
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {items.length > 0 && (
+          <div className="leafly-cart-footer">
+            <div className="leafly-cart-subtotal">
+              <span>SUBTOTAL</span>
+              <strong>₹{subtotal.toLocaleString("en-IN")}</strong>
+            </div>
+
+            <p>Taxes and shipping calculated at checkout.</p>
+
+            <button
+              type="button"
+              className="leafly-checkout-button"
+              onClick={() => {
+                closeCart();
+                navigate("/checkout");
+              }}
+            >
+              PROCEED TO CHECKOUT
+              <span>❧</span>
+            </button>
+
+            <button type="button" className="leafly-continue-shopping" onClick={closeCart}>
+              CONTINUE SHOPPING
+            </button>
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+}

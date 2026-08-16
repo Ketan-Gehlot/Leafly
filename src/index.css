@@ -1,0 +1,152 @@
+/* =========================================================
+   LEAFLY — GLOBAL RESET
+   Full-bleed layout for every page and section
+   ========================================================= */
+
+:root {
+  --leafly-forest: #0b2b1e;
+  --leafly-black: #011111;
+  --leafly-gold: #c9a24b;
+  --leafly-ivory: #f7f3ec;
+
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-body: Inter, Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  min-width: 320px;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  min-width: 320px;
+  margin: 0;
+  padding: 0;
+
+  background: var(--leafly-ivory);
+  color: var(--leafly-forest);
+
+  font-family: var(--font-body);
+
+  overflow-x: hidden;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* =========================================================
+   IMPORTANT — REMOVE VITE DEFAULT CONTAINER
+   ========================================================= */
+
+#root {
+  width: 100%;
+  max-width: none;
+
+  min-width: 320px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  text-align: left;
+}
+
+/* =========================================================
+   MAIN APPLICATION WRAPPER
+   ========================================================= */
+
+.leafly-app {
+  width: 100%;
+  max-width: none;
+
+  min-width: 320px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  overflow-x: clip;
+}
+
+/* =========================================================
+   MAIN PAGE
+   ========================================================= */
+
+.leafly-app > main,
+.leafly-main {
+  width: 100%;
+  max-width: none;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+}
+
+/* =========================================================
+   EVERY SECTION IS FULL WIDTH
+   ========================================================= */
+
+.leafly-app section,
+.leafly-app main {
+  max-width: none;
+}
+
+/* =========================================================
+   MEDIA
+   ========================================================= */
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+/* =========================================================
+   LINKS / BUTTONS
+   ========================================================= */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--leafly-gold);
+  color: var(--leafly-black);
+}

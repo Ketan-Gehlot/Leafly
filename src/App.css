@@ -1,0 +1,24 @@
+.leafly-page-placeholder {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 120px 24px 60px;
+
+  box-sizing: border-box;
+
+  background: #f7f3ec;
+
+  color: #0b2b1e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(42px, 6vw, 80px);
+
+  text-align: center;
+}
