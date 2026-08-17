@@ -1,4 +1,4 @@
-import logo from "../assets/leafly-logo.png";
+import logo from "../assets/leafly-logo.webp";
 import "./Footer.css";
 
 const shopLinks = [
@@ -46,6 +46,7 @@ export default function Footer() {
               src={logo}
               alt="Leafly"
               className="leafly-footer-logo"
+              loading="lazy"
             />
 
             <p className="leafly-footer-brand-text">

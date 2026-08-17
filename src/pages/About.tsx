@@ -1,9 +1,9 @@
 import "./About.css";
-import mainImage from "../assets/main.png";
-import image2 from "../assets/image2.png";
-import image3 from "../assets/image3.png";
-import image4 from "../assets/image4.png";
-import image5 from "../assets/image5.png";
+import mainImage from "../assets/main.webp";
+import image2 from "../assets/image2.webp";
+import image3 from "../assets/image3.webp";
+import image4 from "../assets/image4.webp";
+import image5 from "../assets/image5.webp";
 
 const values = [
   {
@@ -39,7 +39,7 @@ export default function About() {
         </div>
 
         <div className="about-hero-visual">
-          <img src={mainImage} alt="Tea leaves and a teacup in a bright studio setting" />
+          <img src={mainImage} alt="Tea leaves and a teacup in a bright studio setting" loading="eager" fetchPriority="high" />
           <div className="about-badge">
             <span>EST. 2024</span>
             <strong>Slow tea, beautifully made.</strong>
@@ -78,11 +78,11 @@ export default function About() {
 
       <section className="about-gallery">
         <div className="about-gallery-row">
-          <img src={image2} alt="Close-up tea leaves in a jar" />
-          <img src={image3} alt="Tea preparation and pouring ritual" />
+          <img src={image2} alt="Close-up tea leaves in a jar" loading="lazy" />
+          <img src={image3} alt="Tea preparation and pouring ritual" loading="lazy" />
         </div>
         <div className="about-gallery-feature">
-          <img src={image4} alt="Premium tea packaging and accessories" />
+          <img src={image4} alt="Premium tea packaging and accessories" loading="lazy" />
         </div>
       </section>
 
@@ -105,7 +105,7 @@ export default function About() {
 
       <section className="about-ritual">
         <div className="about-ritual-image">
-          <img src={image5} alt="Tea ritual with a warm cup and natural elements" />
+          <img src={image5} alt="Tea ritual with a warm cup and natural elements" loading="lazy" />
         </div>
 
         <div className="about-ritual-copy">

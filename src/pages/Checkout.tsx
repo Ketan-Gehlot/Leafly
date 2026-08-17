@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DeliveryAnimation from "../components/DeliveryAnimation";
 import { useCart } from "../context/CartContext";
 import {
   useOrderContext,
   type Order,
   type ShippingAddress,
 } from "../context/OrderContext";
+import DeliveryAnimation from "../components/DeliveryAnimation";
+import CouponRewardAnimation from "../components/CouponRewardAnimation";
+import { validateCoupon, calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import "./Checkout.css";
 
 type DeliveryMethod = "standard" | "express";
@@ -78,8 +80,13 @@ export default function Checkout() {
   const [cardName, setCardName] = useState("");
   const [upiId, setUpiId] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Coupon state
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [couponFeedback, setCouponFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
     const savedAddresses = readSavedAddresses();
@@ -104,7 +111,46 @@ export default function Checkout() {
     [deliveryMethod]
   );
 
-  const total = useMemo(() => subtotal + deliveryFee, [deliveryFee, subtotal]);
+  const discountAmount = useMemo(() => {
+    if (!appliedCoupon) return 0;
+    return calculateDiscount(subtotal, appliedCoupon.discountPercentage);
+  }, [appliedCoupon, subtotal]);
+
+  const total = useMemo(
+    () => Math.max(0, subtotal - discountAmount + deliveryFee),
+    [deliveryFee, discountAmount, subtotal]
+  );
+
+  const handleApplyCoupon = (event?: React.FormEvent) => {
+    if (event) event.preventDefault();
+
+    const result = validateCoupon(couponInput);
+
+    if (result.isValid) {
+      const discount = calculateDiscount(subtotal, result.discountPercentage);
+      setAppliedCoupon({
+        code: result.code,
+        discountPercentage: result.discountPercentage,
+        discountAmount: discount,
+      });
+      setCouponFeedback({
+        type: "success",
+        message: result.message,
+      });
+      setCouponInput("");
+    } else {
+      setCouponFeedback({
+        type: "error",
+        message: result.message,
+      });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponFeedback(null);
+    setCouponInput("");
+  };
 
   const updateAddressField = (field: keyof AddressForm, value: string) => {
     setShippingAddress((current) => ({
@@ -199,15 +245,20 @@ export default function Checkout() {
       id: generateOrderId(),
       createdAt: new Date().toISOString(),
       status: "Processing",
-      items: items.map(({ product, quantity }) => ({
-        id: String(product.id),
-        name: product.name,
-        image: product.image,
-        price: product.price,
-        quantity,
-        category: product.category,
+      items: items.map((item) => ({
+        id: item.id || `${item.product.id}-${item.variant}`,
+        productId: item.product.id,
+        name: item.product.name,
+        variant: item.variant || item.weight,
+        weight: item.weight || item.variant,
+        image: item.product.image,
+        price: item.price,
+        quantity: item.quantity,
+        category: item.product.category,
       })),
       subtotal,
+      discount: discountAmount,
+      couponCode: appliedCoupon?.code,
       deliveryFee,
       total,
       deliveryMethod:
@@ -257,11 +308,15 @@ export default function Checkout() {
 
     addOrder(order);
     clearCart();
-    setIsProcessing(false);
-    setIsAnimating(true);
+
+    // Brief tea/teapot micro-animation on checkout before transitioning into delivery scene
+    window.setTimeout(() => {
+      setIsProcessing(false);
+      setDeliveryPhase("delivery");
+    }, 600);
   };
 
-  if (items.length === 0 && !isAnimating) {
+  if (items.length === 0 && deliveryPhase === "idle") {
     return (
       <main className="checkout-page checkout-page-empty">
         <div className="checkout-empty-state">
@@ -276,9 +331,22 @@ export default function Checkout() {
     );
   }
 
-  if (isAnimating) {
+  // Sequential phase rendering: Delivery Boy -> Coupon Reward -> Order Success
+  if (deliveryPhase === "delivery") {
     return (
       <DeliveryAnimation
+        onComplete={() => {
+          // Transition sequentially to coupon reward after delivery boy completely finishes
+          setDeliveryPhase("coupon");
+        }}
+      />
+    );
+  }
+
+  if (deliveryPhase === "coupon") {
+    return (
+      <CouponRewardAnimation
+        couponCode="LEAFLY2026"
         onComplete={() => {
           navigate("/order-success");
         }}
@@ -578,25 +646,76 @@ export default function Checkout() {
           </div>
 
           <div className="checkout-summary-items">
-            {items.map(({ product, quantity }) => (
-              <article key={product.id} className="checkout-summary-item">
+            {items.map((item) => (
+              <article key={item.id} className="checkout-summary-item">
                 <div className="checkout-summary-image-wrap">
-                  <img src={product.image} alt={product.name} />
+                  <img src={item.product.image} alt={item.product.name} loading="lazy" />
                 </div>
 
                 <div className="checkout-summary-copy">
                   <div className="checkout-summary-row">
-                    <strong>{product.name}</strong>
-                    <span>{currencyFormatter.format(product.price * quantity)}</span>
+                    <strong>{item.product.name}</strong>
+                    <span>{currencyFormatter.format(item.price * item.quantity)}</span>
                   </div>
-                  <small>{product.category}</small>
+                  <small>{item.product.category} · {item.variant || item.weight}</small>
                   <div className="checkout-summary-meta">
-                    <span>Qty: {quantity}</span>
-                    <span>{currencyFormatter.format(product.price)}</span>
+                    <span>Qty: {item.quantity}</span>
+                    <span>{currencyFormatter.format(item.price)}</span>
                   </div>
                 </div>
               </article>
             ))}
+          </div>
+
+          {/* COUPON SECTION */}
+          <div className="checkout-coupon-section">
+            <label htmlFor="checkout-coupon-input" className="checkout-coupon-title">
+              PROMO CODE / REFERRAL
+            </label>
+
+            {appliedCoupon ? (
+              <div className="checkout-coupon-applied">
+                <div className="checkout-coupon-tag">
+                  <span className="checkout-coupon-code">{appliedCoupon.code}</span>
+                  <span className="checkout-coupon-badge">-{appliedCoupon.discountPercentage}% OFF</span>
+                </div>
+                <button
+                  type="button"
+                  className="checkout-coupon-remove"
+                  onClick={handleRemoveCoupon}
+                  aria-label="Remove applied coupon"
+                >
+                  REMOVE
+                </button>
+              </div>
+            ) : (
+              <form className="checkout-coupon-form" onSubmit={handleApplyCoupon}>
+                <input
+                  id="checkout-coupon-input"
+                  type="text"
+                  placeholder="Enter code (e.g. LEAFLY30)"
+                  value={couponInput}
+                  onChange={(event) => {
+                    setCouponInput(event.target.value);
+                    if (couponFeedback) setCouponFeedback(null);
+                  }}
+                  aria-label="Coupon code"
+                />
+                <button
+                  type="button"
+                  className="checkout-coupon-apply-btn"
+                  onClick={() => handleApplyCoupon()}
+                >
+                  APPLY
+                </button>
+              </form>
+            )}
+
+            {couponFeedback && (
+              <p className={`checkout-coupon-message ${couponFeedback.type}`} role="status">
+                {couponFeedback.message}
+              </p>
+            )}
           </div>
 
           <div className="checkout-total-box">
@@ -608,10 +727,12 @@ export default function Checkout() {
               <span>Delivery</span>
               <strong>{deliveryFee === 0 ? "Free" : currencyFormatter.format(deliveryFee)}</strong>
             </div>
-            <div>
-              <span>Discount</span>
-              <strong>₹0</strong>
-            </div>
+            {discountAmount > 0 && (
+              <div className="checkout-discount-row">
+                <span>Discount ({appliedCoupon?.code} · {appliedCoupon?.discountPercentage}%)</span>
+                <strong className="checkout-discount-value">-{currencyFormatter.format(discountAmount)}</strong>
+              </div>
+            )}
             <div className="checkout-total-final">
               <span>TOTAL</span>
               <strong>{currencyFormatter.format(total)}</strong>
@@ -622,12 +743,19 @@ export default function Checkout() {
 
           <button
             type="button"
-            className="checkout-primary-button"
+            className={`checkout-primary-button ${isProcessing ? "brewing" : ""}`}
             disabled={isProcessing || items.length === 0}
-            aria-label={isProcessing ? "Processing order" : "Place order"}
+            aria-label={isProcessing ? "Brewing ritual..." : "Place order"}
             onClick={handlePlaceOrder}
           >
-            {isProcessing ? "PROCESSING ORDER..." : "PLACE ORDER"}
+            {isProcessing ? (
+              <span className="checkout-brewing-content">
+                <span className="checkout-teapot-icon" aria-hidden="true">🫖</span>
+                BREWING YOUR RITUAL...
+              </span>
+            ) : (
+              "PLACE ORDER"
+            )}
           </button>
         </aside>
       </div>

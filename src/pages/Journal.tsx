@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import "./Journal.css";
 
-import teaTastingImage from "../assets/tea-tasting-journal.png";
-import quietImage from "../assets/The-quite.png";
-import morningImage from "../assets/The-morning.png";
-import eveningImage from "../assets/The-evening.png";
-import brokenLeafImage from "../assets/Broken-leaf.png";
-import assamImage from "../assets/Inside-assam.png";
-import fiveSmallImage from "../assets/Five-small.png";
-import caseImage from "../assets/The-case.png";
+import teaTastingImage from "../assets/tea-tasting-journal.webp";
+import quietImage from "../assets/The-quite.webp";
+import morningImage from "../assets/The-morning.webp";
+import eveningImage from "../assets/The-evening.webp";
+import brokenLeafImage from "../assets/Broken-leaf.webp";
+import assamImage from "../assets/Inside-assam.webp";
+import fiveSmallImage from "../assets/Five-small.webp";
+import caseImage from "../assets/The-case.webp";
 
 type Story = {
   id: number;
@@ -222,6 +222,7 @@ export default function Journal() {
           <img
             src={teaTastingImage}
             alt="Tea tasting table with different teas"
+            loading="lazy"
           />
 
           <span className="journal-image-mark">
@@ -314,6 +315,7 @@ export default function Journal() {
                 <img
                   src={story.image}
                   alt={story.title}
+                  loading="lazy"
                 />
 
                 <span className="journal-image-mark">

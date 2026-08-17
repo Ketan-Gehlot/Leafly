@@ -1,0 +1,771 @@
+/* =========================================================
+   LEAFLY — TEA MAKER INTERACTIVE RITUAL STYLES
+   Minimal, calm, elegant, Indian-inspired
+   ========================================================= */
+
+.tea-maker-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 76px;
+  background: #faf7f0;
+  color: #0b2b1e;
+  font-family: Inter, Arial, sans-serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.tm-container {
+  width: min(1080px, calc(100% - 36px));
+  margin: 0 auto;
+}
+
+/* =========================================================
+   1. HERO SECTION
+   ========================================================= */
+
+.tm-hero {
+  position: relative;
+  padding: 85px 24px 75px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 120%, rgba(201, 162, 75, 0.2) 0%, transparent 55%),
+    linear-gradient(180deg, #071f16 0%, #0b2b1e 65%, #0f3627 100%);
+  color: #f7f3ec;
+  overflow: hidden;
+}
+
+.tm-hero-bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.15) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.tm-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tm-eyebrow-line {
+  width: 28px;
+  height: 1px;
+  background: #c9a24b;
+}
+
+.tm-eyebrow p {
+  margin: 0;
+  color: #c9a24b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.tm-title {
+  margin: 6px 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 6vw, 68px);
+  font-weight: 400;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.tm-subtitle {
+  margin: 12px 0 28px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: rgba(247, 243, 236, 0.85);
+  line-height: 1.4;
+}
+
+.tm-subtitle em {
+  font-style: italic;
+  color: #d5ae59;
+}
+
+.tm-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #c9a24b;
+  color: #0b2b1e;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tm-hero-cta:hover {
+  background: #f7f3ec;
+  transform: translateY(-2px);
+}
+
+.tm-cta-arrow {
+  font-size: 14px;
+}
+
+/* =========================================================
+   2. CONFIGURATION SECTION
+   ========================================================= */
+
+.tm-config-section {
+  padding: 60px 0 50px;
+}
+
+.tm-section-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.tm-step-badge {
+  display: inline-block;
+  color: #9a793f;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.tm-section-header h2 {
+  margin: 0 0 6px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 400;
+  letter-spacing: -1px;
+}
+
+.tm-section-header p {
+  margin: 0;
+  color: rgba(11, 43, 30, 0.65);
+  font-size: 14px;
+}
+
+.tm-config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.tm-config-card {
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.1);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 8px 24px rgba(11, 43, 30, 0.04);
+}
+
+.tm-config-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: rgba(11, 43, 30, 0.6);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.tm-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tm-pill-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 43, 30, 0.18);
+  background: #fffdf9;
+  color: #0b2b1e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tm-pill-btn:hover {
+  border-color: #c9a24b;
+  transform: translateY(-1px);
+}
+
+.tm-pill-btn.active {
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border-color: #0b2b1e;
+}
+
+/* Ambient Mode Card */
+.tm-ambient-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(201, 162, 75, 0.1), rgba(11, 43, 30, 0.04));
+  border: 1px solid rgba(201, 162, 75, 0.35);
+}
+
+.tm-ambient-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.tm-ambient-desc {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: rgba(11, 43, 30, 0.7);
+}
+
+.tm-ambient-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid #0b2b1e;
+  background: transparent;
+  color: #0b2b1e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.tm-ambient-toggle-btn.enabled {
+  background: #0b2b1e;
+  color: #c9a24b;
+  border-color: #0b2b1e;
+}
+
+.toggle-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tm-start-action {
+  text-align: center;
+  margin-top: 36px;
+}
+
+.tm-brew-master-btn {
+  min-height: 52px;
+  padding: 0 38px;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border: 1px solid #0b2b1e;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  box-shadow: 0 10px 25px rgba(11, 43, 30, 0.15);
+}
+
+.tm-brew-master-btn:hover {
+  background: #14422f;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(11, 43, 30, 0.2);
+}
+
+/* =========================================================
+   3. BREWING STAGE & TEAPOT SCENE
+   ========================================================= */
+
+.tm-ritual-stage-section {
+  padding: 30px 0 60px;
+  background: #faf7f0;
+}
+
+.tm-stages-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #fffdf9;
+  border: 1px solid rgba(11, 43, 30, 0.1);
+  border-radius: 999px;
+  margin-bottom: 36px;
+  overflow-x: auto;
+}
+
+.tm-stage-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.45;
+  transition: opacity 250ms ease;
+  white-space: nowrap;
+}
+
+.tm-stage-step.active {
+  opacity: 1;
+}
+
+.stage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c9a24b;
+}
+
+.stage-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #0b2b1e;
+}
+
+/* Brewing Stage Visual Scene */
+.tm-brewing-scene {
+  background: #0b2b1e;
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  border-radius: 24px;
+  padding: 50px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.tm-scene-table {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 60px;
+  min-height: 240px;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Teapot Animation */
+.tm-teapot-wrap {
+  position: relative;
+  width: 170px;
+  transform-origin: 20% 80%;
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.tm-teapot-wrap.heating {
+  animation: teapot-heating 1.2s ease-in-out infinite alternate;
+}
+
+.tm-teapot-wrap.tilting {
+  transform: translate3d(50px, -20px, 0) rotate(34deg);
+}
+
+@keyframes teapot-heating {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+.tm-teapot-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.4));
+}
+
+.tm-water-stream {
+  position: absolute;
+  top: 60px;
+  right: -20px;
+  width: 5px;
+  height: 95px;
+  background: linear-gradient(180deg, rgba(201, 162, 75, 0.9), rgba(247, 243, 236, 0.7));
+  border-radius: 3px;
+  animation: stream-flow 0.4s linear infinite;
+  box-shadow: 0 0 10px rgba(201, 162, 75, 0.6);
+}
+
+@keyframes stream-flow {
+  0% { opacity: 0.7; transform: scaleY(0.95); }
+  100% { opacity: 1; transform: scaleY(1.05); }
+}
+
+/* Tea Cup */
+.tm-teacup-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tm-teacup-body {
+  width: 110px;
+  height: 80px;
+  background: #faf7f0;
+  border-radius: 4px 4px 50px 50px;
+  border: 3px solid #c9a24b;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.tm-cup-liquid {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  transition: height 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+}
+
+.tm-cup-liquid.filling {
+  height: 80%;
+}
+
+.tm-cup-liquid.filled {
+  height: 85%;
+}
+
+.tm-teacup-saucer {
+  width: 140px;
+  height: 12px;
+  background: #0b2b1e;
+  border: 2px solid #c9a24b;
+  border-radius: 50%;
+  margin-top: -3px;
+}
+
+/* Leaves Blooming Inside Cup */
+.tm-leaves-bloom {
+  position: absolute;
+  inset: 0;
+}
+
+.tm-leaf {
+  position: absolute;
+  width: 14px;
+  height: 8px;
+  border-radius: 50% 0 50% 0;
+  animation: leaf-swirl 3s ease-in-out infinite alternate;
+}
+
+.tm-leaf.l1 { top: 40%; left: 25%; animation-delay: 0s; transform: rotate(15deg); }
+.tm-leaf.l2 { top: 50%; right: 25%; animation-delay: 0.6s; transform: rotate(-35deg); }
+.tm-leaf.l3 { top: 65%; left: 40%; animation-delay: 1.2s; transform: rotate(50deg); }
+.tm-leaf.l4 { top: 30%; right: 40%; animation-delay: 0.9s; transform: rotate(-10deg); }
+
+@keyframes leaf-swirl {
+  0% { transform: translateY(0) rotate(0deg) scale(0.9); }
+  50% { transform: translateY(-5px) rotate(15deg) scale(1.1); }
+  100% { transform: translateY(3px) rotate(-10deg) scale(1); }
+}
+
+/* Subtle Steam */
+.tm-steam-container {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 50px;
+  pointer-events: none;
+}
+
+.tm-steam-particle {
+  position: absolute;
+  width: 8px;
+  height: 30px;
+  background: linear-gradient(180deg, transparent 0%, rgba(247, 243, 236, 0.4) 60%, transparent 100%);
+  border-radius: 50%;
+  filter: blur(4px);
+  animation: steam-rise 2.4s ease-in-out infinite;
+}
+
+.tm-steam-particle.s1 { left: 15px; animation-delay: 0s; }
+.tm-steam-particle.s2 { left: 26px; animation-delay: 0.8s; }
+.tm-steam-particle.s3 { left: 37px; animation-delay: 1.4s; }
+
+@keyframes steam-rise {
+  0% { transform: translateY(15px) scale(0.7); opacity: 0; }
+  50% { opacity: 0.6; }
+  100% { transform: translateY(-20px) scale(1.4); opacity: 0; }
+}
+
+/* Timer Display Panel */
+.tm-timer-panel {
+  margin-top: 36px;
+  text-align: center;
+}
+
+.tm-timer-label {
+  color: #c9a24b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.tm-timer-digits {
+  color: #f7f3ec;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 48px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  margin: 6px 0 14px;
+}
+
+.tm-timer-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.tm-timer-btn {
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: 1px solid #c9a24b;
+  background: #c9a24b;
+  color: #0b2b1e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tm-timer-btn.secondary {
+  background: transparent;
+  color: #f7f3ec;
+  border-color: rgba(247, 243, 236, 0.4);
+}
+
+.tm-timer-btn:hover {
+  transform: translateY(-1px);
+  background: #f7f3ec;
+  color: #0b2b1e;
+}
+
+/* Result Card */
+.tm-result-card {
+  margin-top: 32px;
+  padding: 28px 32px;
+  background: rgba(247, 243, 236, 0.06);
+  border: 1px solid rgba(201, 162, 75, 0.5);
+  border-radius: 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  width: min(480px, 100%);
+  animation: result-card-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes result-card-pop {
+  0% { transform: scale(0.9) translateY(15px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.tm-result-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #c9a24b;
+  color: #0b2b1e;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.tm-result-eyebrow {
+  margin: 0;
+  color: #c9a24b;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.tm-result-title {
+  margin: 4px 0 14px;
+  color: #f7f3ec;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.tm-result-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.tm-result-meta-chips span {
+  padding: 3px 10px;
+  background: rgba(201, 162, 75, 0.18);
+  border-radius: 999px;
+  color: #f7f3ec;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tm-result-notes-box {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.tm-result-notes-box strong {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #c9a24b;
+  margin-bottom: 4px;
+}
+
+.tm-result-notes {
+  margin: 0;
+  color: #f7f3ec;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.tm-result-tagline {
+  margin: 6px 0 0;
+  color: rgba(247, 243, 236, 0.7);
+  font-size: 11px;
+  font-style: italic;
+}
+
+.tm-result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.tm-brew-again-btn,
+.tm-shop-tea-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tm-brew-again-btn {
+  background: transparent;
+  border: 1px solid rgba(247, 243, 236, 0.4);
+  color: #f7f3ec;
+}
+
+.tm-shop-tea-btn {
+  background: #c9a24b;
+  border: 1px solid #c9a24b;
+  color: #0b2b1e;
+}
+
+.tm-brew-again-btn:hover,
+.tm-shop-tea-btn:hover {
+  transform: translateY(-1px);
+  background: #f7f3ec;
+  color: #0b2b1e;
+}
+
+/* =========================================================
+   AMBIENT MODE PARTICLES
+   ========================================================= */
+
+.tm-ambient-particles {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-mode-active .tm-ambient-particles {
+  display: block;
+}
+
+.tm-ambient-leaf {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.35;
+  animation: ambient-fall 8s linear infinite;
+}
+
+.tm-ambient-leaf.al-1 { top: -10%; left: 15%; animation-duration: 9s; animation-delay: 0s; }
+.tm-ambient-leaf.al-2 { top: -10%; left: 45%; animation-duration: 11s; animation-delay: 2s; }
+.tm-ambient-leaf.al-3 { top: -10%; left: 75%; animation-duration: 8.5s; animation-delay: 4s; }
+.tm-ambient-leaf.al-4 { top: -10%; left: 30%; animation-duration: 10s; animation-delay: 1.5s; }
+.tm-ambient-leaf.al-5 { top: -10%; left: 85%; animation-duration: 12s; animation-delay: 3s; }
+
+@keyframes ambient-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.4; }
+  80% { opacity: 0.4; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .tm-config-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tm-hero {
+    padding: 60px 18px 50px;
+  }
+
+  .tm-scene-table {
+    gap: 30px;
+  }
+
+  .tm-teapot-wrap {
+    width: 130px;
+  }
+
+  .tm-teacup-body {
+    width: 90px;
+    height: 65px;
+  }
+
+  .tm-stages-nav {
+    border-radius: 16px;
+  }
+
+  .tm-result-actions {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-teapot-wrap,
+  .tm-ambient-leaf,
+  .tm-leaf,
+  .tm-steam-particle {
+    animation: none !important;
+    transition: none !important;
+  }
+}

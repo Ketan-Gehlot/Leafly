@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/leafly-logo.png";
+import logo from "../assets/leafly-logo.webp";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import "./Navbar.css";
@@ -11,6 +11,10 @@ const navLinks = [
   {
     label: "Tea Collections",
     path: "/tea-collections",
+  },
+  {
+  label: "Tea Maker",
+  path: "/tea-maker",
   },
   {
     label: "Why Leafly",
@@ -73,6 +77,8 @@ export default function Navbar() {
         <img
           src={logo}
           alt="Leafly"
+          loading="eager"
+          fetchPriority="high"
         />
 
         {/* Decorative butterfly 1 */}

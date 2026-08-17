@@ -7,10 +7,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import type { ProductVariantKey } from "../data/products";
 
 export type OrderItem = {
   id: string;
+  productId?: number;
   name: string;
+  variant?: ProductVariantKey | string;
+  weight?: string;
   image: string;
   price: number;
   quantity: number;
@@ -33,6 +37,8 @@ export type Order = {
   status: "Processing" | "Shipped" | "Delivered" | "Cancelled";
   items: OrderItem[];
   subtotal: number;
+  discount?: number;
+  couponCode?: string;
   deliveryFee: number;
   total: number;
   deliveryMethod: string;
@@ -48,7 +54,7 @@ type OrderContextType = {
 };
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
-const STORAGE_KEY = "leafly_orders";
+const STORAGE_KEY = "leafly_orders_v2";
 
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>(() => {

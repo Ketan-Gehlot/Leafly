@@ -269,6 +269,7 @@ export default function TeaCollections() {
             <img
               src={active.image}
               alt={active.name}
+              loading="lazy"
             />
 
             <span>
@@ -461,6 +462,7 @@ export default function TeaCollections() {
                     <img
                       src={product.image}
                       alt={product.name}
+                      loading="lazy"
                     />
 
                     <span>

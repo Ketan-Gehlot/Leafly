@@ -1,0 +1,274 @@
+/* =========================================================
+   TEA RITUAL SOUNDSCAPE STYLING
+   Indian instrumental meditative music player
+   ========================================================= */
+
+.tea-soundscape-section {
+  width: 100%;
+  padding: 60px 24px 70px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(201, 162, 75, 0.12), transparent 60%),
+    linear-gradient(180deg, #faf7f0 0%, #f0ebd8 100%);
+  border-top: 1px solid rgba(201, 162, 75, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.tea-soundscape-container {
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.tea-soundscape-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.tea-soundscape-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: rgba(201, 162, 75, 0.15);
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  margin-bottom: 12px;
+}
+
+.sound-wave-icon {
+  color: #9a793f;
+  font-size: 11px;
+}
+
+.sound-wave-label {
+  color: #0b2b1e;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.tea-soundscape-title {
+  margin: 0;
+  color: #0b2b1e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 400;
+  letter-spacing: -1.2px;
+}
+
+.tea-soundscape-subtitle {
+  margin: 8px 0 0;
+  color: rgba(11, 43, 30, 0.68);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13.5px;
+}
+
+/* Card Container */
+.tea-soundscape-card {
+  background: #0b2b1e;
+  border-radius: 20px;
+  border: 1px solid rgba(201, 162, 75, 0.45);
+  padding: 28px 34px;
+  box-shadow: 0 16px 40px rgba(11, 43, 30, 0.15);
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.tea-soundscape-track-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.tea-soundscape-disc {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #214b39 0%, #061c13 100%);
+  border: 2px solid #c9a24b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.tea-soundscape-disc.spinning {
+  animation: disc-spin 6s linear infinite;
+}
+
+@keyframes disc-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.disc-inner {
+  font-size: 20px;
+}
+
+.tea-soundscape-meta {
+  min-width: 0;
+}
+
+.tea-soundscape-tag {
+  display: block;
+  color: #c9a24b;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.tea-soundscape-track-title {
+  margin: 4px 0 3px;
+  color: #f7f3ec;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+}
+
+.tea-soundscape-desc {
+  margin: 0;
+  color: rgba(247, 243, 236, 0.65);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Controls */
+.tea-soundscape-controls-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tea-soundscape-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-display {
+  color: rgba(247, 243, 236, 0.6);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 10.5px;
+  min-width: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tea-soundscape-seeker {
+  flex: 1;
+  height: 4px;
+  accent-color: #c9a24b;
+  cursor: pointer;
+}
+
+.tea-soundscape-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.soundscape-btn {
+  background: transparent;
+  border: none;
+  color: #f7f3ec;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 160ms ease, color 160ms ease;
+  padding: 6px;
+  border-radius: 50%;
+}
+
+.soundscape-btn:hover {
+  color: #c9a24b;
+  transform: scale(1.1);
+}
+
+.soundscape-btn.play-btn {
+  width: 44px;
+  height: 44px;
+  background: #c9a24b;
+  color: #0b2b1e;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.soundscape-btn.play-btn:hover {
+  background: #f7f3ec;
+  color: #0b2b1e;
+  transform: scale(1.06);
+}
+
+.soundscape-btn.toggle-btn {
+  font-size: 14px;
+  opacity: 0.55;
+}
+
+.soundscape-btn.toggle-btn.active {
+  opacity: 1;
+  color: #c9a24b;
+}
+
+/* Volume Slider */
+.tea-soundscape-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-icon {
+  font-size: 14px;
+}
+
+.tea-soundscape-volume-slider {
+  width: 70px;
+  height: 4px;
+  accent-color: #c9a24b;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tea-soundscape-card {
+    grid-template-columns: 1fr;
+    padding: 22px 20px;
+    gap: 20px;
+  }
+
+  .tea-soundscape-buttons-row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tea-soundscape-volume {
+    width: 100%;
+    justify-content: center;
+    margin-top: 6px;
+  }
+
+  .tea-soundscape-volume-slider {
+    width: 120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tea-soundscape-disc.spinning {
+    animation: none !important;
+  }
+}

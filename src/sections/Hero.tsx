@@ -1,4 +1,5 @@
 import heroVideo from "../assets/leafly-hero.mp4";
+import heroPoster from "../assets/leafly-hero-poster.webp";
 import "./Hero.css";
 
 export default function Hero() {
@@ -12,11 +13,12 @@ export default function Hero() {
       <video
         className="hero-background-video"
         src={heroVideo}
+        poster={heroPoster}
         autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
         aria-hidden="true"
       />
 

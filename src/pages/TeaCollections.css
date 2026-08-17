@@ -110,9 +110,9 @@
 
   font-size:
     clamp(
-      45px,
-      6vw,
-      72px
+      48px,
+      6.2vw,
+      78px
     );
 
   font-weight: 400;
@@ -198,9 +198,9 @@
 
   font-size:
     clamp(
-      34px,
-      4vw,
-      49px
+      38px,
+      4.2vw,
+      54px
     );
 
   font-weight: 400;
@@ -509,9 +509,9 @@
 
   font-size:
     clamp(
-      35px,
-      4vw,
-      51px
+      39px,
+      4.2vw,
+      56px
     );
 
   font-weight: 400;

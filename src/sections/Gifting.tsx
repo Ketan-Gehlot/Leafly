@@ -8,9 +8,12 @@ export default function Gifting() {
         {/* IMAGE */}
         <div className="gifting-image-wrap">
           <img
-            src="/leafly-gifting.png"
+            src="/leafly-gifting.webp"
             alt="Leafly premium tea gifting collection"
             className="gifting-image"
+            width={1254}
+            height={1254}
+            loading="lazy"
           />
         </div>
 

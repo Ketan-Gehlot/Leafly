@@ -127,9 +127,9 @@
 
   font-size:
     clamp(
-      48px,
-      5.8vw,
-      82px
+      52px,
+      6.2vw,
+      88px
     );
 
   font-weight: 400;
@@ -175,7 +175,7 @@
     Arial,
     sans-serif;
 
-  font-size: 14px;
+  font-size: 15px;
 
   line-height: 1.75;
 }
@@ -370,7 +370,7 @@
     "Times New Roman",
     serif;
 
-  font-size: 28px;
+  font-size: 34px;
 
   font-weight: 400;
 
@@ -434,7 +434,7 @@
     Arial,
     sans-serif;
 
-  font-size: 11.5px;
+  font-size: 13px;
 
   line-height: 1.55;
 }

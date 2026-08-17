@@ -61,7 +61,7 @@ export default function OrderSuccess() {
             <ul>
               {order.items.map((item) => (
                 <li key={item.id}>
-                  {item.name} × {item.quantity}
+                  {item.name} {item.variant ? `(${item.variant})` : ""} × {item.quantity}
                 </li>
               ))}
             </ul>

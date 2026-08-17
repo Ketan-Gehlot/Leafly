@@ -340,10 +340,25 @@
       11,
       43,
       30,
-      0.48
+      0.65
     );
 
-  font-size: 7px;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.leafly-variant-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  background: rgba(201, 162, 75, 0.15);
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  border-radius: 999px;
+  color: #0b2b1e;
+  font-weight: 700;
+  font-size: 8px;
+  letter-spacing: 0.5px;
 }
 
 .leafly-cart-item-info > strong {

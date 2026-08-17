@@ -153,9 +153,9 @@
 
   font-size:
     clamp(
-      42px,
-      3.8vw,
-      66px
+      46px,
+      4.2vw,
+      72px
     );
 
   font-weight: 400;
@@ -233,7 +233,7 @@
     Arial,
     sans-serif;
 
-  font-size: 14px;
+  font-size: 15px;
 
   line-height: 1.7;
 }
@@ -299,7 +299,7 @@
 
   color: #9b7840;
 
-  font-size: 17px;
+  font-size: 19px;
 }
 
 .gifting-feature h3 {
@@ -312,7 +312,7 @@
     "Times New Roman",
     serif;
 
-  font-size: 13px;
+  font-size: 14px;
 
   font-weight: 400;
 

@@ -5,121 +5,8 @@ import {
 } from "react";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import { type Product, type ProductVariantKey, products } from "../data/products";
 import "./Shop.css";
-
-type TeaCategory =
-  | "Green"
-  | "White"
-  | "Black"
-  | "Oolong"
-  | "Pu-erh";
-
-type Product = {
-  id: number;
-  name: string;
-  category: TeaCategory;
-  origin: string;
-  caffeine: "Low" | "Medium" | "High";
-  weight: string;
-  price: number;
-  oldPrice?: number;
-  badge: "Premium" | "Popular" | "Bestseller";
-  image: string;
-};
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Himalayan Green Tea",
-    category: "Green",
-    origin: "Darjeeling",
-    caffeine: "Medium",
-    weight: "50g",
-    price: 699,
-    oldPrice: 799,
-    badge: "Premium",
-    image: "/leafly-green-tea.png",
-  },
-  {
-    id: 2,
-    name: "Silver Tips White Tea",
-    category: "White",
-    origin: "Darjeeling",
-    caffeine: "Low",
-    weight: "40g",
-    price: 899,
-    badge: "Popular",
-    image: "/leafly-white-tea.png",
-  },
-  {
-    id: 3,
-    name: "Darjeeling First Flush",
-    category: "Black",
-    origin: "Darjeeling",
-    caffeine: "High",
-    weight: "50g",
-    price: 749,
-    oldPrice: 849,
-    badge: "Bestseller",
-    image: "/leafly-black-tea.png",
-  },
-  {
-    id: 4,
-    name: "Artisan Oolong",
-    category: "Oolong",
-    origin: "Assam",
-    caffeine: "Medium",
-    weight: "50g",
-    price: 999,
-    badge: "Premium",
-    image: "/leafly-oolong-tea.png",
-  },
-  {
-    id: 5,
-    name: "Assam Golden Black",
-    category: "Black",
-    origin: "Assam",
-    caffeine: "High",
-    weight: "100g",
-    price: 649,
-    badge: "Popular",
-    image: "/leafly-black-tea.png",
-  },
-  {
-    id: 6,
-    name: "Kashmir White Reserve",
-    category: "White",
-    origin: "Kashmir",
-    caffeine: "Low",
-    weight: "40g",
-    price: 1199,
-    badge: "Premium",
-    image: "/leafly-white-tea.png",
-  },
-  {
-    id: 7,
-    name: "Mountain Pu-erh",
-    category: "Pu-erh",
-    origin: "Assam",
-    caffeine: "Medium",
-    weight: "50g",
-    price: 1099,
-    badge: "Bestseller",
-    image: "/leafly-puer-tea.png",
-  },
-  {
-    id: 8,
-    name: "Reserve Oolong",
-    category: "Oolong",
-    origin: "Darjeeling",
-    caffeine: "Medium",
-    weight: "50g",
-    price: 1299,
-    oldPrice: 1499,
-    badge: "Premium",
-    image: "/leafly-oolong-tea.png",
-  },
-];
 
 const categories = [
   "All Teas",
@@ -164,6 +51,9 @@ export default function Shop() {
 
   const [selectedProduct, setSelectedProduct] =
     useState<Product | null>(null);
+
+  const [modalVariant, setModalVariant] =
+    useState<ProductVariantKey>("100g");
 
   const [showBackToTop, setShowBackToTop] =
     useState(false);
@@ -728,11 +618,12 @@ export default function Shop() {
                       <button
                         type="button"
                         className="details-button"
-                        onClick={() =>
+                        onClick={() => {
                           setSelectedProduct(
                             product
-                          )
-                        }
+                          );
+                          setModalVariant("100g");
+                        }}
                       >
                         DETAILS
                         <span>+</span>
@@ -1135,6 +1026,32 @@ export default function Shop() {
               </p>
 
 
+              {/* QUANTITY / WEIGHT VARIANT SELECTOR */}
+
+              <div className="product-detail-variants">
+                <span className="product-detail-variant-label">SELECT QUANTITY / WEIGHT</span>
+                <div className="product-detail-variant-buttons" role="radiogroup" aria-label="Quantity options">
+                  <button
+                    type="button"
+                    className={`product-variant-btn ${modalVariant === "100g" ? "active" : ""}`}
+                    onClick={() => setModalVariant("100g")}
+                    role="radio"
+                    aria-checked={modalVariant === "100g"}
+                  >
+                    100g
+                  </button>
+                  <button
+                    type="button"
+                    className={`product-variant-btn ${modalVariant === "250g" ? "active" : ""}`}
+                    onClick={() => setModalVariant("250g")}
+                    role="radio"
+                    aria-checked={modalVariant === "250g"}
+                  >
+                    250g
+                  </button>
+                </div>
+              </div>
+
               <div className="product-detail-specs">
 
                 <div>
@@ -1154,7 +1071,7 @@ export default function Shop() {
                 <div>
                   <span>WEIGHT</span>
                   <strong>
-                    {selectedProduct.weight}
+                    {modalVariant}
                   </strong>
                 </div>
 
@@ -1172,17 +1089,29 @@ export default function Shop() {
 
                 <strong>
                   ₹
-                  {selectedProduct.price.toLocaleString(
-                    "en-IN"
-                  )}
+                  {(
+                    selectedProduct.variants
+                      ? selectedProduct.variants[modalVariant].price
+                      : modalVariant === "250g"
+                        ? Math.round(selectedProduct.price * 2.2)
+                        : selectedProduct.price
+                  ).toLocaleString("en-IN")}
                 </strong>
 
-                {selectedProduct.oldPrice && (
+                {(selectedProduct.variants
+                  ? selectedProduct.variants[modalVariant].oldPrice
+                  : modalVariant === "250g" && selectedProduct.oldPrice
+                    ? Math.round(selectedProduct.oldPrice * 2.2)
+                    : selectedProduct.oldPrice) && (
                   <del>
                     ₹
-                    {selectedProduct.oldPrice.toLocaleString(
-                      "en-IN"
-                    )}
+                    {(
+                      selectedProduct.variants
+                        ? selectedProduct.variants[modalVariant].oldPrice!
+                        : modalVariant === "250g" && selectedProduct.oldPrice
+                          ? Math.round(selectedProduct.oldPrice * 2.2)
+                          : selectedProduct.oldPrice!
+                    ).toLocaleString("en-IN")}
                   </del>
                 )}
 
@@ -1193,14 +1122,32 @@ export default function Shop() {
                 type="button"
                 className="product-detail-cart"
                 onClick={() => {
-                  addToCart(
-                    selectedProduct.id
+                  const variantData = selectedProduct.variants
+                    ? selectedProduct.variants[modalVariant]
+                    : {
+                        weight: modalVariant,
+                        price:
+                          modalVariant === "250g"
+                            ? Math.round(selectedProduct.price * 2.2)
+                            : selectedProduct.price,
+                        oldPrice:
+                          modalVariant === "250g" && selectedProduct.oldPrice
+                            ? Math.round(selectedProduct.oldPrice * 2.2)
+                            : selectedProduct.oldPrice,
+                      };
+
+                  addProductToCart(
+                    selectedProduct,
+                    1,
+                    modalVariant,
+                    variantData.price,
+                    variantData.oldPrice
                   );
 
                   setSelectedProduct(null);
                 }}
               >
-                ADD TO CART
+                ADD TO CART ({modalVariant})
                 <span>🛒</span>
               </button>
 

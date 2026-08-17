@@ -57,7 +57,7 @@ export default function Orders() {
                   <div key={`${order.id}-${item.id}`} className="orders-item-row">
                     <div className="orders-item-copy">
                       <strong>{item.name}</strong>
-                      <small>{item.category || "Tea"}</small>
+                      <small>{item.category || "Tea"} · {item.variant || item.weight || "100g"}</small>
                     </div>
                     <span>
                       {item.quantity} × {currencyFormatter.format(item.price)}

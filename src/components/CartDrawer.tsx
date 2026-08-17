@@ -49,11 +49,24 @@ export default function CartDrawer() {
         onClick={(event) => event.stopPropagation()}
         aria-label="Shopping cart"
       >
+        {/* HEADER */}
+
         <div className="leafly-cart-header">
           <div>
-            <p className="leafly-cart-eyebrow">YOUR LEAFLY</p>
-            <h2>Shopping cart</h2>
-            <span>{cartCount} {cartCount === 1 ? "item" : "items"}</span>
+            <p className="leafly-cart-eyebrow">
+              YOUR LEAFLY
+            </p>
+
+            <h2>
+              Shopping cart
+            </h2>
+
+            <span>
+              {cartCount}{" "}
+              {cartCount === 1
+                ? "item"
+                : "items"}
+            </span>
           </div>
 
           <button
@@ -66,50 +79,94 @@ export default function CartDrawer() {
           </button>
         </div>
 
+        {/* CART CONTENT */}
+
         <div className="leafly-cart-content">
           {items.length === 0 ? (
             <div className="leafly-cart-empty">
-              <div className="leafly-cart-empty-leaf">❧</div>
+              <div className="leafly-cart-empty-leaf">
+                ❧
+              </div>
 
-              <h3>Your cart is waiting.</h3>
+              <h3>
+                Your cart is waiting.
+              </h3>
 
-              <p>Add a beautiful tea to begin your ritual.</p>
+              <p>
+                Add a beautiful tea to
+                begin your ritual.
+              </p>
 
-              <button type="button" onClick={closeCart}>
+              <button
+                type="button"
+                onClick={closeCart}
+              >
                 CONTINUE SHOPPING
               </button>
             </div>
           ) : (
             <>
               <div className="leafly-cart-items">
-                {items.map(({ product, quantity }) => (
-                  <article className="leafly-cart-item" key={product.id}>
+                {items.map((item) => (
+                  <article
+                    className="leafly-cart-item"
+                    key={item.id}
+                  >
                     <div className="leafly-cart-item-image">
-                      <img src={product.image} alt={product.name} />
+                      <img
+                        src={item.product.image}
+                        alt={item.product.name}
+                      />
                     </div>
 
                     <div className="leafly-cart-item-info">
-                      <p>{product.origin} · {product.category}</p>
-                      <h3>{product.name}</h3>
-                      <span>{product.weight} · {product.caffeine} caffeine</span>
-                      <strong>₹{(product.price * quantity).toLocaleString("en-IN")}</strong>
+                      <p>
+                        {item.product.origin} ·{" "}
+                        {item.product.category}
+                      </p>
+
+                      <h3>
+                        {item.product.name}
+                      </h3>
+
+                      <span className="leafly-cart-variant-meta">
+                        <strong className="leafly-variant-badge">{item.variant || item.weight}</strong>
+                        {" · "}
+                        {item.product.caffeine} caffeine
+                      </span>
+
+                      <strong>
+                        ₹
+                        {(
+                          item.price *
+                          item.quantity
+                        ).toLocaleString(
+                          "en-IN"
+                        )}
+                      </strong>
 
                       <div className="leafly-cart-item-bottom">
                         <div className="leafly-quantity">
                           <button
                             type="button"
-                            onClick={() => decreaseQuantity(product.id)}
-                            aria-label={`Decrease ${product.name}`}
+                            onClick={() =>
+                              decreaseQuantity(item.id)
+                            }
+                            aria-label={`Decrease ${item.product.name} (${item.variant})`}
                           >
                             −
                           </button>
 
-                          <span>{quantity}</span>
+                          <span>
+                            {item.quantity}
+                          </span>
 
                           <button
                             type="button"
-                            onClick={() => increaseQuantity(product.id)}
-                            aria-label={`Increase ${product.name}`}
+                            onClick={() =>
+                              increaseQuantity(item.id)
+                            }
+                            aria-label={`Increase ${item.product.name} (${item.variant})`}
                           >
                             +
                           </button>
@@ -118,7 +175,9 @@ export default function CartDrawer() {
                         <button
                           type="button"
                           className="leafly-remove-item"
-                          onClick={() => removeFromCart(product.id)}
+                          onClick={() =>
+                            removeFromCart(item.id)
+                          }
                         >
                           REMOVE
                         </button>
@@ -129,7 +188,11 @@ export default function CartDrawer() {
               </div>
 
               <div className="leafly-cart-actions">
-                <button type="button" className="leafly-clear-cart" onClick={clearCart}>
+                <button
+                  type="button"
+                  className="leafly-clear-cart"
+                  onClick={clearCart}
+                >
                   CLEAR CART
                 </button>
               </div>
@@ -137,14 +200,25 @@ export default function CartDrawer() {
           )}
         </div>
 
+        {/* FOOTER */}
+
         {items.length > 0 && (
           <div className="leafly-cart-footer">
             <div className="leafly-cart-subtotal">
               <span>SUBTOTAL</span>
-              <strong>₹{subtotal.toLocaleString("en-IN")}</strong>
+
+              <strong>
+                ₹
+                {subtotal.toLocaleString(
+                  "en-IN"
+                )}
+              </strong>
             </div>
 
-            <p>Taxes and shipping calculated at checkout.</p>
+            <p>
+              Taxes and shipping calculated
+              at checkout.
+            </p>
 
             <button
               type="button"
@@ -158,7 +232,11 @@ export default function CartDrawer() {
               <span>❧</span>
             </button>
 
-            <button type="button" className="leafly-continue-shopping" onClick={closeCart}>
+            <button
+              type="button"
+              className="leafly-continue-shopping"
+              onClick={() => navigate("/shop")}
+            >
               CONTINUE SHOPPING
             </button>
           </div>

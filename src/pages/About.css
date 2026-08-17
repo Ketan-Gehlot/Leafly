@@ -46,7 +46,7 @@
   margin: 0;
   color: #0b2b1e;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(3rem, 5vw, 6.1rem);
+  font-size: clamp(3.3rem, 5.2vw, 6.5rem);
   line-height: 0.96;
   letter-spacing: -0.08em;
   font-weight: 400;
@@ -62,7 +62,7 @@
   max-width: 35rem;
   margin-top: 1.5rem;
   color: rgba(11, 43, 30, 0.75);
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1.8;
 }
 
@@ -125,7 +125,7 @@
   margin: 0;
   color: #0b2b1e;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.2rem, 3vw, 4rem);
+  font-size: clamp(2.5rem, 3.2vw, 4.4rem);
   line-height: 1.05;
   letter-spacing: -0.06em;
   font-weight: 400;
@@ -146,7 +146,7 @@
 .about-story-copy p {
   margin: 0;
   color: rgba(11, 43, 30, 0.78);
-  font-size: 1.04rem;
+  font-size: 1.12rem;
   line-height: 1.9;
 }
 

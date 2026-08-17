@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
 import { useWishlist } from "../context/WishlistContext";
 import type { CartProduct } from "../context/CartContext";
-import mainImage from "../assets/main.png";
-import image2 from "../assets/image2.png";
-import image3 from "../assets/image3.png";
-import image5 from "../assets/image5.png";
+import mainImage from "../assets/main.webp";
+import image2 from "../assets/image2.webp";
+import image3 from "../assets/image3.webp";
+import image5 from "../assets/image5.webp";
 import "./Profile.css";
 
 type SidebarItemId =
@@ -416,7 +416,7 @@ export default function Profile() {
             </div>
 
             <div className="profile-hero-image-wrap">
-              <img src={mainImage} alt="Tea ritual at home with warm natural lighting" />
+              <img src={mainImage} alt="Tea ritual at home with warm natural lighting" loading="eager" fetchPriority="high" />
             </div>
           </header>
 
@@ -466,7 +466,7 @@ export default function Profile() {
               <div className="profile-mini-list">
                 {wishlistItems.map((item) => (
                   <div key={item.id} className="profile-mini-thumb">
-                    <img src={item.image} alt={item.name} />
+                    <img src={item.image} alt={item.name} loading="lazy" />
                   </div>
                 ))}
               </div>
@@ -677,7 +677,7 @@ export default function Profile() {
 
           <section className="profile-recommendations-card">
             <div className="profile-recommendations-image">
-              <img src={image2} alt="Tea leaves and quiet morning ritual" />
+              <img src={image2} alt="Tea leaves and quiet morning ritual" loading="lazy" />
             </div>
 
             <div className="profile-recommendations-copy">
@@ -697,7 +697,7 @@ export default function Profile() {
 
                 return (
                   <article key={item.id} className="profile-recommendation-item">
-                    <img src={item.image} alt={item.name} />
+                    <img src={item.image} alt={item.name} loading="lazy" />
                     <div className="profile-recommendation-meta">
                       <p>{item.name}</p>
                       <span>{item.category}</span>
