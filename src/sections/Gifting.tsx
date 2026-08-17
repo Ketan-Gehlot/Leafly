@@ -8,7 +8,7 @@ export default function Gifting() {
         {/* IMAGE */}
         <div className="gifting-image-wrap">
           <img
-            src="/public/leafly-gifting.png"
+            src="/leafly-gifting.png"
             alt="Leafly premium tea gifting collection"
             className="gifting-image"
           />
