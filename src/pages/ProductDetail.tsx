@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { products, type ProductVariantKey } from "../data/products";
+import { type ProductVariantKey } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 import "./ProductDetail.css";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { products } = useProducts();
 
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();

@@ -5,7 +5,8 @@ import {
 } from "react";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { type Product, type ProductVariantKey, products } from "../data/products";
+import { type Product, type ProductVariantKey } from "../data/products";
+import { useProducts } from "../context/ProductContext";
 import "./Shop.css";
 
 const categories = [
@@ -18,6 +19,8 @@ const categories = [
 ];
 
 export default function Shop() {
+  const { products } = useProducts();
+
   const {
     addToCart: addProductToCart,
     cartCount,
