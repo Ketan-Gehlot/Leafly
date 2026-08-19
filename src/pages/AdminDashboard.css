@@ -393,3 +393,76 @@
   padding-top: 2rem;
   border-top: 1px solid rgba(11, 43, 30, 0.1);
 }
+
+/* =========================================================
+   ADMIN RESPONSIVE MOBILE STYLES
+   ========================================================= */
+
+.admin-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(11, 43, 30, 0.03);
+}
+
+@media (max-width: 900px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+  }
+
+  .admin-brand {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-nav button {
+    padding: 0.6rem 1rem;
+    white-space: nowrap;
+    border-radius: 4px;
+    border-left: none;
+  }
+
+  .admin-nav button.active {
+    border-left: none;
+    border-bottom: 2px solid var(--leafly-gold);
+  }
+
+  .admin-sidebar-footer {
+    display: none;
+  }
+
+  .admin-main {
+    padding: 1.5rem 1rem;
+  }
+
+  .admin-main h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .admin-analytics-grid {
+    flex-direction: column;
+  }
+
+  .admin-form {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

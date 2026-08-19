@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./FeaturedTeaCollections.css";
 
 const teas = [
@@ -130,8 +131,8 @@ export default function FeaturedTeaCollections() {
                   {tea.description}
                 </p>
 
-                <a
-                  href="/tea-collections"
+                <Link
+                  to="/tea-collections"
                   className="featured-tea-link"
                 >
                   <span>
@@ -141,7 +142,7 @@ export default function FeaturedTeaCollections() {
                   <strong aria-hidden="true">
                     →
                   </strong>
-                </a>
+                </Link>
 
               </div>
 

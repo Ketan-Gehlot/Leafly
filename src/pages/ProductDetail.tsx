@@ -235,9 +235,9 @@ export default function ProductDetail() {
                   ADDING...
                 </>
               ) : addedToCart ? (
-                <>ADDED ({selectedVariant}) ✓</>
+                <>ADDED ✓</>
               ) : (
-                <>ADD TO CART ({selectedVariant}) 🛒</>
+                <>ADD TO CART 🛒</>
               )}
             </button>
 

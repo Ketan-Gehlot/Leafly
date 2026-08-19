@@ -174,32 +174,34 @@ export default function AdminDashboard() {
               <h1>Manage Products</h1>
               <button className="admin-btn-primary" onClick={handleAddNewClick}>+ Add New Product</button>
             </div>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map(product => (
-                  <tr key={product.id}>
-                    <td>
-                      <img src={product.image} alt={product.name} className="admin-table-img" />
-                    </td>
-                    <td>{product.name}</td>
-                    <td>{product.category}</td>
-                    <td>₹{product.price.toLocaleString()}</td>
-                    <td>
-                      <button className="admin-btn-secondary" onClick={() => handleEditClick(product)}>Edit</button>
-                    </td>
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {products.map(product => (
+                    <tr key={product.id}>
+                      <td>
+                        <img src={product.image} alt={product.name} className="admin-table-img" />
+                      </td>
+                      <td>{product.name}</td>
+                      <td>{product.category}</td>
+                      <td>₹{product.price.toLocaleString()}</td>
+                      <td>
+                        <button className="admin-btn-secondary" onClick={() => handleEditClick(product)}>Edit</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 

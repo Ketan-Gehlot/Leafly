@@ -8,6 +8,7 @@ import { lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import CartDrawer from "./components/CartDrawer";
 import WishlistDrawer from "./components/WishlistDrawer";
+import ScrollToTop from "./components/ScrollToTop";
 import { CartProvider } from "./context/CartContext";
 import { OrderProvider } from "./context/OrderContext";
 import { WishlistProvider } from "./context/WishlistContext";
@@ -42,6 +43,7 @@ function App() {
           <OrderProvider>
             <CouponProvider>
               <BrowserRouter>
+                <ScrollToTop />
                 <Navbar />
 
                 <Suspense fallback={null}>

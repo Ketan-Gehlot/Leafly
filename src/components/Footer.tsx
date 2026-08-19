@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../assets/leafly-logo.webp";
 import "./Footer.css";
 
@@ -135,12 +136,12 @@ export default function Footer() {
             </p>
 
             {shopLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
+                to={link.href}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
 
           </div>
@@ -155,12 +156,12 @@ export default function Footer() {
             </p>
 
             {exploreLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
+                to={link.href}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
 
           </div>
@@ -175,12 +176,12 @@ export default function Footer() {
             </p>
 
             {careLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
+                to={link.href}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
 
           </div>

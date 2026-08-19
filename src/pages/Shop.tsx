@@ -671,7 +671,7 @@ export default function Shop() {
                           </>
                         ) : (
                           <>
-                            ADD TO CART ({cardVariants[product.id] ?? "100g"})
+                            ADD TO CART
                             <span>🛒</span>
                           </>
                         )}
@@ -975,7 +975,7 @@ export default function Shop() {
                   setSelectedProduct(null);
                 }}
               >
-                ADD TO CART ({modalVariant})
+                ADD TO CART
                 <span>🛒</span>
               </button>
 
