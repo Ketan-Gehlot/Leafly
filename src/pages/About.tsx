@@ -1,4 +1,5 @@
 import "./About.css";
+import Footer from "../components/Footer";
 import mainImage from "../assets/main.webp";
 import image2 from "../assets/image2.webp";
 import image3 from "../assets/image3.webp";
@@ -119,6 +120,7 @@ export default function About() {
           </p>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

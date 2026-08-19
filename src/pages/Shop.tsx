@@ -6,6 +6,7 @@ import {
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { type Product, type ProductVariantKey, products } from "../data/products";
+import Footer from "../components/Footer";
 import "./Shop.css";
 
 const categories = [
@@ -21,6 +22,7 @@ export default function Shop() {
   const {
     addToCart: addProductToCart,
     cartCount,
+    openCart,
   } = useCart();
 
   const {
@@ -48,6 +50,9 @@ export default function Shop() {
 
   const [addedId, setAddedId] =
     useState<number | null>(null);
+
+  const [cardVariants, setCardVariants] =
+    useState<Record<number, ProductVariantKey>>({});
 
   const [selectedProduct, setSelectedProduct] =
     useState<Product | null>(null);
@@ -106,70 +111,55 @@ export default function Shop() {
   }, []);
 
   /*
-   * FILTER + SORT
+   * FILTERED PRODUCTS
    */
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
     if (category !== "All Teas") {
       result = result.filter(
-        (product) =>
-          product.category === category
+        (item) => item.category === category
       );
+    }
+
+    if (priceFilter !== "All Prices") {
+      result = result.filter((item) => {
+        if (priceFilter === "Under ₹700") {
+          return item.price < 700;
+        }
+        if (priceFilter === "₹700 - ₹900") {
+          return (
+            item.price >= 700 &&
+            item.price <= 900
+          );
+        }
+        if (priceFilter === "Above ₹900") {
+          return item.price > 900;
+        }
+        return true;
+      });
     }
 
     if (originFilter !== "All Origins") {
       result = result.filter(
-        (product) =>
-          product.origin === originFilter
+        (item) => item.origin === originFilter
       );
     }
 
-    if (
-      caffeineFilter !==
-      "All Caffeine Levels"
-    ) {
+    if (caffeineFilter !== "All Caffeine Levels") {
       result = result.filter(
-        (product) =>
-          product.caffeine === caffeineFilter
-      );
-    }
-
-    if (priceFilter === "Under ₹750") {
-      result = result.filter(
-        (product) =>
-          product.price < 750
-      );
-    }
-
-    if (priceFilter === "₹750 – ₹1000") {
-      result = result.filter(
-        (product) =>
-          product.price >= 750 &&
-          product.price <= 1000
-      );
-    }
-
-    if (priceFilter === "Above ₹1000") {
-      result = result.filter(
-        (product) =>
-          product.price > 1000
+        (item) =>
+          item.caffeine === caffeineFilter
       );
     }
 
     if (sortBy === "Price: Low to High") {
-      result.sort(
-        (a, b) => a.price - b.price
-      );
-    }
-
-    if (sortBy === "Price: High to Low") {
-      result.sort(
-        (a, b) => b.price - a.price
-      );
-    }
-
-    if (sortBy === "Name: A to Z") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (
+      sortBy === "Price: High to Low"
+    ) {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === "Name: A to Z") {
       result.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
@@ -215,10 +205,15 @@ export default function Shop() {
       return;
     }
 
+    const currentVariant = cardVariants[id] ?? "100g";
+    const variantData = product.variants ? product.variants[currentVariant] : null;
+    const finalPrice = variantData ? variantData.price : (currentVariant === "250g" ? Math.round(product.price * 2.2) : product.price);
+    const finalOldPrice = variantData?.oldPrice ?? (currentVariant === "250g" && product.oldPrice ? Math.round(product.oldPrice * 2.2) : product.oldPrice);
+
     setAddingId(id);
 
     window.setTimeout(() => {
-      addProductToCart(product);
+      addProductToCart(product, 1, currentVariant, finalPrice, finalOldPrice);
       setAddingId(null);
       setAddedId(id);
 
@@ -247,26 +242,6 @@ export default function Shop() {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  /*
-   * FOOTER CATEGORY NAVIGATION
-   */
-  const selectCategoryFromFooter = (
-    selectedCategory: string
-  ) => {
-    setCategory(selectedCategory);
-    setPriceFilter("All Prices");
-    setOriginFilter("All Origins");
-    setCaffeineFilter(
-      "All Caffeine Levels"
-    );
-    setSortBy("Featured Collection");
-
-    window.scrollTo({
-      top: 300,
       behavior: "smooth",
     });
   };
@@ -585,29 +560,59 @@ export default function Shop() {
                       {product.name}
                     </h3>
 
+                    {/* QUANTITY / WEIGHT VARIANT SELECTOR */}
+                    <div className="card-variant-selector">
+                      <button
+                        type="button"
+                        className={`card-variant-btn ${(cardVariants[product.id] ?? "100g") === "100g" ? "active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCardVariants((prev) => ({ ...prev, [product.id]: "100g" }));
+                        }}
+                      >
+                        100g
+                      </button>
+                      <button
+                        type="button"
+                        className={`card-variant-btn ${cardVariants[product.id] === "250g" ? "active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCardVariants((prev) => ({ ...prev, [product.id]: "250g" }));
+                        }}
+                      >
+                        250g
+                      </button>
+                    </div>
+
                     <p className="product-details">
-                      {product.weight} ·{" "}
+                      {cardVariants[product.id] ?? "100g"} ·{" "}
                       {product.caffeine} Caffeine
                     </p>
 
                     <div className="product-price">
-
                       <strong>
                         ₹
-                        {product.price.toLocaleString(
-                          "en-IN"
-                        )}
+                        {(
+                          (cardVariants[product.id] ?? "100g") === "250g"
+                            ? product.variants?.["250g"]?.price ?? Math.round(product.price * 2.2)
+                            : product.variants?.["100g"]?.price ?? product.price
+                        ).toLocaleString("en-IN")}
                       </strong>
 
-                      {product.oldPrice && (
+                      {(
+                        (cardVariants[product.id] ?? "100g") === "250g"
+                          ? product.variants?.["250g"]?.oldPrice ?? (product.oldPrice ? Math.round(product.oldPrice * 2.2) : undefined)
+                          : product.variants?.["100g"]?.oldPrice ?? product.oldPrice
+                      ) && (
                         <del>
                           ₹
-                          {product.oldPrice.toLocaleString(
-                            "en-IN"
-                          )}
+                          {(
+                            (cardVariants[product.id] ?? "100g") === "250g"
+                              ? product.variants?.["250g"]?.oldPrice ?? (product.oldPrice ? Math.round(product.oldPrice * 2.2) : undefined)
+                              : product.variants?.["100g"]?.oldPrice ?? product.oldPrice
+                          )!.toLocaleString("en-IN")}
                         </del>
                       )}
-
                     </div>
 
 
@@ -622,7 +627,7 @@ export default function Shop() {
                           setSelectedProduct(
                             product
                           );
-                          setModalVariant("100g");
+                          setModalVariant(cardVariants[product.id] ?? "100g");
                         }}
                       >
                         DETAILS
@@ -657,7 +662,7 @@ export default function Shop() {
                           </>
                         ) : (
                           <>
-                            ADD TO CART
+                            ADD TO CART ({cardVariants[product.id] ?? "100g"})
                             <span>🛒</span>
                           </>
                         )}
@@ -760,193 +765,7 @@ export default function Shop() {
 
       </section>
 
-
-      {/* =====================================================
-          FOOTER
-          ===================================================== */}
-
-      <footer className="shop-footer">
-
-        <div className="shop-footer-main">
-
-          {/* BRAND */}
-
-          <div className="shop-footer-brand">
-
-            <div className="shop-footer-logo">
-              LEAFLY
-            </div>
-
-            <p className="shop-footer-tagline">
-              Tea worth slowing down for.
-            </p>
-
-            <p className="shop-footer-copy">
-              A carefully curated tea house
-              bringing characterful,
-              single-origin leaves into
-              everyday rituals.
-            </p>
-
-            <div
-              className="shop-footer-mark"
-              aria-hidden="true"
-            >
-              ❧
-            </div>
-
-          </div>
-
-
-          {/* SHOP */}
-
-          <div className="shop-footer-column">
-
-            <p className="shop-footer-title">
-              SHOP
-            </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "All Teas"
-                )
-              }
-            >
-              All Teas
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "Green"
-                )
-              }
-            >
-              Green Tea
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "White"
-                )
-              }
-            >
-              White Tea
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "Black"
-                )
-              }
-            >
-              Black Tea
-            </button>
-
-          </div>
-
-
-          {/* COLLECTION */}
-
-          <div className="shop-footer-column">
-
-            <p className="shop-footer-title">
-              COLLECTION
-            </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "Oolong"
-                )
-              }
-            >
-              Oolong
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "Pu-erh"
-                )
-              }
-            >
-              Pu-erh
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                selectCategoryFromFooter(
-                  "All Teas"
-                )
-              }
-            >
-              Bestsellers
-            </button>
-
-            <button
-              type="button"
-              onClick={clearFilters}
-            >
-              Clear Filters
-            </button>
-
-          </div>
-
-
-          {/* PHILOSOPHY */}
-
-          <div className="shop-footer-column">
-
-            <p className="shop-footer-title">
-              THE LEAFLY RITUAL
-            </p>
-
-            <p className="shop-footer-note">
-              "Good tea asks you to pause,
-              breathe, and stay a little
-              longer."
-            </p>
-
-            <div
-              className="shop-footer-mark"
-              aria-hidden="true"
-            >
-              ✦
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* FOOTER BOTTOM */}
-
-        <div className="shop-footer-bottom">
-
-          <span>
-            © {new Date().getFullYear()} LEAFLY
-            TEA HOUSE
-          </span>
-
-          <span>
-            SINGLE ORIGIN · WHOLE LEAF ·
-            INTENTIONALLY CHOSEN
-          </span>
-
-        </div>
-
-      </footer>
+      <Footer />
 
 
       {/* =====================================================
@@ -1168,16 +987,7 @@ export default function Shop() {
           type="button"
           className="floating-cart"
           aria-label={`${cartCount} teas in cart`}
-          onClick={() => {
-            /*
-             * Replace this later with your real cart
-             * route/modal when the cart page is connected.
-             */
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            });
-          }}
+          onClick={openCart}
         >
 
           <span className="floating-cart-icon">

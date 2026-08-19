@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./Gifting.css";
 
 export default function Gifting() {
@@ -77,20 +78,20 @@ export default function Gifting() {
           {/* BUTTONS */}
           <div className="gifting-actions">
 
-            <a
-              href="/gifting"
+            <Link
+              to="/gifting"
               className="gifting-primary-button"
             >
               <span>EXPLORE GIFTING</span>
               <strong>→</strong>
-            </a>
+            </Link>
 
-            <a
-              href="/contact"
+            <Link
+              to="/contact"
               className="gifting-secondary-button"
             >
               ENQUIRE FOR BULK ORDERS
-            </a>
+            </Link>
 
           </div>
 

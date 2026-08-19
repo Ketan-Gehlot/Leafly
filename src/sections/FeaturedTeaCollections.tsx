@@ -131,7 +131,7 @@ export default function FeaturedTeaCollections() {
                 </p>
 
                 <a
-                  href="#tea-collections"
+                  href="/tea-collections"
                   className="featured-tea-link"
                 >
                   <span>

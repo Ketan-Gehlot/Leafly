@@ -633,56 +633,67 @@
    ========================================================= */
 
 .why-hero {
-  min-height: 580px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 100px 20px;
+  position: relative;
 
   background:
     radial-gradient(
-      circle at 50% 100%,
-      rgba(
-        201,
-        162,
-        75,
-        0.14
-      ),
-      transparent 38%
+      circle at 50% 120%,
+      rgba(201, 162, 75, 0.15) 0%,
+      transparent 60%
     ),
     linear-gradient(
-      135deg,
-      #071f16,
-      #0b2b1e 55%,
-      #143b2b
+      180deg,
+      #071f16 0%,
+      #0b2b1e 65%,
+      #0f3627 100%
     );
 
   color: #f7f3ec;
-}
 
-.why-hero-content {
-  width: 100%;
-  max-width: 780px;
+  padding:
+    110px
+    25px
+    90px;
 
   text-align: center;
 }
 
+.why-hero-content {
+  max-width: 780px;
+
+  margin: 0 auto;
+}
+
 .why-eyebrow {
-  margin: 0 0 18px;
+  display: inline-flex;
 
-  color: #d5ae59;
+  align-items: center;
 
-  font-size: 8px;
+  gap: 12px;
+
+  margin-bottom: 16px;
+}
+
+.why-eyebrow span {
+  width: 30px;
+  height: 1px;
+
+  background: #c9a24b;
+}
+
+.why-eyebrow p {
+  margin: 0;
+
+  color: #c9a24b;
+
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 3px;
+  letter-spacing: 2.5px;
 }
 
-.why-hero h1 {
+.why-hero-content h1 {
   margin: 0;
 
   font-family:
@@ -692,38 +703,38 @@
 
   font-size:
     clamp(
-      48px,
-      7vw,
-      82px
+      42px,
+      5.5vw,
+      72px
     );
 
   font-weight: 400;
 
-  line-height: 0.98;
+  line-height: 1;
 
-  letter-spacing: -3px;
+  letter-spacing: -2px;
 }
 
-.why-hero h1 em {
-  color: #d0a343;
+.why-hero-content h1 em {
+  color: #c9a24b;
 
   font-style: italic;
 }
 
-.why-hero-description {
-  max-width: 600px;
+.why-hero-content > p {
+  max-width: 620px;
 
-  margin: 28px auto 0;
+  margin: 22px auto 0;
 
   color:
     rgba(
       247,
       243,
       236,
-      0.64
+      0.72
     );
 
-  font-size: 12px;
+  font-size: 16px;
 
   line-height: 1.8;
 }
@@ -753,11 +764,11 @@
 
   color: #a77c28;
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
 }
 
 .why-section-label span {

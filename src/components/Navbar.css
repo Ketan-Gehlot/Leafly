@@ -250,8 +250,8 @@
 
   z-index: 5;
 
-  width: 30px;
-  height: 22px;
+  width: 36px;
+  height: 27px;
 
   display: block;
 
@@ -295,8 +295,8 @@
      Starts above/right of logo
   */
 
-  top: -16px;
-  right: -8px;
+  top: -18px;
+  right: -10px;
 
   animation:
     leafly-butterfly-one-flight
@@ -316,11 +316,11 @@
      Starts below/left of logo
   */
 
-  left: -8px;
-  bottom: -16px;
+  left: -10px;
+  bottom: -18px;
 
-  width: 26px;
-  height: 20px;
+  width: 32px;
+  height: 24px;
 
   color: #f1d27c;
 
@@ -1140,21 +1140,21 @@
   /* Larger but controlled butterflies */
 
   .leafly-logo-butterfly {
-    width: 19px;
-    height: 15px;
+    width: 24px;
+    height: 18px;
   }
 
   .butterfly-one {
-    top: -10px;
-    right: -5px;
+    top: -11px;
+    right: -6px;
   }
 
   .butterfly-two {
-    left: -4px;
-    bottom: -11px;
+    left: -5px;
+    bottom: -12px;
 
-    width: 17px;
-    height: 14px;
+    width: 21px;
+    height: 16px;
   }
 
 
@@ -1225,18 +1225,21 @@
   */
 
   .leafly-logo-butterfly {
-    width: 16px;
-    height: 12px;
+    width: 20px;
+    height: 15px;
   }
 
   .butterfly-one {
-    top: -8px;
-    right: -4px;
+    top: -9px;
+    right: -5px;
   }
 
   .butterfly-two {
-    left: -3px;
-    bottom: -9px;
+    left: -4px;
+    bottom: -10px;
+
+    width: 18px;
+    height: 14px;
   }
 }
 

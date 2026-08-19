@@ -920,6 +920,360 @@
   }
 }
 
+/* =========================================================
+   CUSTOM AVATAR & RESET STYLES
+   ========================================================= */
+
+.profile-avatar-custom-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-avatar-default {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-default-leafly-logo {
+  position: absolute;
+  width: 72%;
+  height: auto;
+  opacity: 0.22;
+  filter: brightness(0) invert(1);
+}
+
+.profile-avatar-reset-btn {
+  margin-top: 0.5rem;
+  background: transparent;
+  color: #b98528;
+  font-size: 0.78rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.profile-avatar-reset-btn:hover {
+  color: #0b2b1e;
+}
+
+/* =========================================================
+   COUPONS VIEW
+   ========================================================= */
+
+.profile-coupons-view {
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.10);
+  box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
+  padding: 1.5rem;
+}
+
+.profile-coupons-count-badge {
+  display: inline-block;
+  padding: 0.28rem 0.75rem;
+  background: #edf3ee;
+  color: #0b2b1e;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(11, 43, 30, 0.1);
+}
+
+.profile-coupons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.15rem;
+  margin-top: 1.25rem;
+}
+
+.profile-coupon-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem;
+  border: 1px solid rgba(11, 43, 30, 0.09);
+  box-shadow: 0 4px 16px rgba(11, 43, 30, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-coupon-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 43, 30, 0.08);
+}
+
+.profile-coupon-card.used {
+  opacity: 0.6;
+  background: #f3f0ea;
+}
+
+.profile-coupon-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.profile-coupon-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0b2b1e;
+  letter-spacing: 0.02em;
+}
+
+.profile-coupon-status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 10px;
+}
+
+.profile-coupon-status.available {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.profile-coupon-status.used {
+  background: #eeeeee;
+  color: #757575;
+}
+
+.profile-coupon-discount {
+  margin: 0.2rem 0;
+}
+
+.profile-coupon-discount strong {
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+  color: #0b2b1e;
+  font-weight: 400;
+}
+
+.profile-coupon-condition {
+  margin: 0;
+  color: rgba(11, 43, 30, 0.75);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.profile-coupon-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(11, 43, 30, 0.12);
+}
+
+.profile-coupon-code-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-coupon-code-box span {
+  font-size: 0.6rem;
+  color: rgba(11, 43, 30, 0.55);
+  letter-spacing: 0.1em;
+}
+
+.profile-coupon-code-box strong {
+  font-family: monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: #0b2b1e;
+}
+
+.profile-coupon-copy-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: background 0.2s ease;
+}
+
+.profile-coupon-copy-btn:hover {
+  background: #173f31;
+}
+
+.profile-coupon-expiry {
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(11, 43, 30, 0.5);
+}
+
+/* =========================================================
+   NOTIFICATIONS VIEW & TOGGLES
+   ========================================================= */
+
+.profile-notifications-view,
+.profile-preferences-view,
+.profile-security-view {
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.10);
+  box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
+  padding: 1.5rem;
+}
+
+.profile-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.profile-notif-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+}
+
+.profile-notif-info h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0b2b1e;
+}
+
+.profile-notif-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(11, 43, 30, 0.7);
+  line-height: 1.4;
+}
+
+.profile-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.profile-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.profile-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1c7b7;
+  transition: 0.3s ease;
+  border-radius: 24px;
+}
+
+.profile-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s ease;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.profile-switch input:checked + .profile-switch-slider {
+  background-color: #0b2b1e;
+}
+
+.profile-switch input:checked + .profile-switch-slider:before {
+  transform: translateX(20px);
+}
+
+/* =========================================================
+   SECURITY VIEW
+   ========================================================= */
+
+.profile-security-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  background: rgba(201, 162, 75, 0.15);
+  color: #936814;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.profile-security-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.15rem;
+  margin-top: 1.25rem;
+}
+
+.profile-security-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1.15rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+}
+
+.profile-security-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.profile-security-item h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0b2b1e;
+}
+
+.profile-security-item p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: rgba(11, 43, 30, 0.7);
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  .profile-coupons-grid,
+  .profile-security-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-notif-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { products, type ProductVariantKey } from "../data/products";
+import Footer from "../components/Footer";
 import "./ProductDetail.css";
 
 export default function ProductDetail() {
@@ -251,6 +252,7 @@ export default function ProductDetail() {
 
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

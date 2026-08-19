@@ -227,7 +227,7 @@
     Arial,
     sans-serif;
 
-  font-size: 10px;
+  font-size: 11px;
 
   font-weight: 700;
 
@@ -235,7 +235,7 @@
 }
 
 .leafly-footer-eyebrow span {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .leafly-footer-newsletter h2 {
@@ -477,11 +477,11 @@
     Arial,
     sans-serif;
 
-  font-size: 9px;
+  font-size: 11.5px;
 
   font-weight: 700;
 
-  letter-spacing: 2.5px;
+  letter-spacing: 2.2px;
 }
 
 .leafly-footer-column-title::before {
@@ -491,7 +491,7 @@
 
   color: #c9a24b;
 
-  font-size: 8px;
+  font-size: 10px;
 }
 
 
@@ -520,9 +520,9 @@
     Arial,
     sans-serif;
 
-  font-size: 12px;
+  font-size: 13.5px;
 
-  line-height: 1.45;
+  line-height: 1.4;
 
   text-decoration: none;
 
@@ -531,10 +531,11 @@
     transform 250ms ease;
 }
 
-.leafly-footer-column > a:not(.leafly-footer-social-link):hover {
-  color: #c9a24b;
+.leafly-footer-column > a:not(.leafly-footer-social-link):hover,
+.leafly-footer-column > a:not(.leafly-footer-social-link):focus-visible {
+  color: #f1d27c;
 
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 

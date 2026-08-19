@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
+import Footer from "../components/Footer";
 import "./Orders.css";
 
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
@@ -69,6 +70,7 @@ export default function Orders() {
           ))}
         </div>
       )}
+      <Footer />
     </main>
   );
 }

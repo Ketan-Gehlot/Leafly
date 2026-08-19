@@ -20,7 +20,7 @@ export default function CouponRewardAnimation({
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const duration = prefersReducedMotion ? 1800 : 3200;
+    const duration = prefersReducedMotion ? 2500 : 5500;
     const timer = window.setTimeout(() => {
       onComplete();
     }, duration);

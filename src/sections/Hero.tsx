@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroVideo from "../assets/leafly-hero.mp4";
 import heroPoster from "../assets/leafly-hero-poster.webp";
 import "./Hero.css";
@@ -64,8 +65,8 @@ export default function Hero() {
 
           <div className="hero-actions">
 
-            <a
-              href="/shop"
+            <Link
+              to="/shop"
               className="hero-primary-button"
             >
               <span className="button-label">
@@ -75,10 +76,10 @@ export default function Hero() {
               <span className="button-arrow">
                 →
               </span>
-            </a>
+            </Link>
 
-            <a
-              href="#about"
+            <Link
+              to="/about"
               className="hero-secondary-button"
             >
               <span className="button-label">
@@ -88,7 +89,7 @@ export default function Hero() {
               <span className="button-arrow">
                 →
               </span>
-            </a>
+            </Link>
 
           </div>
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 import "./WhyLeafly.css";
 
 export default function WhyLeafly() {
@@ -306,6 +307,7 @@ export default function WhyLeafly() {
         <small>TOP</small>
       </button>
 
+      <Footer />
     </main>
   );
 }

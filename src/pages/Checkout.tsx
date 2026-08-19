@@ -9,6 +9,8 @@ import {
 import DeliveryAnimation from "../components/DeliveryAnimation";
 import CouponRewardAnimation from "../components/CouponRewardAnimation";
 import { validateCoupon, calculateDiscount, type AppliedCoupon } from "../utils/coupon";
+import { useCoupons } from "../context/CouponContext";
+import Footer from "../components/Footer";
 import "./Checkout.css";
 
 type DeliveryMethod = "standard" | "express";
@@ -67,6 +69,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, clearCart } = useCart();
   const { addOrder } = useOrderContext();
+  const { grantWelcomeReward, markCouponUsed } = useCoupons();
 
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -113,7 +116,12 @@ export default function Checkout() {
 
   const discountAmount = useMemo(() => {
     if (!appliedCoupon) return 0;
-    return calculateDiscount(subtotal, appliedCoupon.discountPercentage);
+    return calculateDiscount(
+      subtotal,
+      appliedCoupon.discountType,
+      appliedCoupon.discountValue,
+      appliedCoupon.minOrderValue
+    );
   }, [appliedCoupon, subtotal]);
 
   const total = useMemo(
@@ -124,14 +132,21 @@ export default function Checkout() {
   const handleApplyCoupon = (event?: React.FormEvent) => {
     if (event) event.preventDefault();
 
-    const result = validateCoupon(couponInput);
+    const result = validateCoupon(couponInput, subtotal);
 
     if (result.isValid) {
-      const discount = calculateDiscount(subtotal, result.discountPercentage);
+      const discount = calculateDiscount(
+        subtotal,
+        result.discountType,
+        result.discountValue,
+        result.minOrderValue
+      );
       setAppliedCoupon({
         code: result.code,
-        discountPercentage: result.discountPercentage,
+        discountType: result.discountType,
+        discountValue: result.discountValue,
         discountAmount: discount,
+        minOrderValue: result.minOrderValue,
       });
       setCouponFeedback({
         type: "success",
@@ -307,6 +322,10 @@ export default function Checkout() {
     }
 
     addOrder(order);
+    if (appliedCoupon?.code) {
+      markCouponUsed(appliedCoupon.code);
+    }
+    grantWelcomeReward();
     clearCart();
 
     // Brief tea/teapot micro-animation on checkout before transitioning into delivery scene
@@ -670,14 +689,18 @@ export default function Checkout() {
           {/* COUPON SECTION */}
           <div className="checkout-coupon-section">
             <label htmlFor="checkout-coupon-input" className="checkout-coupon-title">
-              PROMO CODE / REFERRAL
+              COUPON CODE
             </label>
 
             {appliedCoupon ? (
               <div className="checkout-coupon-applied">
                 <div className="checkout-coupon-tag">
                   <span className="checkout-coupon-code">{appliedCoupon.code}</span>
-                  <span className="checkout-coupon-badge">-{appliedCoupon.discountPercentage}% OFF</span>
+                  <span className="checkout-coupon-badge">
+                    {appliedCoupon.discountType === "fixed"
+                      ? `-₹${appliedCoupon.discountValue} OFF`
+                      : `-${appliedCoupon.discountValue}% OFF`}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -693,7 +716,7 @@ export default function Checkout() {
                 <input
                   id="checkout-coupon-input"
                   type="text"
-                  placeholder="Enter code (e.g. LEAFLY30)"
+                  placeholder="Enter coupon code (e.g. LEAFLY2026)"
                   value={couponInput}
                   onChange={(event) => {
                     setCouponInput(event.target.value);
@@ -729,7 +752,13 @@ export default function Checkout() {
             </div>
             {discountAmount > 0 && (
               <div className="checkout-discount-row">
-                <span>Discount ({appliedCoupon?.code} · {appliedCoupon?.discountPercentage}%)</span>
+                <span>
+                  Discount ({appliedCoupon?.code} ·{" "}
+                  {appliedCoupon?.discountType === "fixed"
+                    ? `₹${appliedCoupon?.discountValue} OFF`
+                    : `${appliedCoupon?.discountValue}%`}
+                  )
+                </span>
                 <strong className="checkout-discount-value">-{currencyFormatter.format(discountAmount)}</strong>
               </div>
             )}
@@ -759,6 +788,7 @@ export default function Checkout() {
           </button>
         </aside>
       </div>
+      <Footer />
     </main>
   );
 }

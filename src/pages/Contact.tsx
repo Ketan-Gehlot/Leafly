@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 import "./Contact.css";
 
 type ContactForm = {
@@ -290,6 +291,7 @@ export default function Contact() {
       <button type="button" className="back-to-top" onClick={handleBackToTop} aria-label="Back to top">
         ↑
       </button>
+      <Footer />
     </main>
   );
 }

@@ -11,6 +11,7 @@ import WishlistDrawer from "./components/WishlistDrawer";
 import { CartProvider } from "./context/CartContext";
 import { OrderProvider } from "./context/OrderContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import { CouponProvider } from "./context/CouponContext";
 
 /* Route-level code splitting — each page is a separate JS chunk.
    Only the Home bundle ships on initial page load. */
@@ -35,8 +36,9 @@ function App() {
     <CartProvider>
       <WishlistProvider>
         <OrderProvider>
-          <BrowserRouter>
-            <Navbar />
+          <CouponProvider>
+            <BrowserRouter>
+              <Navbar />
 
             <Suspense fallback={null}>
               <Routes>
@@ -61,6 +63,7 @@ function App() {
             <CartDrawer />
             <WishlistDrawer />
           </BrowserRouter>
+          </CouponProvider>
         </OrderProvider>
       </WishlistProvider>
     </CartProvider>

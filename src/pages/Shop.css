@@ -185,7 +185,7 @@
 
   color: #b98428;
 
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 2.6px;
 }
@@ -214,10 +214,10 @@
       11,
       43,
       30,
-      0.48
+      0.65
     );
 
-  font-size: 9px;
+  font-size: 12.5px;
 }
 
 
@@ -247,6 +247,131 @@
 
 .category-tabs::-webkit-scrollbar {
   display: none;
+}
+
+.category-tab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 43, 30, 0.15);
+  background: transparent;
+  color: #0b2b1e;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.category-tab.active {
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border-color: #0b2b1e;
+}
+
+
+/* =========================================================
+   FILTER BAR
+   ========================================================= */
+
+.shop-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.shop-filter-bar select {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(11, 43, 30, 0.18);
+  border-radius: 6px;
+  outline: none;
+  background: #faf7f0;
+  color: #183a2c;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.shop-filter-bar select:focus {
+  border-color: #c9a24b;
+}
+
+.shop-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.shop-sort span {
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.75
+    );
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   ACTIVE FILTERS
+   ========================================================= */
+
+.active-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-top: 10px;
+  padding: 7px 12px;
+
+  border:
+    1px solid
+    rgba(
+      201,
+      162,
+      75,
+      0.16
+    );
+
+  border-radius: 5px;
+
+  background:
+    rgba(
+      201,
+      162,
+      75,
+      0.08
+    );
+
+  color:
+    rgba(
+      11,
+      43,
+      30,
+      0.7
+    );
+
+  font-size: 13px;
+}
+
+.active-filters button {
+  padding: 0;
+  border: none;
+
+  background: transparent;
+  color: #9b7738;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
 }
 
 .category-tab {
@@ -473,55 +598,19 @@
   border-radius: 11px;
 
   background: #faf7f0;
-
-  box-shadow:
-    0 3px 12px
-    rgba(
-      11,
-      43,
-      30,
-      0.045
-    );
-
-  transition:
-    transform 300ms ease,
-    box-shadow 300ms ease;
 }
-
-.shop-product-card:hover {
-  transform: translateY(-3px);
-
-  box-shadow:
-    0 12px 25px
-    rgba(
-      11,
-      43,
-      30,
-      0.10
-    );
-}
-
-
-/* =========================================================
-   PRODUCT IMAGE
-   ========================================================= */
 
 .product-image-wrap {
   position: relative;
-
   width: 100%;
-  height: 205px;
-
+  height: 220px;
   overflow: hidden;
-
   background: #e9e2d5;
 }
 
 .product-image {
   width: 100%;
   height: 100%;
-  max-width: none;
-
   object-fit: cover;
   object-position: center;
 
@@ -539,6 +628,19 @@
   transform: scale(1.035);
 }
 
+.shop-product-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 25px
+    rgba(
+      11,
+      43,
+      30,
+      0.10
+    );
+}
+
 
 /* =========================================================
    BADGES
@@ -551,15 +653,15 @@
   left: 8px;
   z-index: 2;
 
-  padding: 5px 8px;
+  padding: 5px 9px;
 
   border-radius: 4px;
 
   color: #fff;
 
-  font-size: 6.5px;
-  font-weight: 800;
-  letter-spacing: 0.7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
   line-height: 1;
 
   text-transform: uppercase;
@@ -591,8 +693,8 @@
   right: 7px;
   z-index: 3;
 
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
 
   display: flex;
   align-items: center;
@@ -644,7 +746,7 @@
    ========================================================= */
 
 .product-content {
-  padding: 13px 13px 14px;
+  padding: 14px 14px 15px;
 }
 
 .product-meta {
@@ -652,16 +754,16 @@
 
   color: #9a793f;
 
-  font-size: 6.5px;
-  font-weight: 800;
-  letter-spacing: 0.75px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
   line-height: 1.3;
 
   text-transform: uppercase;
 }
 
 .product-content h3 {
-  min-height: 33px;
+  min-height: 36px;
 
   margin: 0;
 
@@ -672,25 +774,55 @@
     "Times New Roman",
     serif;
 
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.2;
   letter-spacing: -0.2px;
 }
 
+.card-variant-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 4px;
+}
+
+.card-variant-btn {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 43, 30, 0.2);
+  background: transparent;
+  color: #315044;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.card-variant-btn:hover {
+  border-color: #c9a24b;
+  color: #0b2b1e;
+}
+
+.card-variant-btn.active {
+  border-color: #0b2b1e;
+  background: #0b2b1e;
+  color: #f7f3ec;
+}
+
 .product-details {
-  margin: 6px 0 9px;
+  margin: 4px 0 9px;
 
   color:
     rgba(
       11,
       43,
       30,
-      0.52
+      0.72
     );
 
-  font-size: 7.5px;
-  line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 
@@ -702,13 +834,13 @@
   display: flex;
   align-items: baseline;
 
-  gap: 7px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .product-price strong {
   color: #0b2b1e;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 800;
 }
 
@@ -718,10 +850,10 @@
       11,
       43,
       30,
-      0.38
+      0.45
     );
 
-  font-size: 8px;
+  font-size: 13px;
 }
 
 
@@ -742,7 +874,7 @@
 .details-button,
 .add-cart-button {
   min-width: 0;
-  min-height: 35px;
+  min-height: 38px;
 
   display: flex;
   align-items: center;
@@ -750,13 +882,13 @@
 
   gap: 5px;
 
-  padding: 0 7px;
+  padding: 0 8px;
 
-  border-radius: 5px;
+  border-radius: 6px;
 
-  font-size: 7px;
-  font-weight: 800;
-  letter-spacing: 0.7px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
   line-height: 1;
 
   cursor: pointer;
@@ -1425,9 +1557,9 @@
 
   color: #9a793f;
 
-  font-size: 7px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
 
   text-transform: uppercase;
 }
@@ -1446,31 +1578,27 @@
     clamp(32px, 4vw, 46px);
 
   font-weight: 400;
-  line-height: 1;
-  letter-spacing: -1.3px;
+  line-height: 1.1;
+  letter-spacing: -1px;
 }
 
 .product-detail-description {
-  max-width: 400px;
+  max-width: 440px;
 
-  margin: 17px 0 22px;
+  margin: 14px 0 20px;
 
   color:
     rgba(
       11,
       43,
       30,
-      0.62
+      0.72
     );
 
-  font-size: 11px;
-  line-height: 1.7;
+  font-size: 15.5px;
+  line-height: 1.65;
 }
 
-
-/* =========================================================
-   DETAIL SPECS
-   ========================================================= */
 
 /* =========================================================
    MODAL VARIANT SELECTOR
@@ -1484,7 +1612,7 @@
   display: block;
   margin-bottom: 7px;
   color: #9a793f;
-  font-size: 7.5px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.2px;
   text-transform: uppercase;
@@ -1497,15 +1625,15 @@
 }
 
 .product-variant-btn {
-  height: 30px;
-  min-width: 68px;
-  padding: 0 14px;
+  height: 36px;
+  min-width: 78px;
+  padding: 0 16px;
   border: 1px solid rgba(11, 43, 30, 0.2);
   border-radius: 999px;
   background: transparent;
   color: #315044;
   font-family: Inter, Arial, sans-serif;
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.6px;
   cursor: pointer;
@@ -1588,7 +1716,7 @@
 
   color: #9a793f;
 
-  font-size: 6px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1px;
 }
@@ -1596,8 +1724,8 @@
 .product-detail-specs strong {
   color: #0b2b1e;
 
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 
@@ -1616,7 +1744,8 @@
 
 .product-detail-price strong {
   color: #0b2b1e;
-  font-size: 21px;
+  font-size: 24px;
+  font-weight: 800;
 }
 
 .product-detail-price del {
@@ -1625,10 +1754,10 @@
       11,
       43,
       30,
-      0.4
+      0.45
     );
 
-  font-size: 9px;
+  font-size: 15px;
 }
 
 
@@ -1638,7 +1767,7 @@
 
 .product-detail-cart {
   width: 100%;
-  min-height: 44px;
+  min-height: 46px;
 
   display: flex;
   align-items: center;
@@ -1647,13 +1776,13 @@
   gap: 8px;
 
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
 
   background: #0b2b1e;
   color: #f7f3ec;
 
-  font-size: 8px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
   letter-spacing: 1px;
 
   cursor: pointer;
@@ -2055,13 +2184,14 @@
       repeat(2, minmax(0, 1fr));
 
     width: 100%;
-    gap: 6px;
+    gap: 8px;
   }
 
   .shop-filter-bar select {
     width: 100%;
     min-width: 0;
-    font-size: 7px;
+    font-size: 13px;
+    height: 38px;
   }
 
 
@@ -2069,27 +2199,27 @@
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
 
-    gap: 8px;
+    gap: 10px;
   }
 
   .product-image-wrap {
-    height: 160px;
+    height: 175px;
   }
 
   .product-content {
     padding:
+      12px
       10px
-      9px
-      10px;
+      12px;
   }
 
   .product-meta {
-    font-size: 5.8px;
+    font-size: 11px;
   }
 
   .product-content h3 {
-    min-height: 29px;
-    font-size: 13px;
+    min-height: 32px;
+    font-size: 15px;
   }
 
   .product-details {
@@ -2098,7 +2228,7 @@
       0
       8px;
 
-    font-size: 6.5px;
+    font-size: 12px;
   }
 
   .product-price {
@@ -2106,11 +2236,11 @@
   }
 
   .product-price strong {
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .product-price del {
-    font-size: 7px;
+    font-size: 12px;
   }
 
   .product-actions {
@@ -2123,10 +2253,10 @@
 
   .details-button,
   .add-cart-button {
-    min-height: 31px;
+    min-height: 35px;
 
-    font-size: 6px;
-    letter-spacing: 0.45px;
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
   }
 
   .product-badge {
@@ -2135,19 +2265,19 @@
 
     padding:
       4px
-      6px;
+      7px;
 
-    font-size: 5.5px;
+    font-size: 9.5px;
   }
 
   .wishlist-button {
     top: 5px;
     right: 5px;
 
-    width: 27px;
-    height: 27px;
+    width: 30px;
+    height: 30px;
 
-    font-size: 14px;
+    font-size: 15px;
   }
 
 

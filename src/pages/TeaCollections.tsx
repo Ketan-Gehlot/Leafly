@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import Footer from "../components/Footer";
 import "./TeaCollections.css";
 
 type TeaCollection = {
@@ -112,6 +113,9 @@ export default function TeaCollections() {
 
   const [addedId, setAddedId] =
     useState<number | null>(null);
+
+  const [selectedRitual, setSelectedRitual] =
+    useState<"bright" | "slow" | "deep">("bright");
 
   const active =
     collections.find(
@@ -368,8 +372,17 @@ export default function TeaCollections() {
 
         <div className="ritual-cards">
 
-          <article>
-            <span>01</span>
+          <article
+            className={`ritual-interactive-card ${selectedRitual === "bright" ? "selected" : ""}`}
+            onClick={() => setSelectedRitual("bright")}
+            tabIndex={0}
+            role="button"
+            aria-pressed={selectedRitual === "bright"}
+          >
+            <div className="ritual-card-header">
+              <span>01</span>
+              {selectedRitual === "bright" && <span className="ritual-selected-badge">SELECTED</span>}
+            </div>
 
             <h3>
               Start Bright
@@ -379,10 +392,38 @@ export default function TeaCollections() {
               Fresh green teas for focused
               mornings and clean beginnings.
             </p>
+
+            <div className="ritual-recommendation">
+              <span className="ritual-rec-label">Recommended:</span>
+              <div className="ritual-rec-tags">
+                <span className="ritual-tag">Green Tea</span>
+                <span className="ritual-tag">White Tea</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="ritual-cta-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/shop");
+              }}
+            >
+              EXPLORE THIS RITUAL →
+            </button>
           </article>
 
-          <article>
-            <span>02</span>
+          <article
+            className={`ritual-interactive-card ${selectedRitual === "slow" ? "selected" : ""}`}
+            onClick={() => setSelectedRitual("slow")}
+            tabIndex={0}
+            role="button"
+            aria-pressed={selectedRitual === "slow"}
+          >
+            <div className="ritual-card-header">
+              <span>02</span>
+              {selectedRitual === "slow" && <span className="ritual-selected-badge">SELECTED</span>}
+            </div>
 
             <h3>
               Slow Down
@@ -392,10 +433,38 @@ export default function TeaCollections() {
               Silken white and oolong teas
               for quieter afternoons.
             </p>
+
+            <div className="ritual-recommendation">
+              <span className="ritual-rec-label">Recommended:</span>
+              <div className="ritual-rec-tags">
+                <span className="ritual-tag">White Tea</span>
+                <span className="ritual-tag">Oolong</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="ritual-cta-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/shop");
+              }}
+            >
+              EXPLORE THIS RITUAL →
+            </button>
           </article>
 
-          <article>
-            <span>03</span>
+          <article
+            className={`ritual-interactive-card ${selectedRitual === "deep" ? "selected" : ""}`}
+            onClick={() => setSelectedRitual("deep")}
+            tabIndex={0}
+            role="button"
+            aria-pressed={selectedRitual === "deep"}
+          >
+            <div className="ritual-card-header">
+              <span>03</span>
+              {selectedRitual === "deep" && <span className="ritual-selected-badge">SELECTED</span>}
+            </div>
 
             <h3>
               Go Deep
@@ -405,6 +474,25 @@ export default function TeaCollections() {
               Bold black teas and mature
               pu-erh for slower evenings.
             </p>
+
+            <div className="ritual-recommendation">
+              <span className="ritual-rec-label">Recommended:</span>
+              <div className="ritual-rec-tags">
+                <span className="ritual-tag">Black Tea</span>
+                <span className="ritual-tag">Pu-erh</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="ritual-cta-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/shop");
+              }}
+            >
+              EXPLORE THIS RITUAL →
+            </button>
           </article>
 
         </div>
@@ -613,142 +701,7 @@ export default function TeaCollections() {
 
       </section>
 
-
-      {/* =====================================================
-          FOOTER
-      ===================================================== */}
-
-      <footer className="collections-footer">
-
-        <div className="collections-footer-main">
-
-          <div className="collections-footer-brand">
-
-            <div className="collections-footer-logo">
-              LEAFLY
-            </div>
-
-            <p className="collections-footer-tagline">
-              Tea worth slowing down for.
-            </p>
-
-            <p className="collections-footer-copy">
-              Carefully selected single-origin
-              teas for thoughtful rituals,
-              quiet moments and everyday
-              pauses.
-            </p>
-
-            <span className="collections-footer-mark">
-              ✦
-            </span>
-
-          </div>
-
-
-          <div className="collections-footer-column">
-
-            <p>
-              EXPLORE
-            </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/shop")
-              }
-            >
-              Shop
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate(
-                  "/tea-collections"
-                )
-              }
-            >
-              Tea Collections
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/journal")
-              }
-            >
-              Journal
-            </button>
-
-          </div>
-
-
-          <div className="collections-footer-column">
-
-            <p>
-              LEAFLY
-            </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/about")
-              }
-            >
-              About
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/why-leafly")
-              }
-            >
-              Why Leafly
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/contact")
-              }
-            >
-              Contact
-            </button>
-
-          </div>
-
-
-          <div className="collections-footer-note">
-
-            <p>
-              “Slow is not a speed.
-              It is a way of noticing.”
-            </p>
-
-            <span>
-              LEAFLY
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div className="collections-footer-bottom">
-
-          <span>
-            © 2026 LEAFLY TEA HOUSE
-          </span>
-
-          <span>
-            CRAFTED WITH INTENTION
-          </span>
-
-        </div>
-
-      </footer>
+      <Footer />
 
 
       {/* =====================================================

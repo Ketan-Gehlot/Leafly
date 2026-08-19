@@ -1,20 +1,19 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, useRef, type ReactNode, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
-import { useWishlist } from "../context/WishlistContext";
-import type { CartProduct } from "../context/CartContext";
+import { useCoupons } from "../context/CouponContext";
+import defaultAvatarImg from "../assets/leafly-logo.webp";
 import mainImage from "../assets/main.webp";
 import image2 from "../assets/image2.webp";
 import image3 from "../assets/image3.webp";
 import image5 from "../assets/image5.webp";
+import Footer from "../components/Footer";
 import "./Profile.css";
 
 type SidebarItemId =
   | "overview"
   | "orders"
-  | "wishlist"
-  | "addresses"
-  | "details"
+  | "coupons"
   | "preferences"
   | "notifications"
   | "security";
@@ -29,6 +28,13 @@ type PreferencesState = {
   caffeinePreference: string;
   brewingStyle: string;
   timeOfDay: string;
+};
+
+type NotificationPreferences = {
+  orderUpdates: boolean;
+  ritualTips: boolean;
+  newHarvestAlerts: boolean;
+  exclusiveVouchers: boolean;
 };
 
 type SidebarItem = {
@@ -65,29 +71,11 @@ const sidebarItems: SidebarItem[] = [
     ),
   },
   {
-    id: "wishlist",
-    label: "Wishlist",
+    id: "coupons",
+    label: "Coupons",
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 20s-7.5-4.5-9.2-8.6A5.6 5.6 0 0 1 12 5.6a5.6 5.6 0 0 1 9.2 5.8C19.5 15.5 12 20 12 20Z" />
-      </svg>
-    ),
-  },
-  {
-    id: "addresses",
-    label: "Addresses",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10Zm0-8.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z" />
-      </svg>
-    ),
-  },
-  {
-    id: "details",
-    label: "Account Details",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-7 7a7 7 0 0 1 14 0" />
+        <path d="M4 6h16a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8a2 2 0 0 1 2-2Zm5 3v6m6-6v6" />
       </svg>
     ),
   },
@@ -136,15 +124,11 @@ const initialPreferences: PreferencesState = {
   timeOfDay: "Morning, Afternoon",
 };
 
-const wishlistItems = [
-  { id: 1, name: "Silver Tips", image: image2 },
-  { id: 2, name: "Himalayan Green", image: image3 },
-  { id: 3, name: "Tea Ritual", image: image5 },
-];
-
-const addressSummary = {
-  totalAddresses: 2,
-  defaultAddress: "15 Meadow Court, Bengaluru, Karnataka 560001",
+const initialNotifications: NotificationPreferences = {
+  orderUpdates: true,
+  ritualTips: true,
+  newHarvestAlerts: true,
+  exclusiveVouchers: false,
 };
 
 const recommendationItems: RecommendationItem[] = [
@@ -212,16 +196,14 @@ const promiseItems = [
 
 const formatLabel = (value: string) => value.trim();
 
+const AVATAR_STORAGE_KEY = "leafly_profile_avatar_v1";
+const NOTIF_STORAGE_KEY = "leafly_profile_notifs_v1";
+
 export default function Profile() {
   const navigate = useNavigate();
   const { orders } = useOrderContext();
-
-  const {
-    wishlistIds,
-  } = useWishlist();
-
-  const { removeFromWishlist, addToWishlist } =
-    useWishlist();
+  const { coupons } = useCoupons();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const orderSummary = useMemo(() => {
     const delivered = orders.filter((order) => order.status === "Delivered").length;
@@ -241,12 +223,31 @@ export default function Profile() {
   const [selectedSidebar, setSelectedSidebar] = useState<SidebarItemId>("overview");
   const [details, setDetails] = useState<DetailsState>(initialDetails);
   const [preferences, setPreferences] = useState<PreferencesState>(initialPreferences);
+  const [notifications, setNotifications] = useState<NotificationPreferences>(() => {
+    try {
+      const saved = localStorage.getItem(NOTIF_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : initialNotifications;
+    } catch {
+      return initialNotifications;
+    }
+  });
+
+  const [avatarUrl, setAvatarUrl] = useState<string>(() => {
+    try {
+      return localStorage.getItem(AVATAR_STORAGE_KEY) || "";
+    } catch {
+      return "";
+    }
+  });
+
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [notice, setNotice] = useState("Welcome back. Your account is ready.");
   const [detailsSaved, setDetailsSaved] = useState(false);
   const [preferencesSaved, setPreferencesSaved] = useState(false);
+  const [notifSaved, setNotifSaved] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const activeUserName = useMemo(() => details.fullName || "Aarav Kapoor", [details.fullName]);
 
@@ -263,12 +264,63 @@ export default function Profile() {
       return;
     }
 
-    setNotice(`${item.label} is coming soon in this demo experience.`);
+    if (item.id === "coupons") {
+      setNotice("Explore your earned rewards and active vouchers.");
+      return;
+    }
+
+    if (item.id === "preferences") {
+      setNotice("Your personalized tea flavor preferences.");
+      return;
+    }
+
+    if (item.id === "notifications") {
+      setNotice("Manage your email & SMS ritual notifications.");
+      return;
+    }
+
+    if (item.id === "security") {
+      setNotice("Account authentication & session security overview.");
+      return;
+    }
   };
 
-  const handleQuickAction = (label: string, message: string) => {
-    setNotice(message);
-    setSelectedSidebar(label.toLowerCase().replace(/\s+/g, "") as SidebarItemId);
+  const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setNotice("Please select a valid image file (PNG, JPG, or WebP).");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setNotice("Selected image is too large. Please select an image under 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      if (result) {
+        setAvatarUrl(result);
+        try {
+          localStorage.setItem(AVATAR_STORAGE_KEY, result);
+          setNotice("Profile photo updated successfully.");
+        } catch {
+          setNotice("Profile photo updated for this session.");
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleResetAvatar = () => {
+    setAvatarUrl("");
+    try {
+      localStorage.removeItem(AVATAR_STORAGE_KEY);
+      setNotice("Profile photo reset to default avatar.");
+    } catch {}
   };
 
   const handleEditDetails = () => {
@@ -279,7 +331,7 @@ export default function Profile() {
   const handleSaveDetails = () => {
     setIsEditingDetails(false);
     setDetailsSaved(true);
-    setNotice("Your details have been updated.");
+    setNotice("Your personal details have been updated.");
   };
 
   const handleCancelDetails = () => {
@@ -297,7 +349,7 @@ export default function Profile() {
   const handleSavePreferences = () => {
     setIsEditingPreferences(false);
     setPreferencesSaved(true);
-    setNotice("Your preferences have been saved.");
+    setNotice("Your tea preferences have been saved.");
   };
 
   const handleCancelPreferences = () => {
@@ -307,28 +359,26 @@ export default function Profile() {
     setNotice("Preferences were not changed.");
   };
 
-  const toggleWishlist = (id: number) => {
-    const item = wishlistItems.find(
-      (w) => w.id === id
-    );
+  const handleToggleNotification = (key: keyof NotificationPreferences) => {
+    setNotifications((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      try {
+        localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+    setNotifSaved(true);
+    setNotice("Notification preferences updated.");
+    window.setTimeout(() => setNotifSaved(false), 3000);
+  };
 
-    if (wishlistIds.includes(id)) {
-      removeFromWishlist(id);
-    } else if (item) {
-      const product: CartProduct = {
-        id: item.id,
-        name: item.name,
-        image: item.image,
-        category: "",
-        origin: "",
-        caffeine: "",
-        weight: "",
-        price: 0,
-        badge: "",
-      };
-
-      addToWishlist(product);
-    }
+  const handleCopyCoupon = (code: string) => {
+    try {
+      navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      setNotice(`Coupon ${code} copied to clipboard! Apply it at checkout.`);
+      window.setTimeout(() => setCopiedCode(null), 2000);
+    } catch {}
   };
 
   const handleBackToTop = () => {
@@ -341,7 +391,7 @@ export default function Profile() {
 
   const handleLogout = () => {
     setShowLogoutConfirm(false);
-    setNotice("You have been logged out in this demo session.");
+    setNotice("You have been logged out of this demo session.");
   };
 
   return (
@@ -389,9 +439,30 @@ export default function Profile() {
           <header className="profile-hero">
             <div className="profile-avatar-wrap">
               <div className="profile-avatar" aria-label="Profile avatar">
-                <span>{activeUserName.split(" ").map((part) => part[0]).slice(0, 2).join("")}</span>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={activeUserName} className="profile-avatar-custom-img" />
+                ) : (
+                  <div className="profile-avatar-default">
+                    <img src={defaultAvatarImg} alt="Leafly Logo" className="profile-default-leafly-logo" />
+                    <span>{activeUserName.split(" ").map((part) => part[0]).slice(0, 2).join("")}</span>
+                  </div>
+                )}
               </div>
-              <button type="button" className="profile-avatar-edit" aria-label="Edit profile photo">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleAvatarChange}
+                aria-label="Upload avatar image"
+              />
+              <button
+                type="button"
+                className="profile-avatar-edit"
+                aria-label="Edit profile photo"
+                title="Change profile photo"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M19.4 7.5c.4-.4.4-1 0-1.4l-1.1-1.1a1 1 0 0 0-1.4 0L16 6.1l2.5 2.5 1-1Zm-2.9 2.1L8.8 16.2l-2.6.6.6-2.6 7.7-7.7 2.5 2.5Z" />
                 </svg>
@@ -409,10 +480,20 @@ export default function Profile() {
                   <strong>{details.email}</strong>
                 </div>
                 <div>
-                  <span className="profile-meta-label">Joined</span>
-                  <strong>April 2024</strong>
+                  <span className="profile-meta-label">Active Tier</span>
+                  <strong>Leafly Connoisseur</strong>
+                </div>
+                <div>
+                  <span className="profile-meta-label">Available Vouchers</span>
+                  <strong>{coupons.filter((c) => c.status === "available").length} Active</strong>
                 </div>
               </div>
+
+              {avatarUrl && (
+                <button type="button" className="profile-avatar-reset-btn" onClick={handleResetAvatar}>
+                  Reset to default avatar
+                </button>
+              )}
             </div>
 
             <div className="profile-hero-image-wrap">
@@ -426,181 +507,351 @@ export default function Profile() {
             </div>
           )}
 
-          <section className="profile-summary-grid" aria-label="Account summary">
-            <article className="profile-summary-card">
-              <div className="profile-summary-header">
-                <p className="profile-summary-label">MY ORDERS</p>
-                <span className="profile-summary-total">{orderSummary.totalOrders}</span>
-              </div>
-
-              <div className="profile-summary-body">
-                <div className="profile-summary-line">
-                  <span>Delivered</span>
-                  <strong>{orderSummary.delivered}</strong>
-                </div>
-                <div className="profile-summary-line">
-                  <span>Processing</span>
-                  <strong>{orderSummary.processing}</strong>
-                </div>
-                <div className="profile-summary-line">
-                  <span>Shipped</span>
-                  <strong>{orderSummary.shipped}</strong>
-                </div>
-                <div className="profile-summary-line">
-                  <span>Cancelled</span>
-                  <strong>{orderSummary.cancelled}</strong>
-                </div>
-              </div>
-
-              <button type="button" className="profile-summary-button" onClick={() => navigate("/orders")}>
-                VIEW ORDERS
-              </button>
-            </article>
-
-            <article className="profile-summary-card">
-              <div className="profile-summary-header">
-                <p className="profile-summary-label">MY WISHLIST</p>
-                <span className="profile-summary-total">{wishlistItems.length}</span>
-              </div>
-
-              <div className="profile-mini-list">
-                {wishlistItems.map((item) => (
-                  <div key={item.id} className="profile-mini-thumb">
-                    <img src={item.image} alt={item.name} loading="lazy" />
+          {/* VIEW: OVERVIEW */}
+          {selectedSidebar === "overview" && (
+            <>
+              <section className="profile-summary-grid" aria-label="Account summary">
+                <article className="profile-summary-card">
+                  <div className="profile-summary-header">
+                    <p className="profile-summary-label">MY ORDERS</p>
+                    <span className="profile-summary-total">{orderSummary.totalOrders}</span>
                   </div>
-                ))}
-              </div>
 
-              <button type="button" className="profile-summary-button" onClick={() => handleQuickAction("Wishlist", "Your wishlist is coming soon in this demo.")}>
-                VIEW WISHLIST
-              </button>
-            </article>
-
-            <article className="profile-summary-card">
-              <div className="profile-summary-header">
-                <p className="profile-summary-label">MY ADDRESSES</p>
-                <span className="profile-summary-total">{addressSummary.totalAddresses}</span>
-              </div>
-
-              <div className="profile-address-block">
-                <span className="profile-address-label">Default Address</span>
-                <strong>{addressSummary.defaultAddress}</strong>
-              </div>
-
-              <button type="button" className="profile-summary-button" onClick={() => handleQuickAction("Addresses", "Address management is coming soon in this demo.")}>
-                MANAGE ADDRESSES
-              </button>
-            </article>
-          </section>
-
-          <section className="profile-detail-grid">
-            <article className="profile-card profile-details-card">
-              <div className="profile-card-header">
-                <div>
-                  <p className="profile-card-kicker">PROFILE</p>
-                  <h2>PERSONAL DETAILS</h2>
-                </div>
-
-                {!isEditingDetails ? (
-                  <button type="button" className="profile-edit-button" onClick={handleEditDetails}>
-                    EDIT
-                  </button>
-                ) : null}
-              </div>
-
-              {!isEditingDetails ? (
-                <div className="profile-details-list">
-                  {[
-                    { label: "Full Name", value: details.fullName },
-                    { label: "Email Address", value: details.email },
-                    { label: "Phone Number", value: details.phone },
-                    { label: "Date of Birth", value: details.dob },
-                    { label: "Gender", value: details.gender },
-                  ].map((field) => (
-                    <div key={field.label} className="profile-detail-row">
-                      <span>{field.label}</span>
-                      <strong>{field.value}</strong>
+                  <div className="profile-summary-body">
+                    <div className="profile-summary-line">
+                      <span>Delivered</span>
+                      <strong>{orderSummary.delivered}</strong>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="profile-edit-form">
-                  <label className="profile-form-field">
-                    <span>Full Name</span>
-                    <input
-                      type="text"
-                      value={details.fullName}
-                      onChange={(event) => setDetails((current) => ({ ...current, fullName: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Email Address</span>
-                    <input
-                      type="email"
-                      value={details.email}
-                      onChange={(event) => setDetails((current) => ({ ...current, email: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Phone Number</span>
-                    <input
-                      type="tel"
-                      value={details.phone}
-                      onChange={(event) => setDetails((current) => ({ ...current, phone: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Date of Birth</span>
-                    <input
-                      type="text"
-                      value={details.dob}
-                      onChange={(event) => setDetails((current) => ({ ...current, dob: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Gender</span>
-                    <input
-                      type="text"
-                      value={details.gender}
-                      onChange={(event) => setDetails((current) => ({ ...current, gender: event.target.value }))}
-                    />
-                  </label>
-
-                  <div className="profile-edit-actions">
-                    <button type="button" className="profile-secondary-button" onClick={handleCancelDetails}>
-                      CANCEL
-                    </button>
-                    <button type="button" className="profile-primary-button" onClick={handleSaveDetails}>
-                      SAVE CHANGES
-                    </button>
+                    <div className="profile-summary-line">
+                      <span>Processing</span>
+                      <strong>{orderSummary.processing}</strong>
+                    </div>
+                    <div className="profile-summary-line">
+                      <span>Shipped</span>
+                      <strong>{orderSummary.shipped}</strong>
+                    </div>
+                    <div className="profile-summary-line">
+                      <span>Cancelled</span>
+                      <strong>{orderSummary.cancelled}</strong>
+                    </div>
                   </div>
-                </div>
-              )}
 
-              {detailsSaved && !isEditingDetails && (
-                <p className="profile-success-text">Your details have been updated.</p>
-              )}
-            </article>
+                  <button type="button" className="profile-summary-button" onClick={() => navigate("/orders")}>
+                    VIEW ORDERS
+                  </button>
+                </article>
 
-            <article className="profile-card profile-preferences-card">
+                <article className="profile-summary-card">
+                  <div className="profile-summary-header">
+                    <p className="profile-summary-label">MY COUPONS</p>
+                    <span className="profile-summary-total">{coupons.filter((c) => c.status === "available").length}</span>
+                  </div>
+
+                  <div className="profile-summary-body">
+                    {coupons.slice(0, 2).map((c) => (
+                      <div key={c.id} className="profile-summary-line">
+                        <span>{c.code}</span>
+                        <strong>{c.discountType === "fixed" ? `₹${c.discountValue} OFF` : `${c.discountValue}% OFF`}</strong>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button type="button" className="profile-summary-button" onClick={() => setSelectedSidebar("coupons")}>
+                    EXPLORE COUPONS
+                  </button>
+                </article>
+
+                <article className="profile-summary-card">
+                  <div className="profile-summary-header">
+                    <p className="profile-summary-label">TEA TASTE PROFILE</p>
+                    <span className="profile-summary-total">Active</span>
+                  </div>
+
+                  <div className="profile-summary-body">
+                    <div className="profile-summary-line">
+                      <span>Favorite</span>
+                      <strong>{preferences.favoriteTypes.split(",")[0] || "Green Tea"}</strong>
+                    </div>
+                    <div className="profile-summary-line">
+                      <span>Brewing</span>
+                      <strong>{preferences.brewingStyle}</strong>
+                    </div>
+                  </div>
+
+                  <button type="button" className="profile-summary-button" onClick={() => setSelectedSidebar("preferences")}>
+                    UPDATE PREFERENCES
+                  </button>
+                </article>
+              </section>
+
+              <section className="profile-detail-grid">
+                <article className="profile-card profile-details-card">
+                  <div className="profile-card-header">
+                    <div>
+                      <p className="profile-card-kicker">PROFILE</p>
+                      <h2>PERSONAL DETAILS</h2>
+                    </div>
+
+                    {!isEditingDetails ? (
+                      <button type="button" className="profile-edit-button" onClick={handleEditDetails}>
+                        EDIT
+                      </button>
+                    ) : null}
+                  </div>
+
+                  {!isEditingDetails ? (
+                    <div className="profile-details-list">
+                      {[
+                        { label: "Full Name", value: details.fullName },
+                        { label: "Email Address", value: details.email },
+                        { label: "Phone Number", value: details.phone },
+                        { label: "Date of Birth", value: details.dob },
+                        { label: "Gender", value: details.gender },
+                      ].map((field) => (
+                        <div key={field.label} className="profile-detail-row">
+                          <span>{field.label}</span>
+                          <strong>{field.value}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="profile-edit-form">
+                      <label className="profile-form-field">
+                        <span>Full Name</span>
+                        <input
+                          type="text"
+                          value={details.fullName}
+                          onChange={(event) => setDetails((current) => ({ ...current, fullName: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Email Address</span>
+                        <input
+                          type="email"
+                          value={details.email}
+                          onChange={(event) => setDetails((current) => ({ ...current, email: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Phone Number</span>
+                        <input
+                          type="tel"
+                          value={details.phone}
+                          onChange={(event) => setDetails((current) => ({ ...current, phone: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Date of Birth</span>
+                        <input
+                          type="text"
+                          value={details.dob}
+                          onChange={(event) => setDetails((current) => ({ ...current, dob: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Gender</span>
+                        <input
+                          type="text"
+                          value={details.gender}
+                          onChange={(event) => setDetails((current) => ({ ...current, gender: event.target.value }))}
+                        />
+                      </label>
+
+                      <div className="profile-edit-actions">
+                        <button type="button" className="profile-secondary-button" onClick={handleCancelDetails}>
+                          CANCEL
+                        </button>
+                        <button type="button" className="profile-primary-button" onClick={handleSaveDetails}>
+                          SAVE CHANGES
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {detailsSaved && !isEditingDetails && (
+                    <p className="profile-success-text">Your details have been updated.</p>
+                  )}
+                </article>
+
+                <article className="profile-card profile-preferences-card">
+                  <div className="profile-card-header">
+                    <div>
+                      <p className="profile-card-kicker">TASTES</p>
+                      <h2>TEA PREFERENCES</h2>
+                    </div>
+
+                    {!isEditingPreferences ? (
+                      <button type="button" className="profile-edit-button" onClick={handleEditPreferences}>
+                        EDIT
+                      </button>
+                    ) : null}
+                  </div>
+
+                  <p className="profile-subtitle">Tell us your taste. We&apos;ll make it personal.</p>
+
+                  {!isEditingPreferences ? (
+                    <div className="profile-preference-list">
+                      {Object.entries(preferences).map(([key, value]) => (
+                        <div key={key} className="profile-preference-row">
+                          <span className="profile-preference-label">{formatLabel(key.replace(/([A-Z])/g, " $1"))}</span>
+                          <strong>{value}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="profile-edit-form">
+                      <label className="profile-form-field">
+                        <span>Favourite Types</span>
+                        <input
+                          type="text"
+                          value={preferences.favoriteTypes}
+                          onChange={(event) => setPreferences((current) => ({ ...current, favoriteTypes: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Flavour Notes</span>
+                        <input
+                          type="text"
+                          value={preferences.flavorNotes}
+                          onChange={(event) => setPreferences((current) => ({ ...current, flavorNotes: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Caffeine Preference</span>
+                        <input
+                          type="text"
+                          value={preferences.caffeinePreference}
+                          onChange={(event) => setPreferences((current) => ({ ...current, caffeinePreference: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Brewing Style</span>
+                        <input
+                          type="text"
+                          value={preferences.brewingStyle}
+                          onChange={(event) => setPreferences((current) => ({ ...current, brewingStyle: event.target.value }))}
+                        />
+                      </label>
+
+                      <label className="profile-form-field">
+                        <span>Time of Day</span>
+                        <input
+                          type="text"
+                          value={preferences.timeOfDay}
+                          onChange={(event) => setPreferences((current) => ({ ...current, timeOfDay: event.target.value }))}
+                        />
+                      </label>
+
+                      <div className="profile-edit-actions">
+                        <button type="button" className="profile-secondary-button" onClick={handleCancelPreferences}>
+                          CANCEL
+                        </button>
+                        <button type="button" className="profile-primary-button" onClick={handleSavePreferences}>
+                          SAVE PREFERENCES
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {preferencesSaved && !isEditingPreferences && (
+                    <p className="profile-success-text">Your preferences have been saved.</p>
+                  )}
+                </article>
+              </section>
+            </>
+          )}
+
+          {/* VIEW: COUPONS */}
+          {selectedSidebar === "coupons" && (
+            <section className="profile-card profile-coupons-view">
               <div className="profile-card-header">
                 <div>
-                  <p className="profile-card-kicker">TASTES</p>
+                  <p className="profile-card-kicker">REWARDS & PRIVILEGES</p>
+                  <h2>MY TEA VOUCHERS</h2>
+                </div>
+                <span className="profile-coupons-count-badge">
+                  {coupons.filter((c) => c.status === "available").length} Available
+                </span>
+              </div>
+              <p className="profile-subtitle">
+                Apply your vouchers at checkout for exclusive single-origin savings.
+              </p>
+
+              <div className="profile-coupons-grid">
+                {coupons.map((coupon) => {
+                  const isAvailable = coupon.status === "available";
+                  return (
+                    <article
+                      key={coupon.id}
+                      className={`profile-coupon-card ${isAvailable ? "available" : "used"}`}
+                    >
+                      <div className="profile-coupon-card-top">
+                        <span className="profile-coupon-tag">{coupon.title}</span>
+                        <span className={`profile-coupon-status ${coupon.status}`}>
+                          {coupon.status.toUpperCase()}
+                        </span>
+                      </div>
+
+                      <div className="profile-coupon-discount">
+                        <strong>
+                          {coupon.discountType === "fixed"
+                            ? `₹${coupon.discountValue} OFF`
+                            : `${coupon.discountValue}% OFF`}
+                        </strong>
+                      </div>
+
+                      <p className="profile-coupon-condition">{coupon.applicableCondition}</p>
+
+                      <div className="profile-coupon-bottom">
+                        <div className="profile-coupon-code-box">
+                          <span>CODE</span>
+                          <strong>{coupon.code}</strong>
+                        </div>
+                        {isAvailable && (
+                          <button
+                            type="button"
+                            className="profile-coupon-copy-btn"
+                            onClick={() => handleCopyCoupon(coupon.code)}
+                          >
+                            {copiedCode === coupon.code ? "COPIED ✓" : "COPY"}
+                          </button>
+                        )}
+                      </div>
+
+                      {coupon.expiryDate && (
+                        <p className="profile-coupon-expiry">Expires: {coupon.expiryDate}</p>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* VIEW: PREFERENCES */}
+          {selectedSidebar === "preferences" && (
+            <section className="profile-card profile-preferences-view">
+              <div className="profile-card-header">
+                <div>
+                  <p className="profile-card-kicker">TASTES & CRAFT</p>
                   <h2>TEA PREFERENCES</h2>
                 </div>
-
-                {!isEditingPreferences ? (
+                {!isEditingPreferences && (
                   <button type="button" className="profile-edit-button" onClick={handleEditPreferences}>
                     EDIT
                   </button>
-                ) : null}
+                )}
               </div>
-
-              <p className="profile-subtitle">Tell us your taste. We&apos;ll make it personal.</p>
+              <p className="profile-subtitle">
+                Your profile shapes how we recommend harvest batches and seasonal single-origin releases.
+              </p>
 
               {!isEditingPreferences ? (
                 <div className="profile-preference-list">
@@ -668,13 +919,116 @@ export default function Profile() {
                   </div>
                 </div>
               )}
+            </section>
+          )}
 
-              {preferencesSaved && !isEditingPreferences && (
-                <p className="profile-success-text">Your preferences have been saved.</p>
-              )}
-            </article>
-          </section>
+          {/* VIEW: NOTIFICATIONS */}
+          {selectedSidebar === "notifications" && (
+            <section className="profile-card profile-notifications-view">
+              <div className="profile-card-header">
+                <div>
+                  <p className="profile-card-kicker">UPDATES</p>
+                  <h2>NOTIFICATION PREFERENCES</h2>
+                </div>
+              </div>
+              <p className="profile-subtitle">
+                Choose which ritual updates, dispatch alerts, and tasting stories you want to receive.
+              </p>
 
+              <div className="profile-notif-list">
+                {[
+                  {
+                    key: "orderUpdates" as const,
+                    title: "Order & Delivery Status",
+                    description: "Real-time shipping notifications, transit updates, and delivery confirmations.",
+                  },
+                  {
+                    key: "ritualTips" as const,
+                    title: "Artisan Brewing Rituals & Notes",
+                    description: "Curated brewing advice, water temperature guides, and steeping methods.",
+                  },
+                  {
+                    key: "newHarvestAlerts" as const,
+                    title: "New Single-Origin Harvests",
+                    description: "Be the first to hear when small-batch Darjeeling, Assam, or Nilgiri flushes arrive.",
+                  },
+                  {
+                    key: "exclusiveVouchers" as const,
+                    title: "Member Exclusive Vouchers",
+                    description: "Seasonal discount vouchers, celebration gifts, and loyalty rewards.",
+                  },
+                ].map((item) => (
+                  <div key={item.key} className="profile-notif-row">
+                    <div className="profile-notif-info">
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                    </div>
+                    <label className="profile-switch">
+                      <input
+                        type="checkbox"
+                        checked={notifications[item.key]}
+                        onChange={() => handleToggleNotification(item.key)}
+                      />
+                      <span className="profile-switch-slider" />
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {notifSaved && <p className="profile-success-text">Notification settings updated.</p>}
+            </section>
+          )}
+
+          {/* VIEW: SECURITY */}
+          {selectedSidebar === "security" && (
+            <section className="profile-card profile-security-view">
+              <div className="profile-card-header">
+                <div>
+                  <p className="profile-card-kicker">AUTHENTICATION & PRIVACY</p>
+                  <h2>ACCOUNT SECURITY</h2>
+                </div>
+                <span className="profile-security-badge">DEMO SESSION</span>
+              </div>
+              <p className="profile-subtitle">
+                Overview of your current session integrity and account privacy protections.
+              </p>
+
+              <div className="profile-security-grid">
+                <div className="profile-security-item">
+                  <div className="profile-security-icon">🔒</div>
+                  <div>
+                    <h3>Session Protection</h3>
+                    <p>This prototype runs on client-side state with zero third-party tracking or stored credentials.</p>
+                  </div>
+                </div>
+
+                <div className="profile-security-item">
+                  <div className="profile-security-icon">🛡️</div>
+                  <div>
+                    <h3>Future Backend Authentication</h3>
+                    <p>Production releases will integrate OAuth2 & passwordless magic links. No passwords are collected here.</p>
+                  </div>
+                </div>
+
+                <div className="profile-security-item">
+                  <div className="profile-security-icon">📱</div>
+                  <div>
+                    <h3>Active Device</h3>
+                    <p>Current Browser Session · Verified Local Workspace</p>
+                  </div>
+                </div>
+
+                <div className="profile-security-item">
+                  <div className="profile-security-icon">✦</div>
+                  <div>
+                    <h3>Privacy Standard</h3>
+                    <p>Leafly respects your privacy. All preferences and local orders remain private to your browser.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* RECOMMENDATIONS */}
           <section className="profile-recommendations-card">
             <div className="profile-recommendations-image">
               <img src={image2} alt="Tea leaves and quiet morning ritual" loading="lazy" />
@@ -693,8 +1047,6 @@ export default function Profile() {
 
             <div className="profile-recommendations-list">
               {recommendationItems.map((item) => {
-                const isSaved = wishlistIds.includes(item.id);
-
                 return (
                   <article key={item.id} className="profile-recommendation-item">
                     <img src={item.image} alt={item.name} loading="lazy" />
@@ -703,14 +1055,6 @@ export default function Profile() {
                       <span>{item.category}</span>
                       <div className="profile-recommendation-row">
                         <strong>{item.price}</strong>
-                        <button
-                          type="button"
-                          className={`profile-wishlist-toggle ${isSaved ? "saved" : ""}`}
-                          onClick={() => toggleWishlist(item.id)}
-                          aria-label={isSaved ? `Remove ${item.name} from wishlist` : `Add ${item.name} to wishlist`}
-                        >
-                          ♥
-                        </button>
                       </div>
                     </div>
                   </article>
@@ -719,6 +1063,7 @@ export default function Profile() {
             </div>
           </section>
 
+          {/* PROMISES */}
           <section className="profile-promises" aria-label="Leafly promises">
             {promiseItems.map((promise) => (
               <article key={promise.title} className="profile-promise-item">
@@ -753,6 +1098,8 @@ export default function Profile() {
       <button type="button" className="profile-back-to-top" onClick={handleBackToTop} aria-label="Back to top">
         ↑
       </button>
+
+      <Footer />
     </main>
   );
 }

@@ -93,15 +93,16 @@
 .leafly-cart-eyebrow {
   margin:
     0
+    0
     7px;
 
   color: #d5ae59;
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 2.3px;
+  letter-spacing: 2px;
 }
 
 .leafly-cart-header h2 {
@@ -129,10 +130,10 @@
       247,
       243,
       236,
-      0.55
+      0.65
     );
 
-  font-size: 8px;
+  font-size: 13px;
 }
 
 .leafly-cart-close {
@@ -306,11 +307,11 @@
 
   color: #9a793f;
 
-  font-size: 6px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
 
   text-transform: uppercase;
 }
@@ -325,11 +326,11 @@
     "Times New Roman",
     serif;
 
-  font-size: 17px;
+  font-size: 18px;
 
   font-weight: 400;
 
-  line-height: 1.05;
+  line-height: 1.15;
 }
 
 .leafly-cart-item-info > span {
@@ -340,24 +341,24 @@
       11,
       43,
       30,
-      0.65
+      0.68
     );
 
-  font-size: 8px;
+  font-size: 12.5px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .leafly-variant-badge {
   display: inline-block;
-  padding: 1px 6px;
+  padding: 2px 7px;
   background: rgba(201, 162, 75, 0.15);
   border: 1px solid rgba(201, 162, 75, 0.35);
   border-radius: 999px;
   color: #0b2b1e;
   font-weight: 700;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.5px;
 }
 
@@ -366,7 +367,7 @@
 
   color: #0b2b1e;
 
-  font-size: 14px;
+  font-size: 15px;
 
   font-weight: 800;
 }
@@ -447,7 +448,7 @@
 
   color: #0b2b1e;
 
-  font-size: 8px;
+  font-size: 13px;
 
   font-weight: 800;
 }
@@ -469,10 +470,10 @@
       11,
       43,
       30,
-      0.42
+      0.55
     );
 
-  font-size: 6px;
+  font-size: 11px;
 
   font-weight: 800;
 
@@ -516,10 +517,10 @@
       11,
       43,
       30,
-      0.40
+      0.55
     );
 
-  font-size: 6px;
+  font-size: 11px;
 
   font-weight: 800;
 
@@ -581,7 +582,7 @@
 }
 
 .leafly-cart-empty p {
-  max-width: 230px;
+  max-width: 250px;
 
   margin: 0;
 
@@ -590,10 +591,10 @@
       11,
       43,
       30,
-      0.52
+      0.68
     );
 
-  font-size: 9px;
+  font-size: 14px;
 
   line-height: 1.6;
 }
@@ -601,25 +602,25 @@
 .leafly-cart-empty button {
   margin-top: 20px;
 
-  min-height: 36px;
+  min-height: 42px;
 
   padding:
     0
-    16px;
+    24px;
 
   border: none;
 
-  border-radius: 5px;
+  border-radius: 6px;
 
   background: #0b2b1e;
 
   color: #f7f3ec;
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 0.9px;
+  letter-spacing: 1.2px;
 
   cursor: pointer;
 }
@@ -665,10 +666,10 @@
       11,
       43,
       30,
-      0.52
+      0.65
     );
 
-  font-size: 7px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -694,16 +695,16 @@
       11,
       43,
       30,
-      0.45
+      0.58
     );
 
-  font-size: 7px;
+  font-size: 12px;
 }
 
 .leafly-checkout-button {
   width: 100%;
 
-  min-height: 45px;
+  min-height: 48px;
 
   display: flex;
 
@@ -714,7 +715,7 @@
 
   border: none;
 
-  border-radius: 5px;
+  border-radius: 6px;
 
   background:
     linear-gradient(
@@ -725,11 +726,11 @@
 
   color: #f7f3ec;
 
-  font-size: 7px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
 
   cursor: pointer;
 
@@ -762,7 +763,7 @@
 
   margin-top: 9px;
 
-  padding: 5px;
+  padding: 8px 5px;
 
   border: none;
 
@@ -773,14 +774,14 @@
       11,
       43,
       30,
-      0.52
+      0.65
     );
 
-  font-size: 6px;
+  font-size: 11px;
 
   font-weight: 800;
 
-  letter-spacing: 0.9px;
+  letter-spacing: 1px;
 
   cursor: pointer;
 }

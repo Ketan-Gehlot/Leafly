@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Footer from "../components/Footer";
 import "./Journal.css";
 
 import teaTastingImage from "../assets/tea-tasting-journal.webp";
@@ -438,6 +439,7 @@ export default function Journal() {
         <span>⌃</span>
         <small>TOP</small>
       </button>
+      <Footer />
     </main>
   );
 }
