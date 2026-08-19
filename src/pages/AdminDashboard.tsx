@@ -6,7 +6,7 @@ import { recentOrders, salesAnalytics } from "../data/mockOrders";
 import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const { products, updateProduct, addProduct, deleteProduct } = useProducts();
+  const { products, updateProduct, addProduct } = useProducts();
   const [activeTab, setActiveTab] = useState<"dashboard" | "products">("dashboard");
   
   const [isEditing, setIsEditing] = useState(false);
