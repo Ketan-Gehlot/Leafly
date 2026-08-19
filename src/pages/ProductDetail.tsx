@@ -2,13 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-<<<<<<< HEAD
-import { products, type ProductVariantKey } from "../data/products";
-import Footer from "../components/Footer";
-=======
 import { type ProductVariantKey } from "../data/products";
 import { useProducts } from "../context/ProductContext";
->>>>>>> 90273f2870fab3c28adac9c68b9cd049682ab927
+import Footer from "../components/Footer";
 import "./ProductDetail.css";
 
 export default function ProductDetail() {
