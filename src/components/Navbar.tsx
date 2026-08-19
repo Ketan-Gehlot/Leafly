@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/leafly-logo.webp";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -21,6 +21,10 @@ const navLinks = [
     path: "/why-leafly",
   },
   {
+    label: "Gifting",
+    path: "/gifting",
+  },
+  {
     label: "Journal",
     path: "/journal",
   },
@@ -32,9 +36,14 @@ const navLinks = [
     label: "Contact",
     path: "/contact",
   },
+  {
+    label: "Admin",
+    path: "/admin",
+  },
 ];
 
 export default function Navbar() {
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const {
@@ -60,6 +69,10 @@ export default function Navbar() {
     closeMenu();
     openWishlist();
   };
+
+  if (location.pathname.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="leafly-navbar">

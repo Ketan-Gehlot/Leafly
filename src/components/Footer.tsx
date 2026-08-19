@@ -12,14 +12,14 @@ const shopLinks = [
 
 const exploreLinks = [
   { label: "Tea Collections", href: "/tea-collections" },
-  { label: "Artisanal Teaware", href: "/teaware" },
+  { label: "Tea maker", href: "/tea-maker" },
   { label: "Gifting", href: "/gifting" },
   { label: "Why Leafly", href: "/why-leafly" },
   { label: "Journal", href: "/journal" },
 ];
 
 const careLinks = [
-  { label: "My Account", href: "/account" },
+  { label: "My Account", href: "/profile" },
   { label: "Shipping Policy", href: "/shipping" },
   { label: "Freshness Guarantee", href: "/freshness" },
   { label: "FAQs", href: "/faq" },

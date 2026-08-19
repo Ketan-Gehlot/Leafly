@@ -76,7 +76,7 @@ export default function CouponRewardAnimation({
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                handleCopy(e as any);
+                handleCopy(e as unknown as React.MouseEvent);
               }
             }}
           >

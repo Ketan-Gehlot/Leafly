@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import {
@@ -73,10 +73,28 @@ export default function Checkout() {
 
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [shippingAddress, setShippingAddress] = useState<AddressForm>(defaultAddress);
+  const [shippingAddress, setShippingAddress] = useState<AddressForm>(() => {
+    const savedAddresses = readSavedAddresses();
+    if (savedAddresses.length > 0) {
+      const lastSaved = savedAddresses[0];
+      return {
+        fullName: lastSaved.fullName,
+        addressLine1: lastSaved.addressLine1,
+        addressLine2: lastSaved.addressLine2 ?? "",
+        city: lastSaved.city,
+        state: lastSaved.state,
+        postalCode: lastSaved.postalCode,
+        country: lastSaved.country,
+      };
+    }
+    return defaultAddress;
+  });
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("standard");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
-  const [saveAddress, setSaveAddress] = useState(false);
+  const [saveAddress, setSaveAddress] = useState(() => {
+    const savedAddresses = readSavedAddresses();
+    return savedAddresses.length > 0;
+  });
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
@@ -90,24 +108,6 @@ export default function Checkout() {
   const [couponInput, setCouponInput] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const [couponFeedback, setCouponFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
-
-  useEffect(() => {
-    const savedAddresses = readSavedAddresses();
-
-    if (savedAddresses.length > 0) {
-      const lastSaved = savedAddresses[0];
-      setShippingAddress({
-        fullName: lastSaved.fullName,
-        addressLine1: lastSaved.addressLine1,
-        addressLine2: lastSaved.addressLine2 ?? "",
-        city: lastSaved.city,
-        state: lastSaved.state,
-        postalCode: lastSaved.postalCode,
-        country: lastSaved.country,
-      });
-      setSaveAddress(true);
-    }
-  }, []); // This effect should only run once on mount to load saved addresses
 
   const deliveryFee = useMemo(
     () => (deliveryMethod === "express" ? 99 : 0),
