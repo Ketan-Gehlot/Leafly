@@ -80,12 +80,12 @@ export default function TeaRitualSoundscape() {
     setIsPlaying(false);
   };
 
-  const handleNext = () => {
+  function handleNext() {
     setCurrentTrackIndex((prev) =>
       prev === SOUNDSCAPE_PLAYLIST.length - 1 ? 0 : prev + 1
     );
     setIsPlaying(false);
-  };
+  }
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetTime = Number(e.target.value);

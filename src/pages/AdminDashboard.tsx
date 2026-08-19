@@ -39,7 +39,7 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (currentProduct.id) {
       // Update
-      const updated = currentProduct as Product;
+      const updated = { ...currentProduct } as Product;
       // Ensure variants reflect the base price properly if not deeply edited
       updated.variants = {
         "100g": { weight: "100g", price: updated.price, oldPrice: updated.oldPrice },
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
       updateProduct(updated);
     } else {
       // Add new
-      const newProduct = currentProduct as Product;
+      const newProduct = { ...currentProduct } as Product;
       newProduct.id = Date.now();
       newProduct.variants = {
         "100g": { weight: "100g", price: newProduct.price, oldPrice: newProduct.oldPrice },

@@ -180,6 +180,7 @@ export default function Shop() {
 
     return result;
   }, [
+    products,
     category,
     priceFilter,
     originFilter,

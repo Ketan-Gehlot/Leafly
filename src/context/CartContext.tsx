@@ -81,7 +81,7 @@ export function CartProvider({
         return [];
       }
 
-      // Normalize stored items to ensure composite ID and variant fields
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return parsed.map((item: any) => {
         const variant: ProductVariantKey = item.variant === "250g" ? "250g" : "100g";
         const compositeId = item.id && typeof item.id === "string" && item.id.includes("-")
