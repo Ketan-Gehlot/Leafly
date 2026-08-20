@@ -19,7 +19,6 @@ import kettleImg from "../assets/tea-maker/vessels/glass-kettle.webp";
 import teapotPourImg from "../assets/tea-maker/vessels/teapot-pour.webp";
 import cupImg from "../assets/tea-maker/vessels/cup-tea.webp";
 
-import rippleImg from "../assets/tea-maker/effects/ripple.webp";
 
 import lemonSliceEffect from "../assets/tea-maker/effects/lemon-slice.webp";
 import mintLeafEffect from "../assets/tea-maker/effects/mint-leaf.webp";
@@ -400,11 +399,11 @@ export default function TeaMaker() {
   const triggerPouringStage = () => {
     clearAllTimeouts();
     setBrewingSubStage("pouring");
-    
-    // Pouring duration (3.8s) -> Then transition to final Step 8 Ready state
+
+    // Pouring image shows briefly then transitions to final Step 8 Ready state
     const tPour = window.setTimeout(() => {
       setCurrentStep(8);
-    }, 4200);
+    }, 2200);
     sequenceTimeoutRef.current.push(tPour);
   };
 
@@ -512,6 +511,20 @@ export default function TeaMaker() {
           ======================================================= */}
       <section className="tm-hero" id="tea-maker-hero">
         <div className="tm-hero-bg-glow" aria-hidden="true" />
+
+        {/* Botanical leaf atmosphere — purely CSS animated, aria-hidden */}
+        <div className="tm-hero-leaves" aria-hidden="true">
+          <span className="tm-leaf l-1" />
+          <span className="tm-leaf l-2" />
+          <span className="tm-leaf l-3" />
+          <span className="tm-leaf l-4" />
+          <span className="tm-leaf l-5" />
+          <span className="tm-leaf l-6" />
+          <span className="tm-leaf l-7" />
+          <span className="tm-leaf l-8" />
+          <span className="tm-leaf l-9" />
+          <span className="tm-leaf l-10" />
+        </div>
 
         <div className="tm-hero-content">
           <div className="tm-eyebrow">
@@ -1016,58 +1029,15 @@ export default function TeaMaker() {
                   </div>
                 )}
 
-                {/* PHASE E: POURING (Teapot Tilts & Smooth Tea Stream Pours into Cup) */}
+                {/* PHASE E: POURING — premium image reveal, no physics */}
                 {brewingSubStage === "pouring" && (
                   <div className="tm-ritual-phase-b tm-fade-in">
-                    <div className="tm-vessels-pouring-layout">
-                      {/* Tilting Pouring Teapot */}
-                      <div className="tm-pouring-pot-wrap">
-                        <img
-                          src={teapotPourImg}
-                          alt="Teapot Pouring"
-                          className="tm-pouring-pot-img"
-                        />
-
-                        {/* Continuous Flow Stream in Exact Brewed Color */}
-                        <div className="tm-pouring-stream-wrap" aria-hidden="true">
-                          <svg className="tm-stream-svg" viewBox="0 0 100 240">
-                            <path
-                              d="M 24,0 Q 65,110 40,240"
-                              stroke={getTargetBrewedColor()}
-                              strokeWidth="11"
-                              fill="none"
-                              strokeLinecap="round"
-                              className="tm-stream-animated-path"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-
-                      {/* Cup Gradually Filling */}
-                      <div className="tm-pouring-cup-wrap">
-                        {/* Gentle Steam from Cup */}
-                        <div className="tm-cup-steam-gentle" aria-hidden="true">
-                          <span className="tm-steam-vapor sv-1" />
-                          <span className="tm-steam-vapor sv-2" />
-                        </div>
-
-                        <div className="tm-cup-main-frame">
-                          <img src={cupImg} alt="Tea Cup" className="tm-cup-glass-img" />
-
-                          {/* Gradual Cup Liquid Fill in Exact Brewed Color */}
-                          <div
-                            className="tm-cup-fill-reservoir filling"
-                            style={{ backgroundColor: getTargetBrewedColor() }}
-                          >
-                            <img
-                              src={rippleImg}
-                              alt=""
-                              className="tm-surface-ripple"
-                              aria-hidden="true"
-                            />
-                          </div>
-                        </div>
-                      </div>
+                    <div className="tm-pouring-asset-wrap">
+                      <img
+                        src={teapotPourImg}
+                        alt="Pouring tea"
+                        className="tm-pouring-asset-img"
+                      />
                     </div>
                   </div>
                 )}
@@ -1129,26 +1099,21 @@ export default function TeaMaker() {
           {currentStep === 8 && (
             <div className="tm-step-view tm-fade-in" key="step-8">
               <div className="tm-result-celebration-card">
-                {/* PROMINENT FINISHED CUP VISUAL (Teapot is NOT the centerpiece) */}
-                <div className="tm-result-cup-hero" aria-hidden="true">
-                  <div className="tm-result-steam-wrap">
-                    <span className="tm-steam-vapor sv-1" />
-                    <span className="tm-steam-vapor sv-2" />
-                    <span className="tm-steam-vapor sv-3" />
+                {/* PROMINENT FINISHED CUP — still image, gentle vapor only */}
+                <div className="tm-result-cup-hero">
+                  {/* Gentle vapor trails above cup */}
+                  <div className="tm-cup-vapor-trails" aria-hidden="true">
+                    <span className="tm-vapor-trail vt-1" />
+                    <span className="tm-vapor-trail vt-2" />
+                    <span className="tm-vapor-trail vt-3" />
                   </div>
                   <div className="tm-result-cup-frame">
-                    <img src={cupImg} alt="Steeped Cup" className="tm-cup-glass-img" />
+                    <img src={cupImg} alt="Your freshly brewed tea" className="tm-cup-glass-img" />
+                    {/* Static tea colour fill — no animation */}
                     <div
-                      className="tm-cup-fill-reservoir full"
+                      className="tm-cup-fill-static"
                       style={{ backgroundColor: getTargetBrewedColor() }}
-                    >
-                      <img
-                        src={rippleImg}
-                        alt=""
-                        className="tm-surface-ripple"
-                        aria-hidden="true"
-                      />
-                    </div>
+                    />
                   </div>
                 </div>
 
@@ -1173,7 +1138,7 @@ export default function TeaMaker() {
 
                   <div className="tm-result-quote-box">
                     <p className="tm-result-tasting-notes">✦ {currentCat.notes}</p>
-                    <p className="tm-result-quote">“{currentCat.tagline}”</p>
+                    <p className="tm-result-quote">"{currentCat.tagline}"</p>
                   </div>
 
                   <div className="tm-result-action-buttons">

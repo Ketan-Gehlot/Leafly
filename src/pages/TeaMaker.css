@@ -113,6 +113,70 @@
 }
 
 /* =========================================================
+   1b. HERO BOTANICAL LEAF ATMOSPHERE
+   ========================================================= */
+
+.tm-hero-leaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Single leaf silhouette — rendered entirely in CSS */
+.tm-leaf {
+  position: absolute;
+  display: block;
+  /* Leaf shape via border-radius */
+  border-radius: 0 50% 50% 50%;
+  background: rgba(144, 190, 109, 0.18);
+  transform-origin: center center;
+  animation: tmLeafDrift linear infinite;
+  will-change: transform, opacity;
+}
+
+/* 10 unique leaves with varied size, position, speed, opacity, delay */
+.tm-leaf.l-1  { width: 18px; height: 26px; left:  8%; top: -10%; opacity: 0.22; animation-duration: 18s; animation-delay:  0s;   transform: rotate(15deg); }
+.tm-leaf.l-2  { width: 12px; height: 18px; left: 22%; top: -5%;  opacity: 0.15; animation-duration: 24s; animation-delay: -6s;   transform: rotate(-25deg); }
+.tm-leaf.l-3  { width: 22px; height: 32px; left: 38%; top: -8%;  opacity: 0.10; animation-duration: 20s; animation-delay: -3s;   transform: rotate(40deg); }
+.tm-leaf.l-4  { width: 10px; height: 16px; left: 55%; top: -12%; opacity: 0.18; animation-duration: 28s; animation-delay: -10s;  transform: rotate(-10deg); }
+.tm-leaf.l-5  { width: 16px; height: 24px; left: 68%; top: -6%;  opacity: 0.12; animation-duration: 22s; animation-delay:  -2s;  transform: rotate(30deg); }
+.tm-leaf.l-6  { width: 20px; height: 28px; left: 80%; top: -9%;  opacity: 0.20; animation-duration: 16s; animation-delay:  -8s;  transform: rotate(-20deg); }
+.tm-leaf.l-7  { width: 14px; height: 20px; left: 90%; top: -4%;  opacity: 0.13; animation-duration: 26s; animation-delay:  -4s;  transform: rotate(50deg); }
+.tm-leaf.l-8  { width: 24px; height: 34px; left:  3%; top: -14%; opacity: 0.08; animation-duration: 30s; animation-delay: -14s;  transform: rotate(-35deg); }
+.tm-leaf.l-9  { width: 11px; height: 17px; left: 48%; top: -7%;  opacity: 0.16; animation-duration: 19s; animation-delay:  -7s;  transform: rotate(20deg); }
+.tm-leaf.l-10 { width: 17px; height: 25px; left: 73%; top: -11%; opacity: 0.14; animation-duration: 23s; animation-delay: -11s;  transform: rotate(-45deg); }
+
+@keyframes tmLeafDrift {
+  0% {
+    transform: translateY(0)   translateX(0)   rotate(var(--r, 15deg))  scale(1);
+    opacity: var(--op, 0.16);
+  }
+  25% {
+    transform: translateY(35vh) translateX(18px) rotate(calc(var(--r, 15deg) + 12deg)) scale(0.95);
+    opacity: calc(var(--op, 0.16) * 1.1);
+  }
+  50% {
+    transform: translateY(65vh) translateX(-12px) rotate(calc(var(--r, 15deg) + 28deg)) scale(0.9);
+  }
+  75% {
+    transform: translateY(85vh) translateX(8px)  rotate(calc(var(--r, 15deg) + 40deg)) scale(0.88);
+    opacity: calc(var(--op, 0.16) * 0.6);
+  }
+  100% {
+    transform: translateY(110vh) translateX(0)   rotate(calc(var(--r, 15deg) + 55deg)) scale(0.85);
+    opacity: 0;
+  }
+}
+
+/* Ensure the hero content sits above the leaves */
+.tm-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================
    2. SEQUENTIAL WIZARD CONTAINER & PROGRESS BAR
    ========================================================= */
 
@@ -976,77 +1040,47 @@
   100% { transform: scaleY(1.15) scaleX(1.05); opacity: 1; }
 }
 
-/* PHASE E: POURING LAYOUT (TEAPOT TILTS -> STREAM -> CUP FILLS) */
+/* PHASE E: POURING — premium image reveal */
+.tm-pouring-asset-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 28px;
+  animation: tmPouringReveal 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tm-pouring-asset-img {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 32px rgba(11, 43, 30, 0.14));
+}
+
+@keyframes tmPouringReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Phase B wrapper (used for pouring reveal container) */
 .tm-ritual-phase-b {
   width: 100%;
-  max-width: 500px;
-  margin-bottom: 30px;
-}
-
-.tm-vessels-pouring-layout {
+  max-width: 480px;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 40px;
-  position: relative;
-  min-height: 240px;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
 }
 
-.tm-pouring-pot-wrap {
-  position: relative;
-  width: 180px;
-  height: 165px;
-  transform: rotate(-24deg) translateY(-20px) translateX(12px);
-  transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 5;
-}
-
-.tm-pouring-pot-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 12px 22px rgba(11, 43, 30, 0.18));
-}
-
-.tm-pouring-stream-wrap {
-  position: absolute;
-  top: 60px;
-  right: -52px;
-  width: 90px;
-  height: 200px;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.tm-stream-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.tm-stream-animated-path {
-  stroke-dasharray: 14 6;
-  animation: tmStreamFlow 380ms linear infinite;
-}
-
-@keyframes tmStreamFlow {
-  from { stroke-dashoffset: 20; }
-  to { stroke-dashoffset: 0; }
-}
-
-.tm-pouring-cup-wrap {
-  position: relative;
-  width: 155px;
-  height: 140px;
-  z-index: 4;
-}
-
-.tm-cup-main-frame {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
+/* Cup image used in Step 2 visualiser and final state */
 .tm-cup-glass-img {
   position: relative;
   z-index: 2;
@@ -1054,40 +1088,6 @@
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 10px 18px rgba(11, 43, 30, 0.12));
-}
-
-.tm-cup-fill-reservoir {
-  position: absolute;
-  bottom: 12px;
-  left: 18px;
-  right: 18px;
-  border-radius: 0 0 45px 45px;
-  z-index: 1;
-  overflow: hidden;
-  transition: height 2.2s cubic-bezier(0.2, 0.8, 0.3, 1), background-color 400ms ease;
-}
-
-.tm-cup-fill-reservoir.filling {
-  height: 70%;
-}
-
-.tm-cup-fill-reservoir.full {
-  height: 76%;
-}
-
-.tm-surface-ripple {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  opacity: 0.7;
-  animation: tmRipple 1.2s infinite ease-out;
-}
-
-@keyframes tmRipple {
-  0% { transform: translateX(-50%) scale(0.8); opacity: 0.8; }
-  100% { transform: translateX(-50%) scale(1.3); opacity: 0; }
 }
 
 /* Steeping Timer Box */
@@ -1171,17 +1171,90 @@
   margin: 0 auto;
 }
 
+/* Final still cup hero — larger, prominent */
 .tm-result-cup-hero {
   position: relative;
-  width: 175px;
-  height: 160px;
-  margin-bottom: 24px;
+  width: 200px;
+  height: 185px;
+  margin-bottom: 28px;
 }
 
 .tm-result-cup-frame {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* Gentle vapor trails above final cup */
+.tm-cup-vapor-trails {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tm-vapor-trail {
+  display: block;
+  width: 3px;
+  border-radius: 4px;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(2.5px);
+  opacity: 0;
+  transform-origin: bottom center;
+}
+
+.tm-vapor-trail.vt-1 {
+  height: 26px;
+  animation: tmVaporTrail 3.2s ease-out infinite 0.0s;
+}
+.tm-vapor-trail.vt-2 {
+  height: 34px;
+  animation: tmVaporTrail 2.8s ease-out infinite 1.1s;
+}
+.tm-vapor-trail.vt-3 {
+  height: 22px;
+  animation: tmVaporTrail 3.6s ease-out infinite 2.0s;
+}
+
+@keyframes tmVaporTrail {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scaleX(1) translateX(0);
+  }
+  20% {
+    opacity: 0.7;
+  }
+  60% {
+    opacity: 0.4;
+    transform: translateY(-14px) scaleX(1.2) translateX(4px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-32px) scaleX(0.8) translateX(-3px);
+  }
+}
+
+/* Static tea colour fill inside final cup — no fill animation */
+.tm-cup-fill-static {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
+  height: 72%;
+  border-radius: 0 0 48px 48px;
+  z-index: 1;
+  /* No transition or animation — intentional static image-like quality */
 }
 
 .tm-result-pill {
@@ -1307,26 +1380,33 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 
-  .tm-vessels-pouring-layout {
-    gap: 16px;
+  /* On mobile, hide half the hero leaves to reduce clutter */
+  .tm-leaf.l-3,
+  .tm-leaf.l-6,
+  .tm-leaf.l-7,
+  .tm-leaf.l-9 {
+    display: none;
   }
 
-  .tm-open-pot-composition,
-  .tm-pouring-pot-wrap {
+  .tm-open-pot-composition {
     width: 135px;
     height: 125px;
   }
 
   .tm-pot-liquid-reservoir {
-    bottom: 16px;
-    left: 20px;
-    right: 20px;
-    height: 48px;
+    bottom: 10px;
+    left: 14px;
+    right: 14px;
+    height: 52px;
   }
 
-  .tm-pouring-cup-wrap {
-    width: 115px;
-    height: 105px;
+  .tm-pouring-asset-img {
+    max-width: 280px;
+  }
+
+  .tm-result-cup-hero {
+    width: 160px;
+    height: 148px;
   }
 
   .tm-result-action-buttons {
@@ -1340,19 +1420,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Disable all animations — leave everything statically positioned */
+  .tm-leaf,
   .tm-fade-in,
   .tm-pop-in,
-  .tm-stream-animated-path,
-  .tm-falling-particle,
+  .tm-vapor-trail,
   .tm-steam-vapor,
-  .tm-surface-ripple,
-  .flame,
-  .tm-falling-tea-leaf,
   .tm-sequential-drop-item,
-  .tm-pot-simmering-item,
-  .tm-cup-floating-botanical {
+  .tm-simmer-bubble,
+  .flame,
+  .tm-pouring-asset-wrap,
+  .tm-surface-ripple {
     animation: none !important;
     transition: none !important;
+    opacity: 1 !important;
   }
 }
 
