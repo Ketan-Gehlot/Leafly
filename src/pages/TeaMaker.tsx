@@ -1,137 +1,390 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { useProducts } from "../context/ProductContext";
 import TeaRitualSoundscape from "../components/TeaRitualSoundscape";
 import Footer from "../components/Footer";
 import "./TeaMaker.css";
 
-type TeaType = "Green" | "White" | "Black" | "Oolong" | "Pu-erh";
-type TeaStrength = "Light" | "Balanced" | "Strong";
+// Assets
+import lemonImg from "../assets/tea-maker/ingredients/lemon.webp";
+import jaggeryImg from "../assets/tea-maker/ingredients/jaggery.webp";
+import mintImg from "../assets/tea-maker/ingredients/mint.webp";
+import lemongrassImg from "../assets/tea-maker/ingredients/lemongrass.webp";
+import pepperImg from "../assets/tea-maker/ingredients/black-pepper.webp";
+import saltImg from "../assets/tea-maker/ingredients/black-salt.webp";
+import honeyImg from "../assets/tea-maker/ingredients/honey.webp";
 
-type TeaPreset = {
+import kettleImg from "../assets/tea-maker/vessels/glass-kettle.webp";
+import teapotPourImg from "../assets/tea-maker/vessels/teapot-pour.webp";
+import cupImg from "../assets/tea-maker/vessels/cup-tea.webp";
+
+import rippleImg from "../assets/tea-maker/effects/ripple.webp";
+
+import lemonSliceEffect from "../assets/tea-maker/effects/lemon-slice.webp";
+import mintLeafEffect from "../assets/tea-maker/effects/mint-leaf.webp";
+import jaggeryPieceEffect from "../assets/tea-maker/effects/jaggery-piece.webp";
+import lemongrassPieceEffect from "../assets/tea-maker/effects/lemongrass-piece.webp";
+import pepperParticlesEffect from "../assets/tea-maker/effects/pepper-particles.webp";
+import saltParticlesEffect from "../assets/tea-maker/effects/salt-particles.webp";
+import honeyDropEffect from "../assets/tea-maker/effects/honey-drop.webp";
+import teaLeavesFallingEffect from "../assets/tea-maker/effects/tea-leaves-falling.webp";
+
+export type TeaType = "Green" | "White" | "Black" | "Oolong" | "Pu-erh";
+export type TeaStrength = "Light" | "Balanced" | "Strong";
+
+export type IngredientId =
+  | "lemon"
+  | "jaggery"
+  | "mint"
+  | "lemongrass"
+  | "black-pepper"
+  | "black-salt"
+  | "honey";
+
+interface Ingredient {
+  id: IngredientId;
   name: string;
-  category: TeaType;
-  temp: number;
-  timeSec: number;
-  notes: string;
-  tagline: string;
-  cupColor: string;
-  leafColor: string;
-};
+  subtitle: string;
+  description: string;
+  image: string;
+  effectImage: string;
+  particleType: "drop" | "float" | "dissolve" | "spray" | "stream";
+}
 
-const TEA_PRESETS: Record<TeaType, TeaPreset> = {
+const INGREDIENTS: Ingredient[] = [
+  {
+    id: "lemon",
+    name: "Lemon",
+    subtitle: "Bright · Citrus · Fresh",
+    description: "Sun-ripened citrus zest for bright, uplifting morning freshness.",
+    image: lemonImg,
+    effectImage: lemonSliceEffect,
+    particleType: "drop",
+  },
+  {
+    id: "jaggery",
+    name: "Jaggery",
+    subtitle: "Earthy · Caramel · Warm",
+    description: "Organic cane sweetness with deep caramel and mineral undertones.",
+    image: jaggeryImg,
+    effectImage: jaggeryPieceEffect,
+    particleType: "dissolve",
+  },
+  {
+    id: "mint",
+    name: "Mint Leaves",
+    subtitle: "Crisp · Herbal · Cooling",
+    description: "Hand-plucked spearmint leaves imparting a crisp, soothing finish.",
+    image: mintImg,
+    effectImage: mintLeafEffect,
+    particleType: "float",
+  },
+  {
+    id: "lemongrass",
+    name: "Lemongrass",
+    subtitle: "Aromatic · Zesty · Calming",
+    description: "Highland lemongrass stalks bringing citrus aroma and digest calm.",
+    image: lemongrassImg,
+    effectImage: lemongrassPieceEffect,
+    particleType: "float",
+  },
+  {
+    id: "black-pepper",
+    name: "Black Pepper",
+    subtitle: "Piquant · Spicy · Fiery",
+    description: "Malabar black peppercorns offering warmth and immune vitality.",
+    image: pepperImg,
+    effectImage: pepperParticlesEffect,
+    particleType: "spray",
+  },
+  {
+    id: "black-salt",
+    name: "Black Salt",
+    subtitle: "Savory · Mineral · Grounding",
+    description: "Himalayan kala namak adding authentic Ayurvedic depth.",
+    image: saltImg,
+    effectImage: saltParticlesEffect,
+    particleType: "spray",
+  },
+  {
+    id: "honey",
+    name: "Wild Honey",
+    subtitle: "Floral · Golden · Soothing",
+    description: "Raw forest honey delivering gentle sweetness and a velvety body.",
+    image: honeyImg,
+    effectImage: honeyDropEffect,
+    particleType: "stream",
+  },
+];
+
+interface TeaCategoryInfo {
+  type: TeaType;
+  title: string;
+  tagline: string;
+  defaultTemp: number;
+  defaultTimeSec: number;
+  lightColor: string;
+  balancedColor: string;
+  strongColor: string;
+  leafColor: string;
+  notes: string;
+  matchedProductId: number;
+  image: string;
+}
+
+const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
   Green: {
-    name: "Himalayan Spring Green",
-    category: "Green",
-    temp: 80,
-    timeSec: 150, // 2.5 min
-    notes: "Sweet Grass · Jasmine · Dewy Mist",
-    tagline: "A gentle cup for a slower, mindful morning.",
-    cupColor: "rgba(185, 198, 126, 0.85)",
+    type: "Green",
+    title: "Green Tea",
+    tagline: "Fresh & Vibrant · Clean, uplifting, dewy sweetness.",
+    defaultTemp: 80,
+    defaultTimeSec: 150,
+    lightColor: "#d9e5b6",
+    balancedColor: "#b2cb7e",
+    strongColor: "#89a552",
     leafColor: "#4f7743",
+    notes: "Sweet Grass · Jasmine · Dewy Mountain Mist",
+    matchedProductId: 1,
+    image: "/leafly-green-tea.png",
   },
   White: {
-    name: "Silver Needle Spring White",
-    category: "White",
-    temp: 75,
-    timeSec: 180, // 3 min
-    notes: "Wild Honeysuckle · Melon · Silk",
-    tagline: "Delicate and airy, harvested at high dawn.",
-    cupColor: "rgba(224, 212, 170, 0.75)",
+    type: "White",
+    title: "White Tea",
+    tagline: "Pure & Delicate · Silken, airy, hand-plucked buds.",
+    defaultTemp: 75,
+    defaultTimeSec: 180,
+    lightColor: "#f4eed9",
+    balancedColor: "#e6dcaf",
+    strongColor: "#cbbe86",
     leafColor: "#8f967a",
+    notes: "Wild Honeysuckle · White Peach · Melon Silk",
+    matchedProductId: 2,
+    image: "/leafly-white-tea.png",
   },
   Black: {
-    name: "Darjeeling First Flush Black",
-    category: "Black",
-    temp: 95,
-    timeSec: 210, // 3.5 min
-    notes: "Muscatel Grape · Amber Malt · Forest Oak",
-    tagline: "Bold, grounded, and richly layered.",
-    cupColor: "rgba(180, 84, 30, 0.9)",
+    type: "Black",
+    title: "Black Tea",
+    tagline: "Rich & Bold · Deep amber malt with muscatel notes.",
+    defaultTemp: 95,
+    defaultTimeSec: 210,
+    lightColor: "#d78f5a",
+    balancedColor: "#b3521d",
+    strongColor: "#7e320d",
     leafColor: "#3a2012",
+    notes: "Muscatel Grape · Amber Malt · Forest Oak",
+    matchedProductId: 3,
+    image: "/leafly-black-tea.png",
   },
   Oolong: {
-    name: "High Mountain Artisan Oolong",
-    category: "Oolong",
-    temp: 90,
-    timeSec: 240, // 4 min
-    notes: "Roasted Orchid · Peach Blossom · Honey",
-    tagline: "Complex transformation through curling whole leaves.",
-    cupColor: "rgba(209, 138, 56, 0.85)",
+    type: "Oolong",
+    title: "Oolong Tea",
+    tagline: "Complex & Refined · Floral aroma with roasted orchid depth.",
+    defaultTemp: 90,
+    defaultTimeSec: 240,
+    lightColor: "#e7b975",
+    balancedColor: "#cb8730",
+    strongColor: "#9e5c12",
     leafColor: "#574828",
+    notes: "Roasted Orchid · Peach Blossom · Wild Forest Honey",
+    matchedProductId: 4,
+    image: "/leafly-oolong-tea.png",
   },
   "Pu-erh": {
-    name: "Ancient Tree Aged Pu-erh",
-    category: "Pu-erh",
-    temp: 98,
-    timeSec: 300, // 5 min
-    notes: "Petrichor · Dark Cocoa · Earthy Moss",
-    tagline: "Deeply restorative fermented vintage character.",
-    cupColor: "rgba(95, 34, 16, 0.95)",
+    type: "Pu-erh",
+    title: "Pu-erh Tea",
+    tagline: "Deep & Earthy · Restorative slow-aged vintage complexity.",
+    defaultTemp: 98,
+    defaultTimeSec: 300,
+    lightColor: "#8f442b",
+    balancedColor: "#612312",
+    strongColor: "#3e1207",
     leafColor: "#22130c",
+    notes: "Petrichor · Dark Cocoa · Earthy Forest Moss",
+    matchedProductId: 5,
+    image: "/leafly-puer-tea.png",
   },
 };
 
+const STEPS = [
+  { num: "01", label: "Tea" },
+  { num: "02", label: "Cups" },
+  { num: "03", label: "Water" },
+  { num: "04", label: "Steep" },
+  { num: "05", label: "Strength" },
+  { num: "06", label: "Ingredients" },
+  { num: "07", label: "Brew" },
+  { num: "08", label: "Ready" },
+];
+
 export default function TeaMaker() {
-  // Config state
-  const [teaType, setTeaType] = useState<TeaType>("Green");
-  const [quantity, setQuantity] = useState<"100g" | "250g">("100g");
+  const { addToCart, openCart } = useCart();
+  const { products } = useProducts();
+
+  // Wizard Step: 1 to 8
+  const [currentStep, setCurrentStep] = useState<number>(1);
+
+  // Configuration Selections
+  const [selectedTea, setSelectedTea] = useState<TeaType>("Green");
+  const [cupCount, setCupCount] = useState<number>(1);
   const [temperature, setTemperature] = useState<number>(80);
   const [steepingTimeSec, setSteepingTimeSec] = useState<number>(150);
   const [strength, setStrength] = useState<TeaStrength>("Balanced");
-  const [isAmbient, setIsAmbient] = useState(false);
+  const [selectedIngredients, setSelectedIngredients] = useState<IngredientId[]>([]);
 
-  // Brewing lifecycle:
-  // 0: "idle" (config panel)
-  // 1: "heating" (01 Heating Water)
-  // 2: "pouring" (02 Pouring Water)
-  // 3: "blooming" (03 Leaves Bloom)
-  // 4: "steeping" (04 Steeping with Countdown)
-  // 5: "ready" (05 Tea is Ready + Result)
-  const [ritualStage, setRitualStage] = useState<
-    "idle" | "heating" | "pouring" | "blooming" | "steeping" | "ready"
-  >("idle");
-
-  // Timer state
+  // Brewing & Ritual Lifecycle (Step 7)
+  // Sub-stages:
+  // "heating" (water warming on gentle gas flame, subtle steam)
+  // "adding-tea" (whole tea leaves enter teapot)
+  // "infusing-ingredients" (selected ingredients enter sequentially one by one)
+  // "steeping" (timer counting down, liquid gradually deepening in colour)
+  // "pouring" (teapot tilts, stream flows, cup fills gradually)
+  const [brewingSubStage, setBrewingSubStage] = useState<
+    "heating" | "adding-tea" | "infusing-ingredients" | "steeping" | "pouring"
+  >("heating");
+  const [steepProgress, setSteepProgress] = useState<number>(0); // 0 (clear warm water) to 1 (full brewed strength)
+  const [activeBrewIngredientIdx, setActiveBrewIngredientIdx] = useState<number>(-1);
   const [timeLeft, setTimeLeft] = useState<number>(150);
-  const [isTimerPaused, setIsTimerPaused] = useState(false);
+  const [isTimerPaused, setIsTimerPaused] = useState<boolean>(false);
+  const [addedToCartSuccess, setAddedToCartSuccess] = useState<boolean>(false);
 
   const timerRef = useRef<number | null>(null);
+  const sequenceTimeoutRef = useRef<number[]>([]);
 
-  // Sync defaults when tea type changes
-  const handleTeaTypeChange = (type: TeaType) => {
-    setTeaType(type);
-    const preset = TEA_PRESETS[type];
-    setTemperature(preset.temp);
-    setSteepingTimeSec(preset.timeSec);
-    setTimeLeft(preset.timeSec);
+  const clearAllTimeouts = () => {
+    sequenceTimeoutRef.current.forEach((t) => clearTimeout(t));
+    sequenceTimeoutRef.current = [];
   };
 
-  // Start Brewing trigger
+  // Auto-scroll on step transition
+  useEffect(() => {
+    const wizardEl = document.getElementById("tea-maker-wizard");
+    if (wizardEl) {
+      wizardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [currentStep]);
+
+  // Step 1: Select Tea Category
+  const handleSelectTea = (type: TeaType) => {
+    setSelectedTea(type);
+    const cat = TEA_CATEGORIES[type];
+    setTemperature(cat.defaultTemp);
+    setSteepingTimeSec(cat.defaultTimeSec);
+    setTimeLeft(cat.defaultTimeSec);
+
+    setTimeout(() => {
+      setCurrentStep(2);
+    }, 380);
+  };
+
+  // Step 2: Select Cup Quantity
+  const handleSelectCups = (count: number) => {
+    setCupCount(count);
+    setTimeout(() => {
+      setCurrentStep(3);
+    }, 320);
+  };
+
+  // Step 3: Select Temperature
+  const handleSelectTemperature = (temp: number) => {
+    setTemperature(temp);
+    setTimeout(() => {
+      setCurrentStep(4);
+    }, 320);
+  };
+
+  // Step 4: Select Steeping Duration
+  const handleSelectSteepTime = (sec: number) => {
+    setSteepingTimeSec(sec);
+    setTimeLeft(sec);
+    setTimeout(() => {
+      setCurrentStep(5);
+    }, 320);
+  };
+
+  // Step 5: Select Strength
+  const handleSelectStrength = (str: TeaStrength) => {
+    setStrength(str);
+    setTimeout(() => {
+      setCurrentStep(6);
+    }, 320);
+  };
+
+  // Step 6: Toggle Ingredients (No floating preview outside card)
+  const handleToggleIngredient = (id: IngredientId) => {
+    if (selectedIngredients.includes(id)) {
+      setSelectedIngredients((prev) => prev.filter((item) => item !== id));
+    } else {
+      setSelectedIngredients((prev) => [...prev, id]);
+    }
+  };
+
+  // Step 7: Start Sequential Brewing Ritual
+  // Sequence:
+  // 1. PHASE A - HEATING: Open teapot sits on gas burner with subtle flame & water (2.0s)
+  // 2. PHASE B - ADDING TEA: Tea leaves enter the teapot (1.5s)
+  // 3. PHASE C - ADDING SELECTED INGREDIENTS: Only user-selected ingredients enter sequentially (1.2s each)
+  // 4. STEEPING: Timer counts down, teapot stationary, subtle steam, liquid deepens in color
+  // 5. POURING: Teapot tilts, stream pours, cup fills, steam rises
   const handleStartBrewing = () => {
-    setRitualStage("heating");
+    clearAllTimeouts();
+    setCurrentStep(7);
+    setBrewingSubStage("heating");
+    setSteepProgress(0);
+    setActiveBrewIngredientIdx(-1);
     setTimeLeft(steepingTimeSec);
     setIsTimerPaused(false);
+    setAddedToCartSuccess(false);
 
-    // Sequence stages:
-    // 0s - 2s: Heating Water
-    // 2s - 4.5s: Pouring Water
-    // 4.5s - 6.5s: Leaves Bloom
-    // 6.5s onwards: Steeping countdown
-    window.setTimeout(() => setRitualStage("pouring"), 2000);
-    window.setTimeout(() => setRitualStage("blooming"), 4500);
-    window.setTimeout(() => setRitualStage("steeping"), 6500);
+    // 1. Heating -> 2. Adding Tea Leaves (after 2s)
+    const tAddTea = window.setTimeout(() => {
+      setBrewingSubStage("adding-tea");
+
+      // 3. Adding Tea -> Adding Selected Ingredients or directly to Steeping (after 1.6s)
+      const tAddIngs = window.setTimeout(() => {
+        if (selectedIngredients.length > 0) {
+          setBrewingSubStage("infusing-ingredients");
+          selectedIngredients.forEach((_, idx) => {
+            const tIng = window.setTimeout(() => {
+              setActiveBrewIngredientIdx(idx);
+            }, idx * 1200);
+            sequenceTimeoutRef.current.push(tIng);
+          });
+
+          // Transition to active steeping after all selected ingredients enter
+          const totalIngDuration = selectedIngredients.length * 1200 + 600;
+          const tSteep = window.setTimeout(() => {
+            setBrewingSubStage("steeping");
+          }, totalIngDuration);
+          sequenceTimeoutRef.current.push(tSteep);
+        } else {
+          // Pure tea: directly transition to steeping
+          setBrewingSubStage("steeping");
+        }
+      }, 1600);
+      sequenceTimeoutRef.current.push(tAddIngs);
+
+    }, 2000);
+    sequenceTimeoutRef.current.push(tAddTea);
   };
 
-  // Countdown timer logic for Steeping stage
+  // Countdown Timer in Step 7 (Steeping Stage)
   useEffect(() => {
-    if (ritualStage === "steeping" && !isTimerPaused) {
+    if (currentStep === 7 && brewingSubStage === "steeping" && !isTimerPaused) {
       timerRef.current = window.setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(timerRef.current!);
-            setRitualStage("ready");
+            setSteepProgress(1);
+            // Steeping complete -> Begin Pouring Stage
+            triggerPouringStage();
             return 0;
           }
-          return prev - 1;
+          const newTime = prev - 1;
+          // Dynamically compute steep progress 0 -> 1
+          const progress = (steepingTimeSec - newTime) / steepingTimeSec;
+          setSteepProgress(Math.min(1, Math.max(0.1, progress)));
+          return newTime;
         });
       }, 1000);
     } else {
@@ -141,17 +394,77 @@ export default function TeaMaker() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [ritualStage, isTimerPaused]);
+  }, [currentStep, brewingSubStage, isTimerPaused, steepingTimeSec]);
 
-  const handlePauseResume = () => {
+  // Transition from Steeping to Pouring Phase
+  const triggerPouringStage = () => {
+    clearAllTimeouts();
+    setBrewingSubStage("pouring");
+    
+    // Pouring duration (3.8s) -> Then transition to final Step 8 Ready state
+    const tPour = window.setTimeout(() => {
+      setCurrentStep(8);
+    }, 4200);
+    sequenceTimeoutRef.current.push(tPour);
+  };
+
+  const handlePauseResumeTimer = () => {
     setIsTimerPaused((prev) => !prev);
   };
 
-  const handleReset = () => {
+  const handleResetTimer = () => {
+    clearAllTimeouts();
     if (timerRef.current) clearInterval(timerRef.current);
-    setRitualStage("idle");
     setTimeLeft(steepingTimeSec);
+    setSteepProgress(0.1);
     setIsTimerPaused(false);
+    setBrewingSubStage("steeping");
+  };
+
+  // Skip Timer: Quickly finalize colour transition, steam settles, and smoothly trigger pouring
+  const handleSkipTimer = () => {
+    clearAllTimeouts();
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(0);
+    setSteepProgress(1);
+    
+    // Fast, elegant transition to pouring phase
+    const tSkip = window.setTimeout(() => {
+      triggerPouringStage();
+    }, 400);
+    sequenceTimeoutRef.current.push(tSkip);
+  };
+
+  const handleRestartFullRitual = () => {
+    clearAllTimeouts();
+    if (timerRef.current) clearInterval(timerRef.current);
+    setCurrentStep(1);
+    setSelectedIngredients([]);
+    setTimeLeft(150);
+    setSteepProgress(0);
+    setIsTimerPaused(false);
+    setAddedToCartSuccess(false);
+  };
+
+  const handleAddToCartRitual = () => {
+    const cat = TEA_CATEGORIES[selectedTea];
+    const productMatch = products.find((p) => p.id === cat.matchedProductId) || {
+      id: cat.matchedProductId,
+      name: `${cat.title} (${selectedTea} Ritual)`,
+      category: selectedTea,
+      origin: "Single Estate, India",
+      caffeine: "Medium",
+      weight: "100g",
+      price: 699,
+      badge: "Artisan Ritual",
+      image: cat.image,
+    };
+
+    addToCart(productMatch, cupCount, "100g", 699);
+    setAddedToCartSuccess(true);
+    setTimeout(() => {
+      openCart();
+    }, 350);
   };
 
   const formatTimer = (seconds: number) => {
@@ -160,392 +473,745 @@ export default function TeaMaker() {
     return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  const currentPreset = TEA_PRESETS[teaType];
+  const currentCat = TEA_CATEGORIES[selectedTea];
+
+  // Target brewed tea color based on user's selected infusion strength
+  const getTargetBrewedColor = () => {
+    if (strength === "Light") return currentCat.lightColor;
+    if (strength === "Strong") return currentCat.strongColor;
+    return currentCat.balancedColor;
+  };
+
+  // Dynamic Liquid Color during Steeping (starts pale warm water and subtly transitions to rich tea tone)
+  const getSteepingLiquidStyle = () => {
+    const targetColor = getTargetBrewedColor();
+    if (brewingSubStage === "heating") {
+      return {
+        background: "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(235, 225, 205, 0.5) 100%)",
+        opacity: 0.7,
+      };
+    }
+    if (brewingSubStage === "adding-tea" || brewingSubStage === "infusing-ingredients") {
+      return {
+        background: `linear-gradient(180deg, rgba(245, 238, 220, 0.6) 0%, ${targetColor}44 100%)`,
+        opacity: 0.8,
+      };
+    }
+    // "steeping" or "pouring"
+    return {
+      background: `linear-gradient(180deg, ${targetColor}99 0%, ${targetColor} 100%)`,
+      opacity: 0.75 + steepProgress * 0.25,
+      transition: "background 1.5s ease, opacity 1.5s ease",
+    };
+  };
 
   return (
-    <main className={`tea-maker-page ${isAmbient ? "ambient-mode-active" : ""}`}>
+    <main className="tea-maker-page">
       {/* =======================================================
-          1. HERO SECTION
+          HERO BANNER
           ======================================================= */}
       <section className="tm-hero" id="tea-maker-hero">
         <div className="tm-hero-bg-glow" aria-hidden="true" />
-        
-        {/* Floating atmospheric leaf particles for ambient mode */}
-        <div className="tm-ambient-particles" aria-hidden="true">
-          <span className="tm-ambient-leaf al-1">🍃</span>
-          <span className="tm-ambient-leaf al-2">🍂</span>
-          <span className="tm-ambient-leaf al-3">🍃</span>
-          <span className="tm-ambient-leaf al-4">🍂</span>
-          <span className="tm-ambient-leaf al-5">🍃</span>
-        </div>
 
         <div className="tm-hero-content">
           <div className="tm-eyebrow">
             <span className="tm-eyebrow-line" />
-            <p>INDIAN ARTISAN BREWING</p>
+            <p>GUIDED ARTISAN BREWING</p>
             <span className="tm-eyebrow-line" />
           </div>
 
           <h1 className="tm-title">TEA MAKER</h1>
           <p className="tm-subtitle">
-            Create your perfect cup.
+            An interactive, step-by-step tea-making ritual.
             <br />
-            <em>Your ritual. Your moment.</em>
+            <em>Slow down · Select your leaves · Steep with intention</em>
           </p>
-
-          <a href="#build-ritual" className="tm-hero-cta">
-            <span>START YOUR TEA RITUAL</span>
-            <span className="tm-cta-arrow">↓</span>
-          </a>
         </div>
       </section>
 
       {/* =======================================================
-          2. BUILD YOUR RITUAL (CONFIGURATION PANEL)
+          SEQUENTIAL GUIDED WIZARD CONTAINER
           ======================================================= */}
-      <section className="tm-config-section" id="build-ritual">
+      <section className="tm-wizard-section" id="tea-maker-wizard">
         <div className="tm-container">
-          <div className="tm-section-header">
-            <span className="tm-step-badge">STAGE 01</span>
-            <h2>BUILD YOUR RITUAL</h2>
-            <p>Tailor origin, temperature, time, and leaf strength.</p>
-          </div>
 
-          <div className="tm-config-grid">
-            {/* TEA TYPE SELECTOR */}
-            <div className="tm-config-card">
-              <label className="tm-config-label">SELECT TEA TYPE</label>
-              <div className="tm-pill-group">
-                {(["Green", "White", "Black", "Oolong", "Pu-erh"] as TeaType[]).map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    className={`tm-pill-btn ${teaType === type ? "active" : ""}`}
-                    onClick={() => handleTeaTypeChange(type)}
-                  >
-                    {type} Tea
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* QUANTITY / WEIGHT */}
-            <div className="tm-config-card">
-              <label className="tm-config-label">RITUAL QUANTITY</label>
-              <div className="tm-pill-group">
-                {(["100g", "250g"] as const).map((wt) => (
-                  <button
-                    key={wt}
-                    type="button"
-                    className={`tm-pill-btn ${quantity === wt ? "active" : ""}`}
-                    onClick={() => setQuantity(wt)}
-                  >
-                    {wt} Tin
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* WATER TEMPERATURE */}
-            <div className="tm-config-card">
-              <label className="tm-config-label">WATER TEMPERATURE</label>
-              <div className="tm-pill-group">
-                {[70, 75, 80, 90, 95, 98].map((temp) => (
-                  <button
-                    key={temp}
-                    type="button"
-                    className={`tm-pill-btn ${temperature === temp ? "active" : ""}`}
-                    onClick={() => setTemperature(temp)}
-                  >
-                    {temp}°C
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* STEEPING TIME */}
-            <div className="tm-config-card">
-              <label className="tm-config-label">STEEPING TIME</label>
-              <div className="tm-pill-group">
-                {[
-                  { label: "2 min", sec: 120 },
-                  { label: "2.5 min", sec: 150 },
-                  { label: "3 min", sec: 180 },
-                  { label: "4 min", sec: 240 },
-                  { label: "5 min", sec: 300 },
-                ].map((item) => (
-                  <button
-                    key={item.sec}
-                    type="button"
-                    className={`tm-pill-btn ${steepingTimeSec === item.sec ? "active" : ""}`}
-                    onClick={() => {
-                      setSteepingTimeSec(item.sec);
-                      setTimeLeft(item.sec);
-                    }}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* STRENGTH */}
-            <div className="tm-config-card">
-              <label className="tm-config-label">INFUSION STRENGTH</label>
-              <div className="tm-pill-group">
-                {(["Light", "Balanced", "Strong"] as TeaStrength[]).map((str) => (
-                  <button
-                    key={str}
-                    type="button"
-                    className={`tm-pill-btn ${strength === str ? "active" : ""}`}
-                    onClick={() => setStrength(str)}
-                  >
-                    {str}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* AMBIENT MODE TOGGLE */}
-            <div className="tm-config-card tm-ambient-card">
-              <div className="tm-ambient-header">
-                <div>
-                  <label className="tm-config-label">AMBIENT MODE</label>
-                  <p className="tm-ambient-desc">Immersive visual atmosphere & floating botanical accents</p>
-                </div>
-                <button
-                  type="button"
-                  className={`tm-ambient-toggle-btn ${isAmbient ? "enabled" : ""}`}
-                  onClick={() => setIsAmbient(!isAmbient)}
-                  aria-label="Toggle ambient mode"
-                >
-                  <span className="toggle-indicator" />
-                  {isAmbient ? "ON" : "OFF"}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {ritualStage === "idle" && (
-            <div className="tm-start-action">
-              <button
-                type="button"
-                className="tm-brew-master-btn"
-                onClick={handleStartBrewing}
-              >
-                BEGIN BREWING RITUAL ✦
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* =======================================================
-          3. BREWING STAGES & ANIMATED TEAPOT SCENE
-          ======================================================= */}
-      {ritualStage !== "idle" && (
-        <section className="tm-ritual-stage-section" id="brewing-ritual">
-          <div className="tm-container">
-            {/* STAGES PROGRESS BAR */}
-            <div className="tm-stages-nav" role="tablist" aria-label="Brewing Ritual Stages">
-              {[
-                { id: "heating", label: "01 HEATING WATER" },
-                { id: "pouring", label: "02 POURING WATER" },
-                { id: "blooming", label: "03 LEAVES BLOOM" },
-                { id: "steeping", label: "04 STEEPING" },
-                { id: "ready", label: "05 TEA IS READY" },
-              ].map((stageItem) => {
-                const isActive = ritualStage === stageItem.id;
+          {/* STEP PROGRESS INDICATOR */}
+          <nav className="tm-progress-bar-wrap" aria-label="Ritual Progress">
+            <div className="tm-progress-indicators">
+              {STEPS.map((s, idx) => {
+                const stepNum = idx + 1;
+                const isCurrent = currentStep === stepNum;
+                const isPassed = currentStep > stepNum;
                 return (
                   <div
-                    key={stageItem.id}
-                    className={`tm-stage-step ${isActive ? "active" : ""}`}
+                    key={s.num}
+                    className={`tm-prog-pill ${isCurrent ? "active" : ""} ${isPassed ? "completed" : ""}`}
+                    onClick={() => {
+                      // Allow jumping back to previously completed steps
+                      if (isPassed && currentStep <= 6) {
+                        setCurrentStep(stepNum);
+                      }
+                    }}
                   >
-                    <span className="stage-dot" />
-                    <span className="stage-label">{stageItem.label}</span>
+                    <span className="prog-num">{s.num}</span>
+                    <span className="prog-label">{s.label}</span>
+                    {isPassed && <span className="prog-check">✓</span>}
                   </div>
                 );
               })}
             </div>
+          </nav>
 
-            {/* VISUAL TEAPOT & CUP INTERACTIVE SCENE */}
-            <div className="tm-brewing-scene">
-              <div className="tm-scene-table">
-                {/* ANIMATED TEAPOT */}
-                <div
-                  className={`tm-teapot-wrap ${
-                    ritualStage === "pouring" ? "tilting" : ritualStage === "heating" ? "heating" : "resting"
-                  }`}
-                >
-                  <svg className="tm-teapot-svg" viewBox="0 0 200 160" aria-label="Artisan Teapot">
-                    {/* Teapot Lid */}
-                    <path d="M70 40 Q100 25 130 40 Z" fill="#0b2b1e" stroke="#c9a24b" strokeWidth="2" />
-                    <circle cx="100" cy="24" r="6" fill="#c9a24b" />
+          {/* =======================================================
+              STEP 1: TEA CATEGORY
+              ======================================================= */}
+          {currentStep === 1 && (
+            <div className="tm-step-view tm-fade-in" key="step-1">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 01 OF 08</span>
+                <h2>Select Your Tea Base</h2>
+                <p>Choose the character of whole-leaf harvest for today’s cup.</p>
+              </div>
 
-                    {/* Teapot Body */}
-                    <path
-                      d="M50 48 Q30 90 60 130 Q100 145 140 130 Q170 90 150 48 Z"
-                      fill="linear-gradient(135deg, #0b2b1e 0%, #153b2b 100%)"
-                      stroke="#c9a24b"
-                      strokeWidth="2"
-                    />
-                    <path d="M60 48 L140 48" stroke="#c9a24b" strokeWidth="2" />
-
-                    {/* Handle */}
-                    <path
-                      d="M48 60 Q15 80 46 115"
-                      fill="none"
-                      stroke="#c9a24b"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-
-                    {/* Spout */}
-                    <path
-                      d="M148 70 Q185 60 180 40 Q175 40 142 85"
-                      fill="#0b2b1e"
-                      stroke="#c9a24b"
-                      strokeWidth="2"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-
-                  {/* Water Stream when pouring */}
-                  {ritualStage === "pouring" && (
-                    <div className="tm-water-stream" aria-hidden="true" />
-                  )}
-                </div>
-
-                {/* ANIMATED CUP */}
-                <div className="tm-teacup-wrap">
-                  {/* Subtle rising steam */}
-                  {(ritualStage === "pouring" ||
-                    ritualStage === "blooming" ||
-                    ritualStage === "steeping" ||
-                    ritualStage === "ready") && (
-                    <div className="tm-steam-container" aria-hidden="true">
-                      <span className="tm-steam-particle s1" />
-                      <span className="tm-steam-particle s2" />
-                      <span className="tm-steam-particle s3" />
-                    </div>
-                  )}
-
-                  <div className="tm-teacup-body">
-                    {/* Liquid fill */}
-                    <div
-                      className={`tm-cup-liquid ${
-                        ritualStage === "pouring"
-                          ? "filling"
-                          : ritualStage === "blooming" || ritualStage === "steeping" || ritualStage === "ready"
-                          ? "filled"
-                          : "empty"
-                      }`}
-                      style={{ backgroundColor: currentPreset.cupColor }}
+              <div className="tm-tea-cards-grid">
+                {(Object.keys(TEA_CATEGORIES) as TeaType[]).map((type) => {
+                  const cat = TEA_CATEGORIES[type];
+                  const isSelected = selectedTea === type;
+                  return (
+                    <article
+                      key={type}
+                      className={`tm-tea-card ${isSelected ? "selected" : ""}`}
+                      onClick={() => handleSelectTea(type)}
                     >
-                      {/* Blooming leaves inside the cup */}
-                      {(ritualStage === "blooming" ||
-                        ritualStage === "steeping" ||
-                        ritualStage === "ready") && (
-                        <div className="tm-leaves-bloom" aria-hidden="true">
-                          <span
-                            className="tm-leaf l1"
-                            style={{ backgroundColor: currentPreset.leafColor }}
-                          />
-                          <span
-                            className="tm-leaf l2"
-                            style={{ backgroundColor: currentPreset.leafColor }}
-                          />
-                          <span
-                            className="tm-leaf l3"
-                            style={{ backgroundColor: currentPreset.leafColor }}
-                          />
-                          <span
-                            className="tm-leaf l4"
-                            style={{ backgroundColor: currentPreset.leafColor }}
-                          />
-                        </div>
-                      )}
-                    </div>
+                      <div className="tm-tea-card-image-wrap">
+                        <img
+                          src={cat.image}
+                          alt={cat.title}
+                          className="tm-tea-card-image"
+                          loading="lazy"
+                        />
+                        <span
+                          className="tm-tea-color-preview"
+                          style={{ backgroundColor: cat.balancedColor }}
+                          title="Infusion Tone"
+                        />
+                      </div>
+
+                      <div className="tm-tea-card-content">
+                        <h3>{cat.title}</h3>
+                        <p className="tm-tea-tagline">{cat.tagline}</p>
+                        <p className="tm-tea-notes">✦ {cat.notes}</p>
+                      </div>
+
+                      <div className="tm-tea-card-select-btn">
+                        {isSelected ? "SELECTED ✓" : "CHOOSE THIS TEA →"}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 2: QUANTITY / CUPS
+              ======================================================= */}
+          {currentStep === 2 && (
+            <div className="tm-step-view tm-fade-in" key="step-2">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 02 OF 08</span>
+                <h2>How many cups are you making?</h2>
+                <p>We’ll proportion the leaf volume and water depth perfectly.</p>
+              </div>
+
+              {/* Dynamic Cup Visualizer */}
+              <div className="tm-cups-visualizer" aria-hidden="true">
+                {Array.from({ length: cupCount }).map((_, idx) => (
+                  <div key={idx} className="tm-cup-single-icon tm-pop-in">
+                    <img src={cupImg} alt="" className="tm-cup-single-img" />
+                    <span className="tm-cup-steam-dot" />
                   </div>
-                  {/* Cup Saucer */}
-                  <div className="tm-teacup-saucer" />
+                ))}
+              </div>
+
+              <div className="tm-options-grid tm-cups-grid">
+                {[1, 2, 3, 4].map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    className={`tm-option-card ${cupCount === count ? "active" : ""}`}
+                    onClick={() => handleSelectCups(count)}
+                  >
+                    <span className="tm-option-number">{count}</span>
+                    <span className="tm-option-title">{count === 1 ? "1 Cup" : `${count} Cups`}</span>
+                    <span className="tm-option-desc">
+                      {count === 1
+                        ? "Personal mindful steep (250ml)"
+                        : count === 2
+                        ? "A shared moment (500ml)"
+                        : `Gathering brew (${count * 250}ml)`}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="tm-step-nav-buttons">
+                <button
+                  type="button"
+                  className="tm-btn-back"
+                  onClick={() => setCurrentStep(1)}
+                >
+                  ← BACK TO TEA
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 3: WATER TEMPERATURE
+              ======================================================= */}
+          {currentStep === 3 && (
+            <div className="tm-step-view tm-fade-in" key="step-3">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 03 OF 08</span>
+                <h2>How hot should your water be?</h2>
+                <p>
+                  Recommended for <strong>{currentCat.title}</strong>:{" "}
+                  <span className="tm-recommended-badge">{currentCat.defaultTemp}°C</span>
+                </p>
+              </div>
+
+              {/* Animated Heat Gauge */}
+              <div className="tm-heat-gauge-box">
+                <div
+                  className="tm-heat-gauge-fill"
+                  style={{ width: `${((temperature - 65) / (100 - 65)) * 100}%` }}
+                />
+                <div className="tm-heat-gauge-text">
+                  <span className="tm-heat-icon">🔥</span>
+                  <strong>{temperature}°C</strong>
+                  <span className="tm-heat-label">
+                    {temperature <= 75
+                      ? "Gentle Warmth (Protects sweet tender buds)"
+                      : temperature <= 85
+                      ? "Silken Steep (Optimal for green leaves)"
+                      : temperature <= 92
+                      ? "Aromatic Bloom (Unlocks oolong layers)"
+                      : "Full Rolling Boil (Draws deep rich amber)"}
+                  </span>
                 </div>
               </div>
 
-              {/* STEEPING COUNTDOWN TIMER */}
-              {ritualStage === "steeping" && (
-                <div className="tm-timer-panel">
-                  <span className="tm-timer-label">STEEPING YOUR TEA</span>
-                  <div className="tm-timer-digits" aria-live="polite">
+              <div className="tm-options-grid tm-temp-grid">
+                {[70, 75, 80, 90, 95, 98].map((temp) => (
+                  <button
+                    key={temp}
+                    type="button"
+                    className={`tm-option-card ${temperature === temp ? "active" : ""}`}
+                    onClick={() => handleSelectTemperature(temp)}
+                  >
+                    <span className="tm-temp-degree">{temp}°C</span>
+                    <span className="tm-temp-name">
+                      {temp === currentCat.defaultTemp ? "✦ RECOMMENDED" : `${temp}°C Water`}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="tm-step-nav-buttons">
+                <button
+                  type="button"
+                  className="tm-btn-back"
+                  onClick={() => setCurrentStep(2)}
+                >
+                  ← BACK TO CUPS
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 4: STEEPING TIME
+              ======================================================= */}
+          {currentStep === 4 && (
+            <div className="tm-step-view tm-fade-in" key="step-4">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 04 OF 08</span>
+                <h2>How long should your tea steep?</h2>
+                <p>
+                  Time allows the whole tea leaf to uncurl and release sweet aromatics without bitterness.
+                </p>
+              </div>
+
+              <div className="tm-options-grid tm-time-grid">
+                {[
+                  { label: "2 min", sec: 120, desc: "Light, brisk & fragrant" },
+                  { label: "2:30 min", sec: 150, desc: "Classic balanced cup (Recommended)" },
+                  { label: "3 min", sec: 180, desc: "Smooth, rounded depth" },
+                  { label: "4 min", sec: 240, desc: "Full-bodied & rich character" },
+                  { label: "5 min", sec: 300, desc: "Deep extraction for heavy malt" },
+                ].map((item) => (
+                  <button
+                    key={item.sec}
+                    type="button"
+                    className={`tm-option-card ${steepingTimeSec === item.sec ? "active" : ""}`}
+                    onClick={() => handleSelectSteepTime(item.sec)}
+                  >
+                    <span className="tm-time-val">{item.label}</span>
+                    <span className="tm-time-desc">{item.desc}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="tm-step-nav-buttons">
+                <button
+                  type="button"
+                  className="tm-btn-back"
+                  onClick={() => setCurrentStep(3)}
+                >
+                  ← BACK TO WATER TEMP
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 5: INFUSION STRENGTH
+              ======================================================= */}
+          {currentStep === 5 && (
+            <div className="tm-step-view tm-fade-in" key="step-5">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 05 OF 08</span>
+                <h2>How strong do you like your tea?</h2>
+                <p>We calibrate leaf density and temperature balance to your palate.</p>
+              </div>
+
+              {/* Dynamic Tea Color Indicator */}
+              <div className="tm-strength-preview-box">
+                <div
+                  className="tm-strength-liquid-drop"
+                  style={{ backgroundColor: getTargetBrewedColor() }}
+                >
+                  <span className="drop-ripple" />
+                </div>
+                <div className="tm-strength-preview-copy">
+                  <span className="strength-badge">{strength} Infusion</span>
+                  <p>
+                    {strength === "Light"
+                      ? "Gentle, airy notes with soft sweetness."
+                      : strength === "Balanced"
+                      ? "Harmonious balance of aroma, tannins, and finish."
+                      : "Bold, robust body with pronounced terroir depth."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="tm-options-grid tm-strength-grid">
+                {(["Light", "Balanced", "Strong"] as TeaStrength[]).map((str) => (
+                  <button
+                    key={str}
+                    type="button"
+                    className={`tm-option-card ${strength === str ? "active" : ""}`}
+                    onClick={() => handleSelectStrength(str)}
+                  >
+                    <span className="tm-strength-title">{str}</span>
+                    <span className="tm-strength-desc">
+                      {str === "Light"
+                        ? "Subtle & Airy"
+                        : str === "Balanced"
+                        ? "Classic & Pure"
+                        : "Deep & Intense"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="tm-step-nav-buttons">
+                <button
+                  type="button"
+                  className="tm-btn-back"
+                  onClick={() => setCurrentStep(4)}
+                >
+                  ← BACK TO STEEP TIME
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 6: INGREDIENTS SELECTION
+              ======================================================= */}
+          {currentStep === 6 && (
+            <div className="tm-step-view tm-fade-in" key="step-6">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 06 OF 08</span>
+                <h2>Would you like to add anything?</h2>
+                <p>Select any natural botanicals, citrus zest, or Ayurvedic spices. (Multiple allowed or Pure Tea)</p>
+              </div>
+
+              {/* Ingredients Grid - Clean cards only, no floating preview outside */}
+              <div className="tm-ingredients-grid">
+                {INGREDIENTS.map((ing) => {
+                  const isSelected = selectedIngredients.includes(ing.id);
+                  return (
+                    <div
+                      key={ing.id}
+                      className={`tm-ingredient-card ${isSelected ? "selected" : ""}`}
+                      onClick={() => handleToggleIngredient(ing.id)}
+                    >
+                      <div className="tm-ingredient-img-wrap">
+                        <img
+                          src={ing.image}
+                          alt={ing.name}
+                          className="tm-ingredient-img"
+                          loading="lazy"
+                        />
+                        {isSelected && <span className="tm-ingredient-check">✓</span>}
+                      </div>
+
+                      <div className="tm-ingredient-info">
+                        <h3 className="tm-ingredient-name">{ing.name}</h3>
+                        <p className="tm-ingredient-subtitle">{ing.subtitle}</p>
+                        <p className="tm-ingredient-desc">{ing.description}</p>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`tm-ingredient-btn ${isSelected ? "added" : ""}`}
+                      >
+                        {isSelected ? "ADDED ✓" : "ADD +"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Action Bar */}
+              <div className="tm-ingredients-actions">
+                <button
+                  type="button"
+                  className="tm-btn-back"
+                  onClick={() => setCurrentStep(5)}
+                >
+                  ← BACK TO STRENGTH
+                </button>
+
+                <button
+                  type="button"
+                  className="tm-btn-primary tm-begin-brew-btn"
+                  onClick={handleStartBrewing}
+                >
+                  {selectedIngredients.length === 0
+                    ? "BREW PURE TEA →"
+                    : `PROCEED WITH ${selectedIngredients.length} INGREDIENTS →`}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 7: BREWING RITUAL & REAL COUNTDOWN TIMER
+              ======================================================= */}
+          {currentStep === 7 && (
+            <div className="tm-step-view tm-fade-in" key="step-7">
+              <div className="tm-step-header">
+                <span className="tm-step-eyebrow">STEP 07 OF 08 · RITUAL PROGRESS</span>
+                <h2>
+                  {brewingSubStage === "heating" && "Phase A · Heating pristine water on gentle flame..."}
+                  {brewingSubStage === "adding-tea" && "Phase B · Adding whole tea leaves to the pot..."}
+                  {brewingSubStage === "infusing-ingredients" && `Phase C · Adding selected botanicals (${activeBrewIngredientIdx + 1}/${selectedIngredients.length})...`}
+                  {brewingSubStage === "steeping" && "Phase D · Steeping tea to perfection..."}
+                  {brewingSubStage === "pouring" && "Phase E · Pouring fresh tea into your cup..."}
+                </h2>
+                <p>
+                  <strong>{currentCat.title}</strong> · {temperature}°C · {cupCount} {cupCount === 1 ? "Cup" : "Cups"} · {strength} Strength
+                </p>
+              </div>
+
+              {/* Full Brewing Scene */}
+              <div className="tm-brewing-stage-box">
+                {/* PHASES A, B, C, D: HEATING, ADDING TEA, ADDING INGREDIENTS & STEEPING (Teapot on Gas Burner) */}
+                {brewingSubStage !== "pouring" && (
+                  <div className="tm-ritual-phase-a">
+                    {/* Atmospheric rising steam / vapor */}
+                    <div className="tm-pot-steam-plume" aria-hidden="true">
+                      <span className="tm-steam-vapor sv-1" />
+                      <span className="tm-steam-vapor sv-2" />
+                      <span className="tm-steam-vapor sv-3" />
+                    </div>
+
+                    {/* PHASE B: Tea Leaves Entering Pot */}
+                    {brewingSubStage === "adding-tea" && (
+                      <div className="tm-ingredient-drop-zone" aria-hidden="true">
+                        <div className="tm-sequential-drop-item">
+                          <img
+                            src={teaLeavesFallingEffect}
+                            alt="Tea Leaves"
+                            className="tm-brew-drop-img tea-leaves"
+                          />
+                          <span className="tm-brew-drop-label">{currentCat.title} Leaves</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* PHASE C: Sequentially Adding User-Selected Ingredients ONLY */}
+                    {brewingSubStage === "infusing-ingredients" && (
+                      <div className="tm-ingredient-drop-zone" aria-hidden="true">
+                        {selectedIngredients.map((ingId, idx) => {
+                          if (idx !== activeBrewIngredientIdx) return null;
+                          const ing = INGREDIENTS.find((i) => i.id === ingId);
+                          if (!ing) return null;
+                          return (
+                            <div
+                              key={ing.id}
+                              className="tm-sequential-drop-item"
+                            >
+                              <img
+                                src={ing.effectImage}
+                                alt={ing.name}
+                                className="tm-brew-drop-img"
+                              />
+                              <span className="tm-brew-drop-label">{ing.name}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Open Glass Kettle / Pot on Burner */}
+                    <div className="tm-open-pot-composition">
+                      <img
+                        src={kettleImg}
+                        alt="Teapot on Burner"
+                        className="tm-open-pot-img"
+                      />
+
+                      {/* Gradual liquid colour reservoir inside the pot (starts pale warm water -> deepens to brewed tea) */}
+                      <div
+                        className="tm-pot-liquid-reservoir"
+                        style={getSteepingLiquidStyle()}
+                      >
+                        {/* Subtle movement of submerged leaves and selected ingredients inside the simmer */}
+                        {brewingSubStage === "steeping" && (
+                          <div className="tm-pot-steeping-contents" aria-hidden="true">
+                            <span className="tm-simmer-bubble sb-1" />
+                            <span className="tm-simmer-bubble sb-2" />
+                            <span className="tm-simmer-bubble sb-3" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Subtle Gas Flame Station Underneath */}
+                    <div className="tm-burner-station" aria-hidden="true">
+                      <div className="tm-burner-grate" />
+                      <div className="tm-gas-flames">
+                        <span className="flame fl-1" />
+                        <span className="flame fl-2" />
+                        <span className="flame fl-3" />
+                        <span className="flame fl-4" />
+                        <span className="flame fl-5" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PHASE E: POURING (Teapot Tilts & Smooth Tea Stream Pours into Cup) */}
+                {brewingSubStage === "pouring" && (
+                  <div className="tm-ritual-phase-b tm-fade-in">
+                    <div className="tm-vessels-pouring-layout">
+                      {/* Tilting Pouring Teapot */}
+                      <div className="tm-pouring-pot-wrap">
+                        <img
+                          src={teapotPourImg}
+                          alt="Teapot Pouring"
+                          className="tm-pouring-pot-img"
+                        />
+
+                        {/* Continuous Flow Stream in Exact Brewed Color */}
+                        <div className="tm-pouring-stream-wrap" aria-hidden="true">
+                          <svg className="tm-stream-svg" viewBox="0 0 100 240">
+                            <path
+                              d="M 24,0 Q 65,110 40,240"
+                              stroke={getTargetBrewedColor()}
+                              strokeWidth="11"
+                              fill="none"
+                              strokeLinecap="round"
+                              className="tm-stream-animated-path"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Cup Gradually Filling */}
+                      <div className="tm-pouring-cup-wrap">
+                        {/* Gentle Steam from Cup */}
+                        <div className="tm-cup-steam-gentle" aria-hidden="true">
+                          <span className="tm-steam-vapor sv-1" />
+                          <span className="tm-steam-vapor sv-2" />
+                        </div>
+
+                        <div className="tm-cup-main-frame">
+                          <img src={cupImg} alt="Tea Cup" className="tm-cup-glass-img" />
+
+                          {/* Gradual Cup Liquid Fill in Exact Brewed Color */}
+                          <div
+                            className="tm-cup-fill-reservoir filling"
+                            style={{ backgroundColor: getTargetBrewedColor() }}
+                          >
+                            <img
+                              src={rippleImg}
+                              alt=""
+                              className="tm-surface-ripple"
+                              aria-hidden="true"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Real Countdown Timer Controls */}
+                <div className="tm-steeping-timer-box">
+                  <span className="tm-timer-sub-label">
+                    {brewingSubStage === "heating"
+                      ? "WARMING WATER & LEAVES"
+                      : brewingSubStage === "adding-tea"
+                      ? "ADDING WHOLE TEA LEAVES"
+                      : brewingSubStage === "infusing-ingredients"
+                      ? "ADDING SELECTED INGREDIENTS"
+                      : brewingSubStage === "steeping"
+                      ? (isTimerPaused ? "STEEPING PAUSED" : "ACTIVE STEEPING COUNTDOWN")
+                      : "POURING FRESH TEA"}
+                  </span>
+
+                  <div className="tm-timer-display-clock" aria-live="polite">
                     {formatTimer(timeLeft)}
                   </div>
-                  <div className="tm-timer-controls">
+
+                  <div className="tm-timer-actions">
                     <button
                       type="button"
                       className="tm-timer-btn"
-                      onClick={handlePauseResume}
+                      onClick={handlePauseResumeTimer}
+                      disabled={brewingSubStage === "pouring"}
                     >
                       {isTimerPaused ? "RESUME ▶" : "PAUSE ⏸"}
                     </button>
+
                     <button
                       type="button"
                       className="tm-timer-btn secondary"
-                      onClick={handleReset}
+                      onClick={handleResetTimer}
+                      disabled={brewingSubStage === "pouring"}
                     >
                       RESET ↺
                     </button>
-                  </div>
-                </div>
-              )}
 
-              {/* COMPLETION & PERSONALIZED RESULT */}
-              {ritualStage === "ready" && (
-                <div className="tm-result-card">
-                  <div className="tm-result-header">
-                    <span className="tm-result-check">✓</span>
-                    <p className="tm-result-eyebrow">YOUR TEA IS READY</p>
-                    <h3 className="tm-result-title">{currentPreset.name}</h3>
-                  </div>
-
-                  <div className="tm-result-meta-chips">
-                    <span>{teaType} Tea</span>
-                    <span>{temperature}°C</span>
-                    <span>{strength} Infusion</span>
-                    <span>{Math.round(steepingTimeSec / 60)} Min Steep</span>
-                  </div>
-
-                  <div className="tm-result-notes-box">
-                    <strong>TASTING PROFILE</strong>
-                    <p className="tm-result-notes">{currentPreset.notes}</p>
-                    <p className="tm-result-tagline">“{currentPreset.tagline}”</p>
-                  </div>
-
-                  <div className="tm-result-actions">
                     <button
                       type="button"
-                      className="tm-brew-again-btn"
-                      onClick={handleReset}
+                      className="tm-timer-btn secondary"
+                      onClick={handleSkipTimer}
+                      disabled={brewingSubStage === "pouring"}
+                    >
+                      SKIP TIMER ⏩
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* =======================================================
+              STEP 8: TEA READY (FINAL CELEBRATION RESULT — CUP PROMINENT)
+              ======================================================= */}
+          {currentStep === 8 && (
+            <div className="tm-step-view tm-fade-in" key="step-8">
+              <div className="tm-result-celebration-card">
+                {/* PROMINENT FINISHED CUP VISUAL (Teapot is NOT the centerpiece) */}
+                <div className="tm-result-cup-hero" aria-hidden="true">
+                  <div className="tm-result-steam-wrap">
+                    <span className="tm-steam-vapor sv-1" />
+                    <span className="tm-steam-vapor sv-2" />
+                    <span className="tm-steam-vapor sv-3" />
+                  </div>
+                  <div className="tm-result-cup-frame">
+                    <img src={cupImg} alt="Steeped Cup" className="tm-cup-glass-img" />
+                    <div
+                      className="tm-cup-fill-reservoir full"
+                      style={{ backgroundColor: getTargetBrewedColor() }}
+                    >
+                      <img
+                        src={rippleImg}
+                        alt=""
+                        className="tm-surface-ripple"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="tm-result-copy">
+                  <span className="tm-result-pill">✦ RITUAL COMPLETE</span>
+                  <h2 className="tm-ready-heading">
+                    Your {selectedTea} Tea is ready 😋
+                  </h2>
+
+                  <div className="tm-result-formula">
+                    <strong>{currentCat.title}</strong>
+                    <span> · {temperature}°C · {strength} Infusion · {cupCount} {cupCount === 1 ? "Cup" : "Cups"}</span>
+                    {selectedIngredients.length > 0 && (
+                      <div className="tm-result-additions">
+                        Enriched with:{" "}
+                        {selectedIngredients
+                          .map((id) => INGREDIENTS.find((i) => i.id === id)?.name)
+                          .join(" + ")}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="tm-result-quote-box">
+                    <p className="tm-result-tasting-notes">✦ {currentCat.notes}</p>
+                    <p className="tm-result-quote">“{currentCat.tagline}”</p>
+                  </div>
+
+                  <div className="tm-result-action-buttons">
+                    <button
+                      type="button"
+                      className="tm-btn-secondary"
+                      onClick={handleRestartFullRitual}
                     >
                       BREW ANOTHER CUP ↺
                     </button>
-                    <a href="/shop" className="tm-shop-tea-btn">
+
+                    <Link to="/shop" className="tm-btn-secondary">
                       SHOP THIS TEA →
-                    </a>
+                    </Link>
+
+                    <button
+                      type="button"
+                      className={`tm-btn-primary ${addedToCartSuccess ? "added" : ""}`}
+                      onClick={handleAddToCartRitual}
+                    >
+                      {addedToCartSuccess ? "ADDED TO CART ✓" : "ADD RITUAL TO CART 🛒"}
+                    </button>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+          )}
+
+        </div>
+      </section>
 
       {/* =======================================================
-          4. TEA RITUAL SOUNDSCAPE (NATIVE MUSIC PLAYER)
+          NATIVE SOUNDSCAPE PLAYER
           ======================================================= */}
       <TeaRitualSoundscape />
 
       {/* =======================================================
-          5. EXISTING GLOBAL FOOTER
+          GLOBAL FOOTER
           ======================================================= */}
       <Footer />
     </main>

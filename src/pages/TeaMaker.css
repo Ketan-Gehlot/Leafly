@@ -16,7 +16,7 @@
 }
 
 .tm-container {
-  width: min(1080px, calc(100% - 36px));
+  width: min(1140px, calc(100% - 36px));
   margin: 0 auto;
 }
 
@@ -64,7 +64,7 @@
 .tm-eyebrow p {
   margin: 0;
   color: #c9a24b;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 2.5px;
   text-transform: uppercase;
@@ -104,668 +104,1255 @@
   font-weight: 800;
   letter-spacing: 1.5px;
   text-decoration: none;
-  transition: transform 180ms ease, background 180ms ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 200ms ease, background 200ms ease;
 }
 
 .tm-hero-cta:hover {
-  background: #f7f3ec;
   transform: translateY(-2px);
-}
-
-.tm-cta-arrow {
-  font-size: 14px;
+  background: #e2be6c;
 }
 
 /* =========================================================
-   2. CONFIGURATION SECTION
+   2. SEQUENTIAL WIZARD CONTAINER & PROGRESS BAR
    ========================================================= */
 
-.tm-config-section {
-  padding: 60px 0 50px;
+.tm-wizard-section {
+  padding: 40px 0 80px;
 }
 
-.tm-section-header {
+.tm-progress-bar-wrap {
+  margin-bottom: 40px;
+}
+
+.tm-progress-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: rgba(11, 43, 30, 0.04);
+  border-radius: 999px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.tm-prog-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(11, 43, 30, 0.6);
+  background: transparent;
+  cursor: default;
+  transition: all 200ms ease;
+  user-select: none;
+}
+
+.tm-prog-pill.completed {
+  color: #0b2b1e;
+  cursor: pointer;
+  background: rgba(201, 162, 75, 0.15);
+}
+
+.tm-prog-pill.completed:hover {
+  background: rgba(201, 162, 75, 0.3);
+}
+
+.tm-prog-pill.active {
+  background: #0b2b1e;
+  color: #f7f3ec;
+  box-shadow: 0 4px 12px rgba(11, 43, 30, 0.2);
+}
+
+.tm-prog-pill .prog-num {
+  font-size: 10px;
+  font-weight: 800;
+  opacity: 0.8;
+}
+
+.tm-prog-pill .prog-check {
+  font-size: 11px;
+  color: #c9a24b;
+  font-weight: 900;
+}
+
+/* =========================================================
+   3. STEP VIEWS & HEADERS
+   ========================================================= */
+
+.tm-step-view {
+  background: #ffffff;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+  border-radius: 24px;
+  padding: 40px 32px 48px;
+  box-shadow: 0 10px 30px rgba(11, 43, 30, 0.04);
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.tm-fade-in {
+  animation: tm-fadeIn 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tm-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tm-step-header {
   text-align: center;
-  margin-bottom: 36px;
+  max-width: 620px;
+  margin: 0 auto 36px;
 }
 
-.tm-step-badge {
+.tm-step-eyebrow {
   display: inline-block;
-  color: #9a793f;
-  font-size: 9px;
+  padding: 4px 12px;
+  background: rgba(201, 162, 75, 0.14);
+  color: #926b15;
+  border-radius: 999px;
+  font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 2px;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 
-.tm-section-header h2 {
-  margin: 0 0 6px;
+.tm-step-header h2 {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(30px, 4vw, 44px);
+  font-size: clamp(26px, 3.5vw, 36px);
   font-weight: 400;
-  letter-spacing: -1px;
+  margin: 0 0 10px;
+  color: #0b2b1e;
+  letter-spacing: -0.5px;
 }
 
-.tm-section-header p {
+.tm-step-header p {
+  color: rgba(11, 43, 30, 0.7);
+  font-size: 15px;
+  line-height: 1.5;
   margin: 0;
-  color: rgba(11, 43, 30, 0.65);
-  font-size: 14px;
 }
 
-.tm-config-grid {
+.tm-recommended-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #0b2b1e;
+  color: #c9a24b;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* =========================================================
+   4. STEP 1: LARGE TEA CARDS
+   ========================================================= */
+
+.tm-tea-cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
 
-.tm-config-card {
-  background: #faf7f0;
-  border: 1px solid rgba(11, 43, 30, 0.1);
-  border-radius: 16px;
-  padding: 22px 24px;
-  box-shadow: 0 8px 24px rgba(11, 43, 30, 0.04);
-}
-
-.tm-config-label {
-  display: block;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  color: rgba(11, 43, 30, 0.6);
-  margin-bottom: 12px;
-  text-transform: uppercase;
-}
-
-.tm-pill-group {
+.tm-tea-card {
+  background: #faf8f5;
+  border: 1.5px solid rgba(11, 43, 30, 0.08);
+  border-radius: 18px;
+  padding: 24px 20px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tm-pill-btn {
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(11, 43, 30, 0.18);
-  background: #fffdf9;
-  color: #0b2b1e;
-  font-size: 12px;
-  font-weight: 600;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   cursor: pointer;
-  transition: all 180ms ease;
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
-.tm-pill-btn:hover {
+.tm-tea-card:hover {
+  transform: translateY(-4px);
   border-color: #c9a24b;
-  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(201, 162, 75, 0.16);
+  background: #ffffff;
 }
 
-.tm-pill-btn.active {
-  background: #0b2b1e;
-  color: #f7f3ec;
+.tm-tea-card.selected {
   border-color: #0b2b1e;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(11, 43, 30, 0.1), 0 0 0 2px #0b2b1e;
 }
 
-/* Ambient Mode Card */
-.tm-ambient-card {
-  grid-column: 1 / -1;
-  background: linear-gradient(135deg, rgba(201, 162, 75, 0.1), rgba(11, 43, 30, 0.04));
-  border: 1px solid rgba(201, 162, 75, 0.35);
-}
-
-.tm-ambient-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.tm-ambient-desc {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: rgba(11, 43, 30, 0.7);
-}
-
-.tm-ambient-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  border-radius: 999px;
-  border: 1px solid #0b2b1e;
-  background: transparent;
-  color: #0b2b1e;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 200ms ease;
-}
-
-.tm-ambient-toggle-btn.enabled {
-  background: #0b2b1e;
-  color: #c9a24b;
-  border-color: #0b2b1e;
-}
-
-.toggle-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.tm-start-action {
-  text-align: center;
-  margin-top: 36px;
-}
-
-.tm-brew-master-btn {
-  min-height: 52px;
-  padding: 0 38px;
-  background: #0b2b1e;
-  color: #f7f3ec;
-  border: 1px solid #0b2b1e;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
-  box-shadow: 0 10px 25px rgba(11, 43, 30, 0.15);
-}
-
-.tm-brew-master-btn:hover {
-  background: #14422f;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(11, 43, 30, 0.2);
-}
-
-/* =========================================================
-   3. BREWING STAGE & TEAPOT SCENE
-   ========================================================= */
-
-.tm-ritual-stage-section {
-  padding: 30px 0 60px;
-  background: #faf7f0;
-}
-
-.tm-stages-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 20px;
-  background: #fffdf9;
-  border: 1px solid rgba(11, 43, 30, 0.1);
-  border-radius: 999px;
-  margin-bottom: 36px;
-  overflow-x: auto;
-}
-
-.tm-stage-step {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  opacity: 0.45;
-  transition: opacity 250ms ease;
-  white-space: nowrap;
-}
-
-.tm-stage-step.active {
-  opacity: 1;
-}
-
-.stage-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #c9a24b;
-}
-
-.stage-label {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #0b2b1e;
-}
-
-/* Brewing Stage Visual Scene */
-.tm-brewing-scene {
-  background: #0b2b1e;
-  border: 1px solid rgba(201, 162, 75, 0.35);
-  border-radius: 24px;
-  padding: 50px 32px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+.tm-tea-card-image-wrap {
   position: relative;
-  overflow: hidden;
-}
-
-.tm-scene-table {
+  width: 130px;
+  height: 130px;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 60px;
-  min-height: 240px;
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-}
-
-/* Teapot Animation */
-.tm-teapot-wrap {
-  position: relative;
-  width: 170px;
-  transform-origin: 20% 80%;
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.tm-teapot-wrap.heating {
-  animation: teapot-heating 1.2s ease-in-out infinite alternate;
-}
-
-.tm-teapot-wrap.tilting {
-  transform: translate3d(50px, -20px, 0) rotate(34deg);
-}
-
-@keyframes teapot-heating {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-4px); }
-}
-
-.tm-teapot-svg {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.4));
-}
-
-.tm-water-stream {
-  position: absolute;
-  top: 60px;
-  right: -20px;
-  width: 5px;
-  height: 95px;
-  background: linear-gradient(180deg, rgba(201, 162, 75, 0.9), rgba(247, 243, 236, 0.7));
-  border-radius: 3px;
-  animation: stream-flow 0.4s linear infinite;
-  box-shadow: 0 0 10px rgba(201, 162, 75, 0.6);
-}
-
-@keyframes stream-flow {
-  0% { opacity: 0.7; transform: scaleY(0.95); }
-  100% { opacity: 1; transform: scaleY(1.05); }
-}
-
-/* Tea Cup */
-.tm-teacup-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-}
-
-.tm-teacup-body {
-  width: 110px;
-  height: 80px;
-  background: #faf7f0;
-  border-radius: 4px 4px 50px 50px;
-  border: 3px solid #c9a24b;
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.08);
-}
-
-.tm-cup-liquid {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 0%;
-  transition: height 1.8s cubic-bezier(0.22, 1, 0.36, 1);
-  overflow: hidden;
-}
-
-.tm-cup-liquid.filling {
-  height: 80%;
-}
-
-.tm-cup-liquid.filled {
-  height: 85%;
-}
-
-.tm-teacup-saucer {
-  width: 140px;
-  height: 12px;
-  background: #0b2b1e;
-  border: 2px solid #c9a24b;
-  border-radius: 50%;
-  margin-top: -3px;
-}
-
-/* Leaves Blooming Inside Cup */
-.tm-leaves-bloom {
-  position: absolute;
-  inset: 0;
-}
-
-.tm-leaf {
-  position: absolute;
-  width: 14px;
-  height: 8px;
-  border-radius: 50% 0 50% 0;
-  animation: leaf-swirl 3s ease-in-out infinite alternate;
-}
-
-.tm-leaf.l1 { top: 40%; left: 25%; animation-delay: 0s; transform: rotate(15deg); }
-.tm-leaf.l2 { top: 50%; right: 25%; animation-delay: 0.6s; transform: rotate(-35deg); }
-.tm-leaf.l3 { top: 65%; left: 40%; animation-delay: 1.2s; transform: rotate(50deg); }
-.tm-leaf.l4 { top: 30%; right: 40%; animation-delay: 0.9s; transform: rotate(-10deg); }
-
-@keyframes leaf-swirl {
-  0% { transform: translateY(0) rotate(0deg) scale(0.9); }
-  50% { transform: translateY(-5px) rotate(15deg) scale(1.1); }
-  100% { transform: translateY(3px) rotate(-10deg) scale(1); }
-}
-
-/* Subtle Steam */
-.tm-steam-container {
-  position: absolute;
-  top: -45px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 50px;
-  pointer-events: none;
-}
-
-.tm-steam-particle {
-  position: absolute;
-  width: 8px;
-  height: 30px;
-  background: linear-gradient(180deg, transparent 0%, rgba(247, 243, 236, 0.4) 60%, transparent 100%);
-  border-radius: 50%;
-  filter: blur(4px);
-  animation: steam-rise 2.4s ease-in-out infinite;
-}
-
-.tm-steam-particle.s1 { left: 15px; animation-delay: 0s; }
-.tm-steam-particle.s2 { left: 26px; animation-delay: 0.8s; }
-.tm-steam-particle.s3 { left: 37px; animation-delay: 1.4s; }
-
-@keyframes steam-rise {
-  0% { transform: translateY(15px) scale(0.7); opacity: 0; }
-  50% { opacity: 0.6; }
-  100% { transform: translateY(-20px) scale(1.4); opacity: 0; }
-}
-
-/* Timer Display Panel */
-.tm-timer-panel {
-  margin-top: 36px;
-  text-align: center;
-}
-
-.tm-timer-label {
-  color: #c9a24b;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.tm-timer-digits {
-  color: #f7f3ec;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 48px;
-  font-weight: 400;
-  letter-spacing: 2px;
-  margin: 6px 0 14px;
-}
-
-.tm-timer-controls {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.tm-timer-btn {
-  padding: 8px 22px;
-  border-radius: 999px;
-  border: 1px solid #c9a24b;
-  background: #c9a24b;
-  color: #0b2b1e;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 180ms ease;
-}
-
-.tm-timer-btn.secondary {
-  background: transparent;
-  color: #f7f3ec;
-  border-color: rgba(247, 243, 236, 0.4);
-}
-
-.tm-timer-btn:hover {
-  transform: translateY(-1px);
-  background: #f7f3ec;
-  color: #0b2b1e;
-}
-
-/* Result Card */
-.tm-result-card {
-  margin-top: 32px;
-  padding: 28px 32px;
-  background: rgba(247, 243, 236, 0.06);
-  border: 1px solid rgba(201, 162, 75, 0.5);
-  border-radius: 20px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  width: min(480px, 100%);
-  animation: result-card-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes result-card-pop {
-  0% { transform: scale(0.9) translateY(15px); opacity: 0; }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-.tm-result-check {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #c9a24b;
-  color: #0b2b1e;
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 8px;
-}
-
-.tm-result-eyebrow {
-  margin: 0;
-  color: #c9a24b;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
-.tm-result-title {
-  margin: 4px 0 14px;
-  color: #f7f3ec;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 26px;
-  font-weight: 400;
-}
-
-.tm-result-meta-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
   justify-content: center;
   margin-bottom: 16px;
 }
 
-.tm-result-meta-chips span {
-  padding: 3px 10px;
-  background: rgba(201, 162, 75, 0.18);
-  border-radius: 999px;
-  color: #f7f3ec;
-  font-size: 10px;
-  font-weight: 600;
+.tm-tea-card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 300ms ease;
+  filter: drop-shadow(0 6px 14px rgba(11, 43, 30, 0.1));
 }
 
-.tm-result-notes-box {
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.2);
+.tm-tea-card:hover .tm-tea-card-image {
+  transform: scale(1.08);
+}
+
+.tm-tea-color-preview {
+  position: absolute;
+  bottom: 0;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.tm-tea-card-content h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 500;
+  margin: 0 0 6px;
+  color: #0b2b1e;
+}
+
+.tm-tea-tagline {
+  font-size: 13px;
+  color: rgba(11, 43, 30, 0.75);
+  line-height: 1.4;
+  margin: 0 0 10px;
+}
+
+.tm-tea-notes {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #926b15;
+  letter-spacing: 0.5px;
+  margin: 0 0 18px;
+}
+
+.tm-tea-card-select-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px 0;
   border-radius: 10px;
-  margin-bottom: 20px;
+  border: 1px solid rgba(11, 43, 30, 0.12);
+  background: transparent;
+  color: #0b2b1e;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  transition: all 180ms ease;
 }
 
-.tm-result-notes-box strong {
-  display: block;
-  font-size: 8px;
-  letter-spacing: 1.5px;
+.tm-tea-card:hover .tm-tea-card-select-btn {
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border-color: #0b2b1e;
+}
+
+.tm-tea-card.selected .tm-tea-card-select-btn {
+  background: #0b2b1e;
   color: #c9a24b;
+  border-color: #0b2b1e;
+}
+
+/* =========================================================
+   5. STEP 2-5: UNIFIED OPTIONS GRIDS & VISUALIZERS
+   ========================================================= */
+
+.tm-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.tm-option-card {
+  background: #faf8f5;
+  border: 1.5px solid rgba(11, 43, 30, 0.09);
+  border-radius: 16px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.tm-option-card:hover {
+  border-color: #c9a24b;
+  transform: translateY(-2px);
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(201, 162, 75, 0.12);
+}
+
+.tm-option-card.active {
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border-color: #0b2b1e;
+  box-shadow: 0 8px 22px rgba(11, 43, 30, 0.2);
+}
+
+.tm-option-number,
+.tm-temp-degree,
+.tm-time-val,
+.tm-strength-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #0b2b1e;
+}
+
+.tm-option-card.active .tm-option-number,
+.tm-option-card.active .tm-temp-degree,
+.tm-option-card.active .tm-time-val,
+.tm-option-card.active .tm-strength-title {
+  color: #c9a24b;
+}
+
+.tm-option-title,
+.tm-temp-name {
+  font-size: 13.5px;
+  font-weight: 700;
   margin-bottom: 4px;
 }
 
-.tm-result-notes {
-  margin: 0;
-  color: #f7f3ec;
-  font-size: 12.5px;
-  font-weight: 600;
+.tm-option-desc,
+.tm-time-desc,
+.tm-strength-desc {
+  font-size: 12px;
+  color: rgba(11, 43, 30, 0.65);
+  line-height: 1.4;
 }
 
-.tm-result-tagline {
-  margin: 6px 0 0;
-  color: rgba(247, 243, 236, 0.7);
-  font-size: 11px;
-  font-style: italic;
+.tm-option-card.active .tm-option-desc,
+.tm-option-card.active .tm-time-desc,
+.tm-option-card.active .tm-strength-desc {
+  color: rgba(247, 243, 236, 0.75);
 }
 
-.tm-result-actions {
+/* Cups Visualizer */
+.tm-cups-visualizer {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background: #faf8f5;
+  border-radius: 16px;
+}
+
+.tm-cup-single-icon {
+  position: relative;
+  width: 55px;
+  height: 55px;
+}
+
+.tm-cup-single-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tm-pop-in {
+  animation: tmPop 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes tmPop {
+  0% { transform: scale(0.4); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Heat Gauge Box */
+.tm-heat-gauge-box {
+  background: #faf8f5;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.tm-heat-gauge-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(201, 162, 75, 0.15), rgba(201, 80, 20, 0.25));
+  transition: width 350ms ease;
+  pointer-events: none;
+}
+
+.tm-heat-gauge-text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
   gap: 12px;
+  font-size: 14px;
+}
+
+.tm-heat-gauge-text strong {
+  font-size: 18px;
+  color: #0b2b1e;
+}
+
+.tm-heat-label {
+  color: rgba(11, 43, 30, 0.7);
+  font-size: 13px;
+}
+
+/* Strength Preview Box */
+.tm-strength-preview-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #faf8f5;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+}
+
+.tm-strength-liquid-drop {
+  width: 44px;
+  height: 44px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: background-color 300ms ease;
+  flex-shrink: 0;
+}
+
+.tm-strength-preview-copy .strength-badge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0b2b1e;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.tm-strength-preview-copy p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(11, 43, 30, 0.7);
+}
+
+/* Navigation Buttons */
+.tm-step-nav-buttons {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 24px;
+}
+
+.tm-btn-back {
+  background: transparent;
+  border: 1px solid rgba(11, 43, 30, 0.18);
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: rgba(11, 43, 30, 0.75);
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tm-btn-back:hover {
+  background: rgba(11, 43, 30, 0.06);
+  color: #0b2b1e;
+}
+
+/* =========================================================
+   6. STEP 6: INGREDIENTS GRID
+   ========================================================= */
+
+.tm-ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.tm-ingredient-card {
+  background: #faf8f5;
+  border: 1.5px solid rgba(11, 43, 30, 0.08);
+  border-radius: 16px;
+  padding: 20px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+  position: relative;
+}
+
+.tm-ingredient-card:hover {
+  transform: translateY(-3px);
+  border-color: #c9a24b;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(201, 162, 75, 0.12);
+}
+
+.tm-ingredient-card.selected {
+  border-color: #0b2b1e;
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(11, 43, 30, 0.08), 0 0 0 1.5px #0b2b1e;
+}
+
+.tm-ingredient-img-wrap {
+  position: relative;
+  width: 95px;
+  height: 95px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.tm-ingredient-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(11, 43, 30, 0.08));
+  transition: transform 220ms ease;
+}
+
+.tm-ingredient-card:hover .tm-ingredient-img {
+  transform: scale(1.06);
+}
+
+.tm-ingredient-check {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tm-ingredient-name {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #0b2b1e;
+}
+
+.tm-ingredient-subtitle {
+  color: #926b15;
+  font-size: 10.5px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.tm-ingredient-desc {
+  font-size: 12px;
+  color: rgba(11, 43, 30, 0.65);
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+
+.tm-ingredient-btn {
+  width: 100%;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(11, 43, 30, 0.15);
+  background: transparent;
+  color: #0b2b1e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.tm-ingredient-card:hover .tm-ingredient-btn {
+  background: #0b2b1e;
+  color: #f7f3ec;
+  border-color: #0b2b1e;
+}
+
+.tm-ingredient-btn.added {
+  background: #0b2b1e;
+  color: #c9a24b;
+  border-color: #0b2b1e;
+}
+
+.tm-ingredients-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.tm-begin-brew-btn {
+  padding: 14px 28px;
+  border-radius: 999px;
+  border: none;
+  background: #c9a24b;
+  color: #0b2b1e;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  box-shadow: 0 6px 18px rgba(201, 162, 75, 0.35);
+}
+
+.tm-begin-brew-btn:hover {
+  background: #e2be6c;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(201, 162, 75, 0.45);
+}
+
+/* =========================================================
+   7. STEP 7: BREWING RITUAL SCENE (PHASE A & PHASE B)
+   ========================================================= */
+
+.tm-brewing-stage-box {
+  background: radial-gradient(circle at 50% 30%, #f9f4eb 0%, #ede3d1 100%);
+  border: 1.5px solid rgba(201, 162, 75, 0.3);
+  border-radius: 24px;
+  padding: 42px 24px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 10px rgba(11, 43, 30, 0.03), 0 10px 30px rgba(11, 43, 30, 0.05);
+  min-height: 480px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* PHASE A: HEATING & INFUSING ON GAS BURNER */
+.tm-ritual-phase-a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 28px;
+  min-height: 260px;
+}
+
+/* Atmospheric Steam Plumes from Open Pot */
+.tm-pot-steam-plume,
+.tm-cup-steam-gentle,
+.tm-result-steam-wrap {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 70px;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tm-steam-vapor {
+  width: 14px;
+  height: 48px;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 80%);
+  border-radius: 50%;
+  filter: blur(4px);
+  opacity: 0;
+}
+
+.tm-steam-vapor.sv-1 { animation: tmVaporRise 3.2s infinite ease-out 0.2s; }
+.tm-steam-vapor.sv-2 { animation: tmVaporRise 2.8s infinite ease-out 1.2s; }
+.tm-steam-vapor.sv-3 { animation: tmVaporRise 3.6s infinite ease-out 2.0s; }
+
+@keyframes tmVaporRise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.6) translateX(0);
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-38px) scale(1.4) translateX(12px);
+  }
+}
+
+/* Sequential Dropping Items Container (Leaves & Selected Ingredients) */
+.tm-ingredient-drop-zone {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.tm-sequential-drop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  animation: tmIngDrop 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.tm-brew-drop-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(11, 43, 30, 0.2));
+}
+
+.tm-brew-drop-img.tea-leaves {
+  width: 58px;
+  height: 58px;
+}
+
+.tm-brew-drop-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0b2b1e;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+@keyframes tmIngDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.6) rotate(-10deg);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0px) scale(1.05) rotate(2deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(45px) scale(0.6) rotate(15deg);
+  }
+}
+
+/* Open Glass Kettle Composition */
+.tm-open-pot-composition {
+  position: relative;
+  width: 175px;
+  height: 160px;
+  z-index: 5;
+}
+
+.tm-open-pot-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(11, 43, 30, 0.16));
+  position: relative;
+  z-index: 2;
+}
+
+/* Pot Liquid Color Reservoir inside the glass body */
+.tm-pot-liquid-reservoir {
+  position: absolute;
+  bottom: 12px;
+  left: 20px;
+  right: 20px;
+  height: 75px;
+  border-radius: 0 0 40px 40px;
+  z-index: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.tm-brew-again-btn,
-.tm-shop-tea-btn {
-  padding: 10px 20px;
-  border-radius: 999px;
-  font-size: 10px;
+.tm-pot-steeping-contents {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tm-simmer-bubble {
+  position: absolute;
+  bottom: 6px;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: tmBubbleRise 1.8s infinite ease-out;
+}
+
+.tm-simmer-bubble.sb-1 { left: 30%; animation-delay: 0.2s; }
+.tm-simmer-bubble.sb-2 { left: 50%; animation-delay: 0.8s; width: 8px; height: 8px; }
+.tm-simmer-bubble.sb-3 { left: 70%; animation-delay: 1.4s; }
+
+@keyframes tmBubbleRise {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-45px) scale(1.2); opacity: 0; }
+}
+
+/* Gas Flame Burner Station Underneath Pot */
+.tm-burner-station {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -12px;
+  z-index: 3;
+}
+
+.tm-burner-grate {
+  width: 110px;
+  height: 6px;
+  background: #3a3b3a;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.tm-gas-flames {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.flame {
+  width: 8px;
+  height: 14px;
+  background: radial-gradient(ellipse at 50% 90%, #5dade2 0%, #f39c12 55%, #e74c3c 90%);
+  border-radius: 50% 50% 20% 20%;
+  filter: drop-shadow(0 0 4px rgba(93, 173, 226, 0.8));
+  animation: tmFlameFlicker 400ms infinite alternate ease-in-out;
+}
+
+.fl-1 { animation-delay: 0.05s; }
+.fl-2 { animation-delay: 0.15s; height: 16px; }
+.fl-3 { animation-delay: 0.1s; height: 18px; }
+.fl-4 { animation-delay: 0.2s; height: 16px; }
+.fl-5 { animation-delay: 0.08s; }
+
+@keyframes tmFlameFlicker {
+  0% { transform: scaleY(0.85) scaleX(0.9); opacity: 0.85; }
+  100% { transform: scaleY(1.15) scaleX(1.05); opacity: 1; }
+}
+
+/* PHASE E: POURING LAYOUT (TEAPOT TILTS -> STREAM -> CUP FILLS) */
+.tm-ritual-phase-b {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 30px;
+}
+
+.tm-vessels-pouring-layout {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 40px;
+  position: relative;
+  min-height: 240px;
+}
+
+.tm-pouring-pot-wrap {
+  position: relative;
+  width: 180px;
+  height: 165px;
+  transform: rotate(-24deg) translateY(-20px) translateX(12px);
+  transition: transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 5;
+}
+
+.tm-pouring-pot-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 22px rgba(11, 43, 30, 0.18));
+}
+
+.tm-pouring-stream-wrap {
+  position: absolute;
+  top: 60px;
+  right: -52px;
+  width: 90px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tm-stream-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.tm-stream-animated-path {
+  stroke-dasharray: 14 6;
+  animation: tmStreamFlow 380ms linear infinite;
+}
+
+@keyframes tmStreamFlow {
+  from { stroke-dashoffset: 20; }
+  to { stroke-dashoffset: 0; }
+}
+
+.tm-pouring-cup-wrap {
+  position: relative;
+  width: 155px;
+  height: 140px;
+  z-index: 4;
+}
+
+.tm-cup-main-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.tm-cup-glass-img {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(11, 43, 30, 0.12));
+}
+
+.tm-cup-fill-reservoir {
+  position: absolute;
+  bottom: 12px;
+  left: 18px;
+  right: 18px;
+  border-radius: 0 0 45px 45px;
+  z-index: 1;
+  overflow: hidden;
+  transition: height 2.2s cubic-bezier(0.2, 0.8, 0.3, 1), background-color 400ms ease;
+}
+
+.tm-cup-fill-reservoir.filling {
+  height: 70%;
+}
+
+.tm-cup-fill-reservoir.full {
+  height: 76%;
+}
+
+.tm-surface-ripple {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  opacity: 0.7;
+  animation: tmRipple 1.2s infinite ease-out;
+}
+
+@keyframes tmRipple {
+  0% { transform: translateX(-50%) scale(0.8); opacity: 0.8; }
+  100% { transform: translateX(-50%) scale(1.3); opacity: 0; }
+}
+
+/* Steeping Timer Box */
+.tm-steeping-timer-box {
+  text-align: center;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px 32px;
+  box-shadow: 0 8px 24px rgba(11, 43, 30, 0.06);
+  width: 100%;
+  max-width: 440px;
+}
+
+.tm-timer-sub-label {
+  display: block;
+  font-size: 11px;
   font-weight: 800;
+  letter-spacing: 2px;
+  color: #926b15;
+  margin-bottom: 6px;
+}
+
+.tm-timer-display-clock {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 44px;
+  font-weight: 400;
+  color: #0b2b1e;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.tm-timer-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tm-timer-btn {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid #0b2b1e;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tm-timer-btn:hover:not(:disabled) {
+  background: #134230;
+}
+
+.tm-timer-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tm-timer-btn.secondary {
+  background: transparent;
+  color: #0b2b1e;
+  border-color: rgba(11, 43, 30, 0.2);
+}
+
+.tm-timer-btn.secondary:hover:not(:disabled) {
+  background: rgba(11, 43, 30, 0.06);
+}
+
+/* =========================================================
+   8. STEP 8: FINAL CELEBRATION RESULT CARD (CUP CENTERPIECE)
+   ========================================================= */
+
+.tm-result-celebration-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.tm-result-cup-hero {
+  position: relative;
+  width: 175px;
+  height: 160px;
+  margin-bottom: 24px;
+}
+
+.tm-result-cup-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.tm-result-pill {
+  display: inline-block;
+  padding: 4px 14px;
+  background: rgba(201, 162, 75, 0.18);
+  color: #926b15;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.tm-ready-heading {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  margin: 0 0 12px;
+  color: #0b2b1e;
+}
+
+.tm-result-formula {
+  font-size: 15px;
+  color: rgba(11, 43, 30, 0.85);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.tm-result-additions {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #926b15;
+  font-weight: 600;
+}
+
+.tm-result-quote-box {
+  background: #faf8f5;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.tm-result-tasting-notes {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #926b15;
+  margin: 0 0 4px;
+}
+
+.tm-result-quote {
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(11, 43, 30, 0.7);
+  margin: 0;
+}
+
+.tm-result-action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.tm-btn-primary {
+  padding: 13px 26px;
+  border-radius: 999px;
+  border: none;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tm-btn-primary:hover {
+  background: #144933;
+  transform: translateY(-2px);
+}
+
+.tm-btn-primary.added {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.tm-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 43, 30, 0.2);
+  background: transparent;
+  color: #0b2b1e;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 1px;
   text-decoration: none;
   cursor: pointer;
   transition: all 180ms ease;
 }
 
-.tm-brew-again-btn {
-  background: transparent;
-  border: 1px solid rgba(247, 243, 236, 0.4);
-  color: #f7f3ec;
-}
-
-.tm-shop-tea-btn {
-  background: #c9a24b;
-  border: 1px solid #c9a24b;
-  color: #0b2b1e;
-}
-
-.tm-brew-again-btn:hover,
-.tm-shop-tea-btn:hover {
-  transform: translateY(-1px);
-  background: #f7f3ec;
-  color: #0b2b1e;
+.tm-btn-secondary:hover {
+  background: rgba(11, 43, 30, 0.05);
+  border-color: #0b2b1e;
 }
 
 /* =========================================================
-   AMBIENT MODE PARTICLES
+   9. RESPONSIVE BREAKPOINTS
    ========================================================= */
 
-.tm-ambient-particles {
-  display: none;
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.ambient-mode-active .tm-ambient-particles {
-  display: block;
-}
-
-.tm-ambient-leaf {
-  position: absolute;
-  font-size: 20px;
-  opacity: 0.35;
-  animation: ambient-fall 8s linear infinite;
-}
-
-.tm-ambient-leaf.al-1 { top: -10%; left: 15%; animation-duration: 9s; animation-delay: 0s; }
-.tm-ambient-leaf.al-2 { top: -10%; left: 45%; animation-duration: 11s; animation-delay: 2s; }
-.tm-ambient-leaf.al-3 { top: -10%; left: 75%; animation-duration: 8.5s; animation-delay: 4s; }
-.tm-ambient-leaf.al-4 { top: -10%; left: 30%; animation-duration: 10s; animation-delay: 1.5s; }
-.tm-ambient-leaf.al-5 { top: -10%; left: 85%; animation-duration: 12s; animation-delay: 3s; }
-
-@keyframes ambient-fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-  20% { opacity: 0.4; }
-  80% { opacity: 0.4; }
-  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
-
-/* =========================================================
-   RESPONSIVE DESIGN
-   ========================================================= */
-
-@media (max-width: 900px) {
-  .tm-config-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .tm-hero {
-    padding: 60px 18px 50px;
+@media (max-width: 768px) {
+  .tm-step-view {
+    padding: 28px 18px 36px;
   }
 
-  .tm-scene-table {
-    gap: 30px;
+  .tm-tea-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 
-  .tm-teapot-wrap {
-    width: 130px;
+  .tm-vessels-pouring-layout {
+    gap: 16px;
   }
 
-  .tm-teacup-body {
-    width: 90px;
-    height: 65px;
+  .tm-open-pot-composition,
+  .tm-pouring-pot-wrap {
+    width: 135px;
+    height: 125px;
   }
 
-  .tm-stages-nav {
-    border-radius: 16px;
+  .tm-pot-liquid-reservoir {
+    bottom: 16px;
+    left: 20px;
+    right: 20px;
+    height: 48px;
   }
 
-  .tm-result-actions {
+  .tm-pouring-cup-wrap {
+    width: 115px;
+    height: 105px;
+  }
+
+  .tm-result-action-buttons {
     flex-direction: column;
+  }
+
+  .tm-btn-primary,
+  .tm-btn-secondary {
+    width: 100%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tm-teapot-wrap,
-  .tm-ambient-leaf,
-  .tm-leaf,
-  .tm-steam-particle {
+  .tm-fade-in,
+  .tm-pop-in,
+  .tm-stream-animated-path,
+  .tm-falling-particle,
+  .tm-steam-vapor,
+  .tm-surface-ripple,
+  .flame,
+  .tm-falling-tea-leaf,
+  .tm-sequential-drop-item,
+  .tm-pot-simmering-item,
+  .tm-cup-floating-botanical {
     animation: none !important;
     transition: none !important;
   }
 }
+
