@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/leafly-logo.webp";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useUser, UserButton } from "@clerk/clerk-react";
 import "./Navbar.css";
 
 const navLinks = [
@@ -32,15 +33,12 @@ const navLinks = [
     label: "Contact",
     path: "/contact",
   },
-  {
-    label: "Admin",
-    path: "/admin",
-  },
 ];
 
 export default function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isSignedIn } = useUser();
 
   const {
     cartCount,
@@ -304,33 +302,35 @@ export default function Navbar() {
 
 
         {/* PROFILE */}
-
-        <Link
-          to="/profile"
-          aria-label="Profile"
-          className="leafly-icon-button"
-          onClick={closeMenu}
-        >
-          <svg
-            width="21"
-            height="21"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {isSignedIn ? (
+          <UserButton afterSignOutUrl="/" />
+        ) : (
+          <Link
+            to="/customer-login"
+            aria-label="Profile"
+            className="leafly-icon-button"
+            onClick={closeMenu}
           >
-            <circle
-              cx="12"
-              cy="8"
-              r="3.5"
-            />
+            <svg
+              width="21"
+              height="21"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle
+                cx="12"
+                cy="8"
+                r="3.5"
+              />
 
-            <path d="M5 20c.8-3.5 3.2-5.5 7-5.5s6.2 2 7 5.5" />
-          </svg>
-        </Link>
-
+              <path d="M5 20c.8-3.5 3.2-5.5 7-5.5s6.2 2 7 5.5" />
+            </svg>
+          </Link>
+        )}
       </div>
 
 
@@ -437,10 +437,10 @@ export default function Navbar() {
           {/* PROFILE */}
 
           <Link
-            to="/profile"
+            to={isSignedIn ? "/profile" : "/customer-login"}
             onClick={closeMenu}
           >
-            Profile
+            {isSignedIn ? "Profile" : "Log In / Sign Up"}
           </Link>
 
         </div>

@@ -1,7 +1,8 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import type { CartProduct } from "../context/CartContext";
 import mainImage from "../assets/main.webp";
 import image2 from "../assets/image2.webp";
@@ -120,14 +121,7 @@ const sidebarItems: SidebarItem[] = [
   },
 ];
 
-const initialDetails: DetailsState = {
-  fullName: "Aarav Kapoor",
-  email: "aarav.kapoor@leafly.com",
-  phone: "+91 98200 12345",
-  dob: "14 April 1992",
-  gender: "Male",
-};
-
+// Remove hardcoded initialDetails, we'll initialize from auth
 const initialPreferences: PreferencesState = {
   favoriteTypes: "Green Tea, Oolong, White Tea",
   flavorNotes: "Floral, Earthy, Fresh",
@@ -238,8 +232,32 @@ export default function Profile() {
     };
   }, [orders]);
 
+  const { user } = useUser();
+  const { signOut } = useClerk();
+  
   const [selectedSidebar, setSelectedSidebar] = useState<SidebarItemId>("overview");
-  const [details, setDetails] = useState<DetailsState>(initialDetails);
+  
+  // Use user data for details
+  const [details, setDetails] = useState<DetailsState>({
+    fullName: user?.fullName || "",
+    email: user?.primaryEmailAddress?.emailAddress || "",
+    phone: user?.primaryPhoneNumber?.phoneNumber || "",
+    dob: "Not specified",
+    gender: "Not specified",
+  });
+  
+  // Update details if userData loads after mount
+  useEffect(() => {
+    if (user) {
+      setDetails(prev => ({
+        ...prev,
+        fullName: user?.fullName || prev.fullName,
+        email: user?.primaryEmailAddress?.emailAddress || prev.email,
+        phone: user?.primaryPhoneNumber?.phoneNumber || prev.phone,
+      }));
+    }
+  }, [user]);
+
   const [preferences, setPreferences] = useState<PreferencesState>(initialPreferences);
   const [isEditingDetails, setIsEditingDetails] = useState(false);
   const [isEditingPreferences, setIsEditingPreferences] = useState(false);
@@ -248,7 +266,7 @@ export default function Profile() {
   const [detailsSaved, setDetailsSaved] = useState(false);
   const [preferencesSaved, setPreferencesSaved] = useState(false);
 
-  const activeUserName = useMemo(() => details.fullName || "Aarav Kapoor", [details.fullName]);
+  const activeUserName = useMemo(() => details.fullName || "Tea Lover", [details.fullName]);
 
   const handleSidebarClick = (item: SidebarItem) => {
     setSelectedSidebar(item.id);
@@ -285,7 +303,13 @@ export default function Profile() {
   const handleCancelDetails = () => {
     setIsEditingDetails(false);
     setDetailsSaved(false);
-    setDetails(initialDetails);
+    setDetails({
+      fullName: user?.fullName || "",
+      email: user?.primaryEmailAddress?.emailAddress || "",
+      phone: user?.primaryPhoneNumber?.phoneNumber || "",
+      dob: "Not specified",
+      gender: "Not specified",
+    });
     setNotice("Changes were discarded.");
   };
 
@@ -339,9 +363,10 @@ export default function Profile() {
     navigate("/shop");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setShowLogoutConfirm(false);
-    setNotice("You have been logged out in this demo session.");
+    await signOut();
+    navigate("/");
   };
 
   return (

@@ -3,13 +3,16 @@ import { Link } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
 import { type Product, type TeaCategory } from "../data/products";
 import { recentOrders, salesAnalytics } from "../data/mockOrders";
+import { useAuth } from "../context/AuthContext";
 import "./AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const { products, updateProduct, addProduct } = useProducts();
+  const { products, updateProduct, addProduct, deleteProduct } = useProducts();
+  const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<"dashboard" | "products">("dashboard");
   
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
 
   const handleEditClick = (product: Product) => {
@@ -35,36 +38,55 @@ export default function AdminDashboard() {
     setIsEditing(true);
   };
 
-  const handleSaveProduct = (e: React.FormEvent) => {
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (currentProduct.id) {
-      // Update
-      const updated = { ...currentProduct } as Product;
-      // Ensure variants reflect the base price properly if not deeply edited
-      updated.variants = {
-        "100g": { weight: "100g", price: updated.price, oldPrice: updated.oldPrice },
-        "250g": { weight: "250g", price: Math.round(updated.price * 2.2), oldPrice: updated.oldPrice ? Math.round(updated.oldPrice * 2.2) : undefined }
-      };
-      updateProduct(updated);
-    } else {
-      // Add new
-      const newProduct = { ...currentProduct } as Product;
-      newProduct.id = Date.now();
-      newProduct.variants = {
-        "100g": { weight: "100g", price: newProduct.price, oldPrice: newProduct.oldPrice },
-        "250g": { weight: "250g", price: Math.round(newProduct.price * 2.2), oldPrice: newProduct.oldPrice ? Math.round(newProduct.oldPrice * 2.2) : undefined }
-      };
-      addProduct(newProduct);
+    setIsSaving(true);
+    try {
+      if (currentProduct.id) {
+        // Update
+        const updated = { ...currentProduct } as Product;
+        updated.variants = {
+          "100g": { weight: "100g", price: updated.price, oldPrice: updated.oldPrice },
+          "250g": { weight: "250g", price: Math.round(updated.price * 2.2), oldPrice: updated.oldPrice ? Math.round(updated.oldPrice * 2.2) : undefined }
+        };
+        await updateProduct(updated);
+      } else {
+        // Add new
+        const newProduct = { ...currentProduct } as Product;
+        newProduct.id = Date.now();
+        newProduct.variants = {
+          "100g": { weight: "100g", price: newProduct.price, oldPrice: newProduct.oldPrice },
+          "250g": { weight: "250g", price: Math.round(newProduct.price * 2.2), oldPrice: newProduct.oldPrice ? Math.round(newProduct.oldPrice * 2.2) : undefined }
+        };
+        await addProduct(newProduct);
+      }
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save product", error);
+      alert("Failed to save product. Check console.");
+    } finally {
+      setIsSaving(false);
     }
-    setIsEditing(false);
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        await deleteProduct(id);
+      } catch (error) {
+        console.error("Failed to delete product", error);
+        alert("Failed to delete product.");
+      }
+    }
   };
 
   return (
     <div className="admin-layout">
       {/* SIDEBAR */}
       <aside className="admin-sidebar">
-        <div className="admin-brand">
+        <div className="admin-brand flex justify-between items-center">
           <h2>Leafly Admin</h2>
+          <button onClick={signOut} className="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Logout</button>
         </div>
         <nav className="admin-nav">
           <button 
@@ -194,7 +216,8 @@ export default function AdminDashboard() {
                     <td>{product.category}</td>
                     <td>₹{product.price.toLocaleString()}</td>
                     <td>
-                      <button className="admin-btn-secondary" onClick={() => handleEditClick(product)}>Edit</button>
+                      <button className="admin-btn-secondary" onClick={() => handleEditClick(product)} style={{marginRight: '8px'}}>Edit</button>
+                      <button className="admin-btn-secondary" onClick={() => handleDeleteProduct(product.id)} style={{color: 'red', borderColor: 'red'}}>Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -284,8 +307,10 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="form-actions">
-                <button type="button" className="admin-btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
-                <button type="submit" className="admin-btn-primary">Save Product</button>
+                <button type="button" className="admin-btn-secondary" onClick={() => setIsEditing(false)} disabled={isSaving}>Cancel</button>
+                <button type="submit" className="admin-btn-primary" disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save Product"}
+                </button>
               </div>
             </form>
           </div>

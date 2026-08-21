@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import {
@@ -9,6 +9,7 @@ import {
 import DeliveryAnimation from "../components/DeliveryAnimation";
 import CouponRewardAnimation from "../components/CouponRewardAnimation";
 import { validateCoupon, calculateDiscount, type AppliedCoupon } from "../utils/coupon";
+import { useUser } from "@clerk/clerk-react";
 import "./Checkout.css";
 
 type DeliveryMethod = "standard" | "express";
@@ -67,6 +68,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, clearCart } = useCart();
   const { addOrder } = useOrderContext();
+  const { user } = useUser();
 
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -100,6 +102,17 @@ export default function Checkout() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Pre-fill user data if logged in
+  useEffect(() => {
+    if (user) {
+      if (!email) setEmail(user.primaryEmailAddress?.emailAddress || "");
+      if (!phone) setPhone(user.primaryPhoneNumber?.phoneNumber || "");
+      if (!shippingAddress.fullName) {
+        setShippingAddress(prev => ({ ...prev, fullName: user.fullName || "" }));
+      }
+    }
+  }, [user]);
 
   // Coupon state
   const [couponInput, setCouponInput] = useState("");
@@ -243,6 +256,7 @@ export default function Checkout() {
 
     const order: Order = {
       id: generateOrderId(),
+      userId: user ? user.id : undefined,
       createdAt: new Date().toISOString(),
       status: "Processing",
       items: items.map((item) => ({
