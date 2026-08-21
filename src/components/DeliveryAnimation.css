@@ -29,46 +29,162 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  padding: clamp(24px, 4vh, 48px) 20px clamp(20px, 3vh, 40px);
   overflow: hidden;
   background:
-    radial-gradient(circle at center, rgba(201, 162, 75, 0.15) 0%, transparent 65%),
+    radial-gradient(circle at 50% 30%, rgba(201, 162, 75, 0.15) 0%, transparent 65%),
     linear-gradient(180deg, #0b2b1e 0%, #061d14 100%);
 }
 
 .leafly-delivery-glow {
   position: absolute;
-  width: 600px;
-  height: 600px;
+  width: min(600px, 90vw);
+  height: min(600px, 90vw);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(201, 162, 75, 0.12) 0%, transparent 70%);
-  top: 30%;
+  top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
   filter: blur(40px);
 }
 
+/* =========================================================
+   ZONE 1: TOP SUCCESS HUD (ISOLATED IN TOP AREA)
+   ========================================================= */
+
+.leafly-delivery-hud-zone {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: clamp(12px, 2vh, 32px);
+  min-height: 140px;
+}
+
+.leafly-delivery-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.leafly-delivery-text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.leafly-delivery-text-block.fade-in {
+  animation: leafly-text-fade 0.5s ease forwards;
+}
+
+.leafly-delivery-text-block.pop-in {
+  animation: leafly-text-pop 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes leafly-text-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes leafly-text-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.leafly-success-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #c9a24b;
+  color: #0b2b1e;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 2px;
+  box-shadow: 0 0 25px rgba(201, 162, 75, 0.5);
+}
+
+.leafly-delivery-eyebrow {
+  margin: 0;
+  color: #c9a24b;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.leafly-delivery-heading {
+  margin: 4px 0 2px;
+  color: #f7f3ec;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(26px, 3.8vw, 46px);
+  font-weight: 400;
+  letter-spacing: -1.2px;
+  line-height: 1.1;
+}
+
+.leafly-delivery-subtext {
+  color: rgba(247, 243, 236, 0.72);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   ZONE 2: BOTTOM DELIVERY BOY TRACK (ISOLATED IN BOTTOM AREA)
+   ========================================================= */
+
+.leafly-delivery-track-zone {
+  position: relative;
+  width: 100%;
+  height: clamp(200px, 36vh, 310px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+  margin-top: auto;
+}
+
 .leafly-delivery-ground {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 24%;
+  bottom: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(201, 162, 75, 0.4) 50%, transparent 100%);
   box-shadow: 0 0 15px rgba(201, 162, 75, 0.3);
 }
 
-/* =========================================================
-   COURIER CHARACTER MOVEMENT & FLOATING
-   ========================================================= */
-
 .leafly-courier-wrapper {
   position: absolute;
-  bottom: 24%;
+  bottom: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   pointer-events: none;
   will-change: transform, opacity;
@@ -115,7 +231,7 @@
 .leafly-courier-figure {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   animation: leafly-courier-alive 2.2s ease-in-out infinite alternate;
 }
@@ -125,17 +241,17 @@
     transform: translate3d(0, 0, 0) rotate(-0.5deg);
   }
   50% {
-    transform: translate3d(0, -10px, 0) rotate(1deg);
+    transform: translate3d(0, -8px, 0) rotate(1deg);
   }
   100% {
-    transform: translate3d(0, -3px, 0) rotate(-0.5deg);
+    transform: translate3d(0, -2px, 0) rotate(-0.5deg);
   }
 }
 
 .leafly-courier-img {
-  width: min(44vw, 320px);
-  min-width: 200px;
-  max-width: 320px;
+  width: min(38vw, 260px);
+  min-width: 160px;
+  max-width: 260px;
   height: auto;
   display: block;
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5));
@@ -143,8 +259,8 @@
 
 .leafly-courier-package-glow {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background: radial-gradient(circle, rgba(201, 162, 75, 0.4) 0%, transparent 70%);
   border-radius: 50%;
   bottom: 20px;
@@ -165,121 +281,27 @@
 }
 
 /* =========================================================
-   HUD / TEXT OVERLAYS (NO COUPONS HERE)
-   ========================================================= */
-
-.leafly-delivery-hud {
-  position: absolute;
-  top: 15%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  z-index: 10;
-  width: min(90vw, 680px);
-}
-
-.leafly-delivery-text-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.leafly-delivery-text-block.fade-in {
-  animation: leafly-text-fade 0.5s ease forwards;
-}
-
-.leafly-delivery-text-block.pop-in {
-  animation: leafly-text-pop 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes leafly-text-fade {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes leafly-text-pop {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.leafly-success-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #c9a24b;
-  color: #0b2b1e;
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 4px;
-  box-shadow: 0 0 25px rgba(201, 162, 75, 0.5);
-}
-
-.leafly-delivery-eyebrow {
-  margin: 0;
-  color: #c9a24b;
-  font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-
-.leafly-delivery-heading {
-  margin: 4px 0 2px;
-  color: #f7f3ec;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(32px, 4.4vw, 54px);
-  font-weight: 400;
-  letter-spacing: -1.5px;
-  line-height: 1.05;
-}
-
-.leafly-delivery-subtext {
-  color: rgba(247, 243, 236, 0.72);
-  font-family: Inter, Arial, sans-serif;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-}
-
-/* =========================================================
    RESPONSIVE BREAKPOINTS
    ========================================================= */
 
 @media (max-width: 768px) {
-  .leafly-delivery-hud {
-    top: 10%;
+  .leafly-delivery-scene {
+    padding: 24px 16px 20px;
+  }
+
+  .leafly-delivery-hud-zone {
+    min-height: 120px;
+    padding-top: 8px;
+  }
+
+  .leafly-delivery-track-zone {
+    height: clamp(170px, 32vh, 230px);
   }
 
   .leafly-courier-img {
-    width: min(60vw, 240px);
-    min-width: 170px;
-  }
-
-  .leafly-delivery-ground {
-    bottom: 26%;
-  }
-
-  .leafly-courier-wrapper {
-    bottom: 26%;
+    width: min(55vw, 210px);
+    min-width: 150px;
+    max-width: 210px;
   }
 }
 

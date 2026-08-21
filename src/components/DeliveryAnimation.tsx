@@ -56,44 +56,44 @@ export default function DeliveryAnimation({
       <div className="leafly-delivery-scene">
         {/* Soft background glow & tea ambiance */}
         <div className="leafly-delivery-glow" aria-hidden="true" />
-        <div className="leafly-delivery-ground" aria-hidden="true" />
 
-        {/* DELIVERY BOY CHARACTER - completely unobstructed */}
-        <div
-          className={`leafly-courier-wrapper ${step}`}
-          aria-hidden="true"
-        >
-          <div className="leafly-courier-figure">
-            <img
-              src={deliveryBoyImg}
-              alt="Leafly Tea Courier"
-              className="leafly-courier-img"
-              loading="eager"
-              fetchPriority="high"
-            />
-            {/* Subtle package arrival effect */}
-            <div className="leafly-courier-package-glow" />
+        {/* ZONE 1: TOP SUCCESS MESSAGE / HUD — isolated in its own top space */}
+        <div className="leafly-delivery-hud-zone">
+          <div className="leafly-delivery-hud">
+            {(step === "entering" || step === "arriving") && (
+              <div className="leafly-delivery-text-block fade-in">
+                <p className="leafly-delivery-eyebrow">TEA RITUAL IN MOTION</p>
+                <h2 className="leafly-delivery-heading">DISPATCHING YOUR TEA</h2>
+                <span className="leafly-delivery-subtext">Carefully packed with intention</span>
+              </div>
+            )}
+
+            {(step === "confirmed" || step === "exiting") && (
+              <div className="leafly-delivery-text-block pop-in">
+                <span className="leafly-success-badge">✓</span>
+                <p className="leafly-delivery-eyebrow">CONFIRMED</p>
+                <h2 className="leafly-delivery-heading">ORDER PLACED SUCCESSFULLY</h2>
+                <span className="leafly-delivery-subtext">Your fresh harvest tea is on its journey</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* DELIVERY HUD - only order delivery and success confirmation */}
-        <div className="leafly-delivery-hud">
-          {(step === "entering" || step === "arriving") && (
-            <div className="leafly-delivery-text-block fade-in">
-              <p className="leafly-delivery-eyebrow">TEA RITUAL IN MOTION</p>
-              <h2 className="leafly-delivery-heading">DISPATCHING YOUR TEA</h2>
-              <span className="leafly-delivery-subtext">Carefully packed with intention</span>
+        {/* ZONE 2: BOTTOM DELIVERY BOY TRACK — isolated in bottom track, never overlaps text */}
+        <div className="leafly-delivery-track-zone" aria-hidden="true">
+          <div className="leafly-delivery-ground" />
+          <div className={`leafly-courier-wrapper ${step}`}>
+            <div className="leafly-courier-figure">
+              <img
+                src={deliveryBoyImg}
+                alt="Leafly Tea Courier"
+                className="leafly-courier-img"
+                loading="eager"
+                fetchPriority="high"
+              />
+              <div className="leafly-courier-package-glow" />
             </div>
-          )}
-
-          {(step === "confirmed" || step === "exiting") && (
-            <div className="leafly-delivery-text-block pop-in">
-              <span className="leafly-success-badge">✓</span>
-              <p className="leafly-delivery-eyebrow">CONFIRMED</p>
-              <h2 className="leafly-delivery-heading">ORDER PLACED SUCCESSFULLY</h2>
-              <span className="leafly-delivery-subtext">Your fresh harvest tea is on its journey</span>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

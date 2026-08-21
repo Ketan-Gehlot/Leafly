@@ -14,7 +14,6 @@ import { useProducts } from "../context/ProductContext";
 import Footer from "../components/Footer";
 
 import "./Shop.css";
-
 const categories = [
   "All Teas",
   "Green",

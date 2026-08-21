@@ -6,6 +6,8 @@ import {
   type Order,
   type ShippingAddress,
 } from "../context/OrderContext";
+import DeliveryAnimation from "../components/DeliveryAnimation";
+import CouponRewardAnimation from "../components/CouponRewardAnimation";
 import { validateCoupon, calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import { useCoupons } from "../context/CouponContext";
 import Footer from "../components/Footer";
@@ -99,6 +101,7 @@ export default function Checkout() {
   const [cardName, setCardName] = useState("");
   const [upiId, setUpiId] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Coupon state
@@ -325,11 +328,12 @@ export default function Checkout() {
     grantWelcomeReward();
     clearCart();
 
-    // Immediately navigate to Order Success — no race conditions or intermediate flash
-    navigate("/order-success");
+    // Trigger delivery animation immediately with zero cart flash
+    setIsProcessing(false);
+    setDeliveryPhase("delivery");
   };
 
-  if (items.length === 0 && !isProcessing) {
+  if (items.length === 0 && deliveryPhase === "idle" && !isProcessing) {
     return (
       <main className="checkout-page checkout-page-empty">
         <div className="checkout-empty-state">
@@ -341,6 +345,28 @@ export default function Checkout() {
           </button>
         </div>
       </main>
+    );
+  }
+
+  // Sequential phase rendering: Delivery Boy -> Coupon Reward -> Order Success
+  if (deliveryPhase === "delivery") {
+    return (
+      <DeliveryAnimation
+        onComplete={() => {
+          setDeliveryPhase("coupon");
+        }}
+      />
+    );
+  }
+
+  if (deliveryPhase === "coupon") {
+    return (
+      <CouponRewardAnimation
+        couponCode="LEAFLY2026"
+        onComplete={() => {
+          navigate("/order-success");
+        }}
+      />
     );
   }
 
