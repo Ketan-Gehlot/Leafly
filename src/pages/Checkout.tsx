@@ -8,6 +8,7 @@ import {
 } from "../context/OrderContext";
 import DeliveryAnimation from "../components/DeliveryAnimation";
 import CouponRewardAnimation from "../components/CouponRewardAnimation";
+import PhoneInput from "../components/PhoneInput";
 import { validateCoupon, calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import { useCoupons } from "../context/CouponContext";
 import Footer from "../components/Footer";
@@ -405,16 +406,14 @@ export default function Checkout() {
                 {errors.email && <small>{errors.email}</small>}
               </label>
 
-              <label className="checkout-field">
-                <span>Phone</span>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                  aria-invalid={Boolean(errors.phone)}
-                />
-                {errors.phone && <small>{errors.phone}</small>}
-              </label>
+              <PhoneInput
+                id="checkout-phone"
+                label="Phone"
+                value={phone}
+                onChange={setPhone}
+                error={errors.phone}
+                required
+              />
             </div>
           </div>
 

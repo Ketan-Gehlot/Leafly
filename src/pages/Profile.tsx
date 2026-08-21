@@ -8,6 +8,7 @@ import image2 from "../assets/image2.webp";
 import image3 from "../assets/image3.webp";
 import image5 from "../assets/image5.webp";
 import Footer from "../components/Footer";
+import PhoneInput from "../components/PhoneInput";
 import "./Profile.css";
 
 type SidebarItemId =
@@ -634,14 +635,12 @@ export default function Profile() {
                         />
                       </label>
 
-                      <label className="profile-form-field">
-                        <span>Phone Number</span>
-                        <input
-                          type="tel"
-                          value={details.phone}
-                          onChange={(event) => setDetails((current) => ({ ...current, phone: event.target.value }))}
-                        />
-                      </label>
+                      <PhoneInput
+                        id="profile-phone"
+                        label="Phone Number"
+                        value={details.phone}
+                        onChange={(value) => setDetails((current) => ({ ...current, phone: value }))}
+                      />
 
                       <label className="profile-form-field">
                         <span>Date of Birth</span>

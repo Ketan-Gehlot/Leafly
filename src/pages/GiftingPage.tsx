@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import image2 from "../assets/image2.webp";
 import image3 from "../assets/image3.webp";
 import image5 from "../assets/image5.webp";
+import PhoneInput from "../components/PhoneInput";
 import "./GiftingPage.css";
 
 type GiftHamper = {
@@ -251,16 +252,14 @@ export default function GiftingPage() {
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
                     </label>
-                    <label className="gifting-field">
-                      <span>Phone Number *</span>
-                      <input
-                        type="tel"
-                        required
-                        placeholder="+91 98000 00000"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      />
-                    </label>
+                    <PhoneInput
+                      id="gifting-phone"
+                      label="Phone Number"
+                      required
+                      placeholder="Enter phone number"
+                      value={formData.phone}
+                      onChange={(val) => setFormData({ ...formData, phone: val })}
+                    />
                   </div>
 
                   <label className="gifting-field">
