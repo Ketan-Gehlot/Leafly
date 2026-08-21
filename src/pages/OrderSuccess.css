@@ -14,19 +14,42 @@
 }
 
 .order-success-card {
-  width: min(960px, calc(100% - 32px));
+  width: min(880px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 34px 28px 32px;
-  background: #faf7f0;
-  border: 1px solid rgba(11, 43, 30, 0.08);
-  border-radius: 18px;
-  box-shadow: 0 10px 26px rgba(11, 43, 30, 0.05);
+  padding: 40px 36px 38px;
+  background: #ffffff;
+  border: 1px solid rgba(11, 43, 30, 0.09);
+  border-radius: 20px;
+  box-shadow: 0 16px 45px rgba(11, 43, 30, 0.06);
+}
+
+.order-success-header-wrap {
+  text-align: center;
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.order-success-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #134e38, #0b2b1e);
+  color: #d8b15d;
+  font-size: 26px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(11, 43, 30, 0.2), inset 0 0 0 1px rgba(201, 162, 75, 0.4);
 }
 
 .order-success-eyebrow {
   margin: 0 0 10px;
   color: #b98428;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 2.8px;
 }
@@ -35,23 +58,25 @@
   margin: 0;
   color: #0b2b1e;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(36px, 5vw, 60px);
+  font-size: clamp(30px, 4.5vw, 52px);
   font-weight: 400;
-  line-height: 0.96;
-  letter-spacing: -1.8px;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
 }
 
 .order-success-tagline {
   margin: 12px 0 0;
-  color: rgba(11, 43, 30, 0.68);
-  font-size: 14px;
+  color: rgba(11, 43, 30, 0.72);
+  font-size: 15px;
+  max-width: 480px;
+  line-height: 1.6;
 }
 
 .order-success-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  margin-top: 28px;
+  margin-top: 10px;
 }
 
 .order-success-block {

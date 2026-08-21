@@ -16,9 +16,20 @@ import saltImg from "../assets/tea-maker/ingredients/black-salt.webp";
 import honeyImg from "../assets/tea-maker/ingredients/honey.webp";
 
 import kettleImg from "../assets/tea-maker/vessels/glass-kettle.webp";
-import teapotPourImg from "../assets/tea-maker/vessels/teapot-pour.webp";
 import cupImg from "../assets/tea-maker/vessels/cup-tea.webp";
 
+// Category-specific pouring images
+import pouringGreenImg from "../assets/pouring-green.png";
+import pouringWhiteImg from "../assets/pouring-white.png";
+import pouringBlackImg from "../assets/pouring-black.png";
+import pouringPuerhImg from "../assets/pouring-purerh.png";
+
+// Category-specific finished tea ready images
+import greenTeaMakerImg from "../assets/green-tea-maker.png";
+import whiteTeaMakerImg from "../assets/white-tea-maker.png";
+import blackTeaMakerImg from "../assets/black-tea-maker.png";
+import oolongTeaMakerImg from "../assets/oolong-tea-maker.png";
+import puerhTeaMakerImg from "../assets/puerh-tea-maker.png";
 
 import lemonSliceEffect from "../assets/tea-maker/effects/lemon-slice.webp";
 import mintLeafEffect from "../assets/tea-maker/effects/mint-leaf.webp";
@@ -130,6 +141,8 @@ interface TeaCategoryInfo {
   notes: string;
   matchedProductId: number;
   image: string;
+  pouringImage: string;
+  readyImage: string;
 }
 
 const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
@@ -146,6 +159,8 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     notes: "Sweet Grass · Jasmine · Dewy Mountain Mist",
     matchedProductId: 1,
     image: "/leafly-green-tea.png",
+    pouringImage: pouringGreenImg,
+    readyImage: greenTeaMakerImg,
   },
   White: {
     type: "White",
@@ -160,6 +175,8 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     notes: "Wild Honeysuckle · White Peach · Melon Silk",
     matchedProductId: 2,
     image: "/leafly-white-tea.png",
+    pouringImage: pouringWhiteImg,
+    readyImage: whiteTeaMakerImg,
   },
   Black: {
     type: "Black",
@@ -174,6 +191,8 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     notes: "Muscatel Grape · Amber Malt · Forest Oak",
     matchedProductId: 3,
     image: "/leafly-black-tea.png",
+    pouringImage: pouringBlackImg,
+    readyImage: blackTeaMakerImg,
   },
   Oolong: {
     type: "Oolong",
@@ -188,6 +207,8 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     notes: "Roasted Orchid · Peach Blossom · Wild Forest Honey",
     matchedProductId: 4,
     image: "/leafly-oolong-tea.png",
+    pouringImage: pouringBlackImg,
+    readyImage: oolongTeaMakerImg,
   },
   "Pu-erh": {
     type: "Pu-erh",
@@ -202,6 +223,8 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     notes: "Petrichor · Dark Cocoa · Earthy Forest Moss",
     matchedProductId: 5,
     image: "/leafly-puer-tea.png",
+    pouringImage: pouringPuerhImg,
+    readyImage: puerhTeaMakerImg,
   },
 };
 
@@ -1029,13 +1052,13 @@ export default function TeaMaker() {
                   </div>
                 )}
 
-                {/* PHASE E: POURING — premium image reveal, no physics */}
+                {/* PHASE E: POURING — category-specific premium image reveal */}
                 {brewingSubStage === "pouring" && (
                   <div className="tm-ritual-phase-b tm-fade-in">
                     <div className="tm-pouring-asset-wrap">
                       <img
-                        src={teapotPourImg}
-                        alt="Pouring tea"
+                        src={currentCat.pouringImage}
+                        alt={`Pouring fresh ${currentCat.title}`}
                         className="tm-pouring-asset-img"
                       />
                     </div>
@@ -1099,7 +1122,7 @@ export default function TeaMaker() {
           {currentStep === 8 && (
             <div className="tm-step-view tm-fade-in" key="step-8">
               <div className="tm-result-celebration-card">
-                {/* PROMINENT FINISHED CUP — still image, gentle vapor only */}
+                {/* PROMINENT FINISHED TEA — category-specific artisan ready image */}
                 <div className="tm-result-cup-hero">
                   {/* Gentle vapor trails above cup */}
                   <div className="tm-cup-vapor-trails" aria-hidden="true">
@@ -1108,11 +1131,10 @@ export default function TeaMaker() {
                     <span className="tm-vapor-trail vt-3" />
                   </div>
                   <div className="tm-result-cup-frame">
-                    <img src={cupImg} alt="Your freshly brewed tea" className="tm-cup-glass-img" />
-                    {/* Static tea colour fill — no animation */}
-                    <div
-                      className="tm-cup-fill-static"
-                      style={{ backgroundColor: getTargetBrewedColor() }}
+                    <img
+                      src={currentCat.readyImage}
+                      alt={`Your freshly brewed ${currentCat.title}`}
+                      className="tm-cup-glass-img tm-cup-ready-img"
                     />
                   </div>
                 </div>

@@ -1177,16 +1177,29 @@
 /* Final still cup hero — sized by its content, not a fixed box */
 .tm-result-cup-hero {
   position: relative;
-  /* Do NOT set fixed width/height — that clips the image */
-  width: min(260px, 80vw);
-  margin: 0 auto 36px;
+  width: min(340px, 88vw);
+  margin: 0 auto 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Frame flows with the cup image — no overflow: hidden, no fixed height */
 .tm-result-cup-frame {
   position: relative;
   width: 100%;
-  /* height: auto — set by the img below */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tm-cup-ready-img {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 36px rgba(11, 43, 30, 0.16));
 }
 
 /* Gentle vapor trails above final cup */
@@ -1380,6 +1393,34 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 
+  .tm-ingredients-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .tm-ingredient-card {
+    padding: 16px 12px 14px;
+  }
+
+  .tm-ingredient-img-wrap {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 8px;
+  }
+
+  .tm-ingredient-name {
+    font-size: 15px;
+  }
+
+  .tm-ingredient-subtitle {
+    font-size: 9.5px;
+  }
+
+  .tm-ingredient-desc {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
   /* On mobile, hide half the hero leaves to reduce clutter */
   .tm-leaf.l-3,
   .tm-leaf.l-6,
@@ -1405,8 +1446,6 @@
     max-width: 100%;
   }
 
-  /* result-cup-hero uses min(260px, 80vw) already — no override needed on mobile */
-
   .tm-result-action-buttons {
     flex-direction: column;
   }
@@ -1414,6 +1453,12 @@
   .tm-btn-primary,
   .tm-btn-secondary {
     width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .tm-ingredients-grid {
+    grid-template-columns: 1fr;
   }
 }
 

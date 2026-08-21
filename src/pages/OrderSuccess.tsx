@@ -34,9 +34,12 @@ export default function OrderSuccess() {
   return (
     <main className="order-success-page">
       <div className="order-success-card">
-        <p className="order-success-eyebrow">ORDER STATUS</p>
-        <h1>ORDER CONFIRMED</h1>
-        <p className="order-success-tagline">Your tea is on its way.</p>
+        <div className="order-success-header-wrap">
+          <div className="order-success-badge" aria-hidden="true">✓</div>
+          <p className="order-success-eyebrow">ORDER STATUS · RITUAL CONFIRMED</p>
+          <h1>ORDER PLACED SUCCESSFULLY</h1>
+          <p className="order-success-tagline">Thank you for your order. Your fresh harvest tea is on its journey.</p>
+        </div>
 
         <div className="order-success-grid">
           <div className="order-success-block">
