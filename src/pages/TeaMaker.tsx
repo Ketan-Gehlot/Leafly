@@ -535,18 +535,28 @@ export default function TeaMaker() {
       <section className="tm-hero" id="tea-maker-hero">
         <div className="tm-hero-bg-glow" aria-hidden="true" />
 
-        {/* Botanical leaf atmosphere — purely CSS animated, aria-hidden */}
+        {/* Botanical leaf atmosphere — organic leaf SVGs with natural drift */}
         <div className="tm-hero-leaves" aria-hidden="true">
-          <span className="tm-leaf l-1" />
-          <span className="tm-leaf l-2" />
-          <span className="tm-leaf l-3" />
-          <span className="tm-leaf l-4" />
-          <span className="tm-leaf l-5" />
-          <span className="tm-leaf l-6" />
-          <span className="tm-leaf l-7" />
-          <span className="tm-leaf l-8" />
-          <span className="tm-leaf l-9" />
-          <span className="tm-leaf l-10" />
+          {[...Array(10)].map((_, i) => (
+            <span key={i} className={`tm-leaf l-${i + 1}`}>
+              <svg viewBox="0 0 32 48" fill="none">
+                <path
+                  d="M16 2 C26 12 30 26 24 38 C18 46 14 47 16 48 C13 46 8 42 5 32 C2 22 6 10 16 2 Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M16 6 Q16 26 16 46"
+                  stroke="rgba(255, 255, 255, 0.4)"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                />
+                <path d="M16 16 Q21 13 24 11" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.8" />
+                <path d="M16 22 Q10 20 8 18" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.8" />
+                <path d="M16 28 Q22 26 25 24" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.8" />
+                <path d="M16 34 Q11 32 9 30" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="0.8" />
+              </svg>
+            </span>
+          ))}
         </div>
 
         <div className="tm-hero-content">

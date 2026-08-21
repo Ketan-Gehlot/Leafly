@@ -104,6 +104,7 @@ export default function Checkout() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isBursting, setIsBursting] = useState(false);
 
   // Coupon state
   const [couponInput, setCouponInput] = useState("");
@@ -255,6 +256,7 @@ export default function Checkout() {
       return;
     }
 
+    setIsBursting(true);
     setIsProcessing(true);
 
     const order: Order = {
@@ -329,9 +331,12 @@ export default function Checkout() {
     grantWelcomeReward();
     clearCart();
 
-    // Trigger delivery animation immediately with zero cart flash
-    setIsProcessing(false);
-    setDeliveryPhase("delivery");
+    // Allow the leaf burst to bloom naturally for 550ms, then transition to delivery boy animation
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsBursting(false);
+      setDeliveryPhase("delivery");
+    }, 550);
   };
 
   if (items.length === 0 && deliveryPhase === "idle" && !isProcessing) {
@@ -766,22 +771,38 @@ export default function Checkout() {
 
           {errors.cart && <p className="checkout-inline-error">{errors.cart}</p>}
 
-          <button
-            type="button"
-            className={`checkout-primary-button ${isProcessing ? "brewing" : ""}`}
-            disabled={isProcessing || items.length === 0}
-            aria-label={isProcessing ? "Brewing ritual..." : "Place order"}
-            onClick={handlePlaceOrder}
-          >
-            {isProcessing ? (
-              <span className="checkout-brewing-content">
-                <span className="checkout-teapot-icon" aria-hidden="true">🫖</span>
-                BREWING YOUR RITUAL...
-              </span>
-            ) : (
-              "PLACE ORDER"
+          <div className="checkout-button-container">
+            <button
+              type="button"
+              className={`checkout-primary-button ${isProcessing ? "brewing" : ""} ${isBursting ? "bursting" : ""}`}
+              disabled={isProcessing || items.length === 0}
+              aria-label={isProcessing ? "Brewing ritual..." : "Place order"}
+              onClick={handlePlaceOrder}
+            >
+              {isProcessing ? (
+                <span className="checkout-brewing-content">
+                  <span className="checkout-teapot-icon" aria-hidden="true">🫖</span>
+                  BREWING YOUR RITUAL...
+                </span>
+              ) : (
+                "PLACE ORDER"
+              )}
+            </button>
+
+            {/* LEAF BURST PARTICLES ANIMATION */}
+            {isBursting && (
+              <div className="checkout-leaf-burst" aria-hidden="true">
+                {[...Array(8)].map((_, i) => (
+                  <span key={i} className={`burst-leaf burst-leaf-${i + 1}`}>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                      <path d="M21 3C21 3 13.5 4.5 9 9C4.5 13.5 3 21 3 21C3 21 10.5 19.5 15 15C19.5 10.5 21 3 21 3Z" />
+                      <path d="M3 21C6.5 17.5 10 14 14 10" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="none" />
+                    </svg>
+                  </span>
+                ))}
+              </div>
             )}
-          </button>
+          </div>
         </aside>
       </div>
       <Footer />

@@ -9,7 +9,6 @@ import Navbar from "./components/Navbar";
 import CartDrawer from "./components/CartDrawer";
 import WishlistDrawer from "./components/WishlistDrawer";
 import ScrollToTop from "./components/ScrollToTop";
-import VersionUpdateNotifier from "./components/VersionUpdateNotifier";
 import { CartProvider } from "./context/CartContext";
 import { OrderProvider } from "./context/OrderContext";
 import { WishlistProvider } from "./context/WishlistContext";
@@ -133,7 +132,6 @@ function App() {
 
                 <CartDrawer />
                 <WishlistDrawer />
-                <VersionUpdateNotifier />
               </BrowserRouter>
             </CouponProvider>
           </OrderProvider>

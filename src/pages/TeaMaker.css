@@ -113,7 +113,7 @@
 }
 
 /* =========================================================
-   1b. HERO BOTANICAL LEAF ATMOSPHERE
+   1b. HERO BOTANICAL LEAF ATMOSPHERE (VISIBLE & CALM)
    ========================================================= */
 
 .tm-hero-leaves {
@@ -124,48 +124,51 @@
   z-index: 0;
 }
 
-/* Single leaf silhouette — rendered entirely in CSS */
 .tm-leaf {
   position: absolute;
   display: block;
-  /* Leaf shape via border-radius */
-  border-radius: 0 50% 50% 50%;
-  background: rgba(144, 190, 109, 0.18);
   transform-origin: center center;
   animation: tmLeafDrift linear infinite;
   will-change: transform, opacity;
 }
 
-/* 10 unique leaves with varied size, position, speed, opacity, delay */
-.tm-leaf.l-1  { width: 18px; height: 26px; left:  8%; top: -10%; opacity: 0.22; animation-duration: 18s; animation-delay:  0s;   transform: rotate(15deg); }
-.tm-leaf.l-2  { width: 12px; height: 18px; left: 22%; top: -5%;  opacity: 0.15; animation-duration: 24s; animation-delay: -6s;   transform: rotate(-25deg); }
-.tm-leaf.l-3  { width: 22px; height: 32px; left: 38%; top: -8%;  opacity: 0.10; animation-duration: 20s; animation-delay: -3s;   transform: rotate(40deg); }
-.tm-leaf.l-4  { width: 10px; height: 16px; left: 55%; top: -12%; opacity: 0.18; animation-duration: 28s; animation-delay: -10s;  transform: rotate(-10deg); }
-.tm-leaf.l-5  { width: 16px; height: 24px; left: 68%; top: -6%;  opacity: 0.12; animation-duration: 22s; animation-delay:  -2s;  transform: rotate(30deg); }
-.tm-leaf.l-6  { width: 20px; height: 28px; left: 80%; top: -9%;  opacity: 0.20; animation-duration: 16s; animation-delay:  -8s;  transform: rotate(-20deg); }
-.tm-leaf.l-7  { width: 14px; height: 20px; left: 90%; top: -4%;  opacity: 0.13; animation-duration: 26s; animation-delay:  -4s;  transform: rotate(50deg); }
-.tm-leaf.l-8  { width: 24px; height: 34px; left:  3%; top: -14%; opacity: 0.08; animation-duration: 30s; animation-delay: -14s;  transform: rotate(-35deg); }
-.tm-leaf.l-9  { width: 11px; height: 17px; left: 48%; top: -7%;  opacity: 0.16; animation-duration: 19s; animation-delay:  -7s;  transform: rotate(20deg); }
-.tm-leaf.l-10 { width: 17px; height: 25px; left: 73%; top: -11%; opacity: 0.14; animation-duration: 23s; animation-delay: -11s;  transform: rotate(-45deg); }
+.tm-leaf svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+
+/* 10 unique botanical leaves with varied dimensions, palettes, depths, and speeds */
+.tm-leaf.l-1  { width: 22px; height: 32px; left:  7%; top: -8%;  color: #c9a24b; opacity: 0.45; animation-duration: 20s; animation-delay:  0s; }
+.tm-leaf.l-2  { width: 16px; height: 24px; left: 19%; top: -5%;  color: #4e8a5a; opacity: 0.50; animation-duration: 25s; animation-delay: -6s; }
+.tm-leaf.l-3  { width: 28px; height: 42px; left: 34%; top: -10%; color: #c9a24b; opacity: 0.38; animation-duration: 22s; animation-delay: -3s; }
+.tm-leaf.l-4  { width: 14px; height: 20px; left: 52%; top: -12%; color: #7fa882; opacity: 0.42; animation-duration: 30s; animation-delay: -11s; }
+.tm-leaf.l-5  { width: 20px; height: 30px; left: 66%; top: -6%;  color: #c9a24b; opacity: 0.48; animation-duration: 24s; animation-delay:  -2s; }
+.tm-leaf.l-6  { width: 26px; height: 38px; left: 81%; top: -9%;  color: #3d7a48; opacity: 0.40; animation-duration: 18s; animation-delay:  -8s; }
+.tm-leaf.l-7  { width: 18px; height: 26px; left: 91%; top: -4%;  color: #c9a24b; opacity: 0.52; animation-duration: 27s; animation-delay:  -5s; }
+.tm-leaf.l-8  { width: 30px; height: 44px; left:  3%; top: -14%; color: #2e663a; opacity: 0.35; animation-duration: 32s; animation-delay: -15s; }
+.tm-leaf.l-9  { width: 15px; height: 22px; left: 45%; top: -7%;  color: #c9a24b; opacity: 0.46; animation-duration: 21s; animation-delay:  -7s; }
+.tm-leaf.l-10 { width: 24px; height: 36px; left: 74%; top: -11%; color: #5a9466; opacity: 0.40; animation-duration: 26s; animation-delay: -12s; }
 
 @keyframes tmLeafDrift {
   0% {
-    transform: translateY(0)   translateX(0)   rotate(var(--r, 15deg))  scale(1);
-    opacity: var(--op, 0.16);
+    transform: translateY(0) translateX(0) rotate(15deg) scale(1);
+    opacity: 0;
   }
-  25% {
-    transform: translateY(35vh) translateX(18px) rotate(calc(var(--r, 15deg) + 12deg)) scale(0.95);
-    opacity: calc(var(--op, 0.16) * 1.1);
+  15% {
+    opacity: 1;
+    transform: translateY(20vh) translateX(18px) rotate(32deg) scale(1.04);
   }
-  50% {
-    transform: translateY(65vh) translateX(-12px) rotate(calc(var(--r, 15deg) + 28deg)) scale(0.9);
+  45% {
+    transform: translateY(50vh) translateX(-16px) rotate(60deg) scale(0.96);
   }
   75% {
-    transform: translateY(85vh) translateX(8px)  rotate(calc(var(--r, 15deg) + 40deg)) scale(0.88);
-    opacity: calc(var(--op, 0.16) * 0.6);
+    transform: translateY(80vh) translateX(14px) rotate(88deg) scale(1.02);
+    opacity: 0.9;
   }
   100% {
-    transform: translateY(110vh) translateX(0)   rotate(calc(var(--r, 15deg) + 55deg)) scale(0.85);
+    transform: translateY(115vh) translateX(0) rotate(115deg) scale(0.92);
     opacity: 0;
   }
 }
