@@ -16,6 +16,7 @@ import { ProductProvider } from "./context/ProductContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SyncClerkToFirebase from "./components/SyncClerkToFirebase";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 /* Route-level code splitting — each page is a separate JS chunk.
    Only the Home bundle ships on initial page load. */
@@ -58,8 +59,9 @@ function App() {
             <BrowserRouter>
               <Navbar />
 
-              <Suspense fallback={null}>
-                <Routes>
+              <ErrorBoundary>
+                <Suspense fallback={null}>
+                  <Routes>
                   <Route path="/"                element={<Home />} />
                   <Route path="/shop"            element={<Shop />} />
                   <Route path="/product/:id"     element={<ProductDetail />} />
@@ -82,8 +84,8 @@ function App() {
                   <Route path="/journal"         element={<Journal />} />
                   <Route path="/about"           element={<About />} />
                   <Route path="/contact"         element={<Contact />} />
-                  <Route path="/customer-login"  element={<CustomerLogin />} />
-                  <Route path="/customer-signup" element={<CustomerSignup />} />
+                  <Route path="/customer-login/*"  element={<CustomerLogin />} />
+                  <Route path="/customer-signup/*" element={<CustomerSignup />} />
                   <Route path="/profile"         element={
                     <>
                       <SignedIn>
@@ -101,8 +103,9 @@ function App() {
                     </ProtectedRoute>
                   } />
                   <Route path="*"               element={<NotFound />} />
-                </Routes>
-              </Suspense>
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
 
               <CartDrawer />
               <WishlistDrawer />
