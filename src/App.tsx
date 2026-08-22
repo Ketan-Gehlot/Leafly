@@ -30,6 +30,10 @@ const Orders = lazy(() => import("./pages/Orders"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Shop = lazy(() => import("./pages/Shop"));
+const Teaware = lazy(() => import("./pages/Teaware"));
+const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
+const FreshnessGuarantee = lazy(() => import("./pages/FreshnessGuarantee"));
+const FAQs = lazy(() => import("./pages/FAQs"));
 const TeaCollections = lazy(() => import("./pages/TeaCollections"));
 const TeaMaker = lazy(() => import("./pages/TeaMaker"));
 const WhyLeafly = lazy(() => import("./pages/WhyLeafly"));
@@ -56,6 +60,11 @@ function App() {
                     <Route
                       path="/shop"
                       element={<Shop />}
+                    />
+
+                    <Route
+                      path="/teaware"
+                      element={<Teaware />}
                     />
 
                     <Route
@@ -116,6 +125,33 @@ function App() {
                     <Route
                       path="/profile"
                       element={<Profile />}
+                    />
+
+                    <Route
+                      path="/shipping-policy"
+                      element={<ShippingPolicy />}
+                    />
+                    <Route
+                      path="/shipping"
+                      element={<ShippingPolicy />}
+                    />
+
+                    <Route
+                      path="/freshness-guarantee"
+                      element={<FreshnessGuarantee />}
+                    />
+                    <Route
+                      path="/freshness"
+                      element={<FreshnessGuarantee />}
+                    />
+
+                    <Route
+                      path="/faqs"
+                      element={<FAQs />}
+                    />
+                    <Route
+                      path="/faq"
+                      element={<FAQs />}
                     />
 
                     <Route

@@ -278,7 +278,7 @@ export default function About() {
       <section className="about-top-reviews" aria-label="Top Customer Reviews">
         <div className="about-section-head">
           <p className="about-eyebrow">VERIFIED EXPERIENCES</p>
-          <h2>Top 5 Customer Reviews</h2>
+          <h2>Voices from the Leafly Ritual</h2>
           <p className="about-section-sub">
             Reflections from tea lovers, sommeliers, and everyday practitioners across India.
           </p>

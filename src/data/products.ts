@@ -33,6 +33,8 @@ export type Product = {
   };
   badge: "Premium" | "Popular" | "Bestseller";
   image: string;
+  rating?: number;
+  reviewCount?: number;
 };
 
 export const products: Product[] = [
@@ -51,6 +53,8 @@ export const products: Product[] = [
     },
     badge: "Premium",
     image: "/leafly-green-tea.webp",
+    rating: 4.9,
+    reviewCount: 128,
   },
   {
     id: 2,
@@ -66,6 +70,8 @@ export const products: Product[] = [
     },
     badge: "Popular",
     image: "/leafly-white-tea.webp",
+    rating: 4.8,
+    reviewCount: 94,
   },
   {
     id: 3,
@@ -82,6 +88,8 @@ export const products: Product[] = [
     },
     badge: "Bestseller",
     image: "/leafly-black-tea.webp",
+    rating: 5.0,
+    reviewCount: 216,
   },
   {
     id: 4,
@@ -97,6 +105,8 @@ export const products: Product[] = [
     },
     badge: "Premium",
     image: "/leafly-oolong-tea.webp",
+    rating: 4.9,
+    reviewCount: 82,
   },
   {
     id: 5,
@@ -112,6 +122,8 @@ export const products: Product[] = [
     },
     badge: "Popular",
     image: "/leafly-black-tea.webp",
+    rating: 4.8,
+    reviewCount: 142,
   },
   {
     id: 6,
@@ -127,6 +139,8 @@ export const products: Product[] = [
     },
     badge: "Premium",
     image: "/leafly-white-tea.webp",
+    rating: 4.9,
+    reviewCount: 68,
   },
   {
     id: 7,
@@ -142,6 +156,8 @@ export const products: Product[] = [
     },
     badge: "Bestseller",
     image: "/leafly-puer-tea.webp",
+    rating: 4.9,
+    reviewCount: 175,
   },
   {
     id: 8,
@@ -158,5 +174,7 @@ export const products: Product[] = [
     },
     badge: "Premium",
     image: "/leafly-oolong-tea.webp",
+    rating: 5.0,
+    reviewCount: 91,
   },
 ];

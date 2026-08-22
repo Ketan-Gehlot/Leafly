@@ -329,14 +329,14 @@ export default function Checkout() {
       markCouponUsed(appliedCoupon.code);
     }
     grantWelcomeReward();
-    clearCart();
 
-    // Allow the leaf burst to bloom naturally for 550ms, then transition to delivery boy animation
+    // Allow the leaf burst to bloom naturally, then transition cleanly to delivery boy animation
     setTimeout(() => {
+      clearCart();
       setIsProcessing(false);
       setIsBursting(false);
       setDeliveryPhase("delivery");
-    }, 550);
+    }, 450);
   };
 
   if (items.length === 0 && deliveryPhase === "idle" && !isProcessing) {

@@ -1,0 +1,360 @@
+/* =========================================================
+   LEAFLY — FRESHNESS GUARANTEE STYLES
+   ========================================================= */
+
+.freshness-page {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  padding-top: 88px;
+  background: #f7f3ec;
+  color: #0b2b1e;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.freshness-page * {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.freshness-hero {
+  width: 100%;
+  padding: 60px 20px 48px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(201, 162, 75, 0.12), transparent 70%),
+    linear-gradient(180deg, #faf7f0 0%, #f7f3ec 100%);
+  text-align: center;
+  border-bottom: 1px solid rgba(11, 43, 30, 0.08);
+}
+
+.freshness-hero-inner {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.freshness-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 10px;
+  color: #b98428;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.freshness-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 16px;
+  max-width: 160px;
+  color: #c9a24b;
+}
+
+.freshness-ornament span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 162, 75, 0.5), transparent);
+}
+
+.freshness-ornament b {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.freshness-hero h1 {
+  margin: 0 0 16px;
+  color: #0b2b1e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -1.2px;
+}
+
+.freshness-hero h1 em {
+  font-style: italic;
+  color: #173f31;
+}
+
+.freshness-hero-sub {
+  max-width: 620px;
+  margin: 0 auto;
+  color: rgba(11, 43, 30, 0.75);
+  font-size: clamp(14px, 1.8vw, 16px);
+  line-height: 1.65;
+}
+
+/* =========================================================
+   FOUR PILLARS
+   ========================================================= */
+
+.freshness-pillars {
+  width: 100%;
+  max-width: 1280px;
+  margin: -24px auto 0;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.freshness-pillars-inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.freshness-pillar-card {
+  padding: 22px 18px;
+  border-radius: 14px;
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.10);
+  box-shadow: 0 10px 25px rgba(11, 43, 30, 0.05);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.freshness-pillar-card:hover {
+  transform: translateY(-2px);
+}
+
+.freshness-pillar-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.freshness-pillar-card h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0b2b1e;
+}
+
+.freshness-pillar-card p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(11, 43, 30, 0.7);
+  line-height: 1.5;
+}
+
+/* =========================================================
+   CONTENT SECTION
+   ========================================================= */
+
+.freshness-content-section {
+  width: 100%;
+  max-width: 1000px;
+  margin: 40px auto 60px;
+  padding: 0 24px;
+}
+
+.freshness-content-inner {
+  display: grid;
+  gap: 28px;
+}
+
+.freshness-block {
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.09);
+  border-radius: 16px;
+  padding: 32px 36px;
+  box-shadow: 0 6px 20px rgba(11, 43, 30, 0.03);
+}
+
+.freshness-block h2 {
+  margin: 0 0 16px;
+  color: #0b2b1e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.4px;
+}
+
+.freshness-block p {
+  color: rgba(11, 43, 30, 0.8);
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.freshness-block p:last-child {
+  margin-bottom: 0;
+}
+
+.freshness-block ul,
+.freshness-block ol {
+  margin: 12px 0 16px 20px;
+  padding: 0;
+  color: rgba(11, 43, 30, 0.85);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.freshness-block li {
+  margin-bottom: 8px;
+}
+
+.freshness-block a {
+  color: #b98428;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+}
+
+.freshness-block a:hover {
+  color: #0b2b1e;
+}
+
+/* STORAGE GRID */
+
+.freshness-storage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 16px 0 6px;
+}
+
+.freshness-storage-item {
+  background: #fff;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.freshness-storage-item strong {
+  display: block;
+  color: #0b2b1e;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.freshness-storage-item p {
+  font-size: 12.5px;
+  color: rgba(11, 43, 30, 0.7);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* CTA CARD */
+
+.freshness-cta-card {
+  text-align: center;
+  background: linear-gradient(135deg, #faf7f0 0%, #edf3ee 100%);
+  border-color: rgba(201, 162, 75, 0.3);
+}
+
+.freshness-cta-card h2 {
+  font-size: 24px;
+}
+
+.freshness-cta-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.freshness-btn-primary,
+.freshness-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.freshness-btn-primary {
+  background: #0b2b1e;
+  color: #f7f3ec !important;
+}
+
+.freshness-btn-primary:hover {
+  background: #173f31;
+  transform: translateY(-1px);
+}
+
+.freshness-btn-secondary {
+  border: 1.5px solid rgba(11, 43, 30, 0.25);
+  background: transparent;
+  color: #0b2b1e !important;
+}
+
+.freshness-btn-secondary:hover {
+  background: rgba(11, 43, 30, 0.04);
+}
+
+/* =========================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .freshness-pillars-inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .freshness-page {
+    padding-top: 76px;
+  }
+
+  .freshness-hero {
+    padding: 40px 16px 36px;
+  }
+
+  .freshness-pillars {
+    margin-top: 14px;
+    padding: 0 16px;
+  }
+
+  .freshness-pillars-inner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .freshness-content-section {
+    padding: 0 16px;
+    margin: 30px auto 40px;
+  }
+
+  .freshness-block {
+    padding: 22px 18px;
+    border-radius: 14px;
+  }
+
+  .freshness-block h2 {
+    font-size: 19px;
+  }
+
+  .freshness-storage-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freshness-cta-links {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .freshness-btn-primary,
+  .freshness-btn-secondary {
+    width: 100%;
+  }
+}

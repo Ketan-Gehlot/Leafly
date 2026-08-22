@@ -597,6 +597,23 @@ export default function Shop() {
                       {product.caffeine} Caffeine
                     </p>
 
+                    {/* RATING ROW: ★★★★★ 4.8 · 126 Reviews */}
+                    <div
+                      className="product-card-rating"
+                      aria-label={`${(product.rating ?? 4.8).toFixed(1)} out of 5 stars based on ${product.reviewCount ?? 126} reviews`}
+                    >
+                      <div className="product-card-stars" aria-hidden="true">
+                        {"★".repeat(5)}
+                      </div>
+                      <span className="product-card-rating-num">
+                        {(product.rating ?? 4.8).toFixed(1)}
+                      </span>
+                      <span className="product-card-rating-sep">·</span>
+                      <span className="product-card-review-count">
+                        {product.reviewCount ?? 126} Reviews
+                      </span>
+                    </div>
+
                     <div className="product-price">
                       <strong>
                         ₹

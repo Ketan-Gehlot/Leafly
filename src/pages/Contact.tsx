@@ -246,7 +246,7 @@ export default function Contact() {
             </div>
 
             {isSubmitted && (
-              <p className="form-success">Thank you. Your message has been received.</p>
+              <p className="form-success">Thank you for reaching out to Leafly. We&apos;ve received your message and will get back to you soon.</p>
             )}
           </form>
         </div>

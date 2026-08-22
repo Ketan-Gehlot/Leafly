@@ -1,9 +1,12 @@
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/leafly-logo.webp";
 import "./Footer.css";
 
 const shopLinks = [
   { label: "All Teas", href: "/shop" },
+  { label: "Teaware Gear", href: "/teaware" },
   { label: "Green Tea", href: "/tea-collections" },
   { label: "White Tea", href: "/tea-collections" },
   { label: "Black Tea", href: "/tea-collections" },
@@ -13,36 +16,60 @@ const shopLinks = [
 
 const exploreLinks = [
   { label: "Tea Collections", href: "/tea-collections" },
-  { label: "Tea maker", href: "/tea-maker" },
+  { label: "Tea Maker", href: "/tea-maker" },
   { label: "Gifting", href: "/gifting" },
   { label: "Why Leafly", href: "/why-leafly" },
   { label: "Journal", href: "/journal" },
+  { label: "About", href: "/about" },
 ];
 
 const careLinks = [
   { label: "My Account", href: "/profile" },
-  { label: "Shipping Policy", href: "/shipping" },
-  { label: "Freshness Guarantee", href: "/freshness" },
-  { label: "FAQs", href: "/faq" },
+  { label: "Shipping Policy", href: "/shipping-policy" },
+  { label: "Freshness Guarantee", href: "/freshness-guarantee" },
+  { label: "FAQs", href: "/faqs" },
   { label: "Contact Us", href: "/contact" },
 ];
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubscribe = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const cleanEmail = email.trim();
+
+    if (!cleanEmail) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      setEmail("");
+    }, 500);
+  };
+
   return (
     <footer className="leafly-footer">
-
       <div className="leafly-footer-inner">
-
         {/* =====================================================
             TOP FOOTER
             ===================================================== */}
-
         <div className="leafly-footer-top">
-
           {/* BRAND */}
-
           <div className="leafly-footer-brand">
-
             <img
               src={logo}
               alt="Leafly"
@@ -51,7 +78,7 @@ export default function Footer() {
             />
 
             <p className="leafly-footer-brand-text">
-              Curating India's finest teas with care,
+              Curating India&apos;s finest teas with care,
               intention and respect for every leaf.
               Pure, small-batch and crafted for
               better moments.
@@ -62,14 +89,10 @@ export default function Footer() {
               <b>✦</b>
               <span />
             </div>
-
           </div>
 
-
           {/* NEWSLETTER */}
-
           <div className="leafly-footer-newsletter">
-
             <p className="leafly-footer-eyebrow">
               <span>✦</span>
               JOIN THE RITUAL
@@ -87,273 +110,163 @@ export default function Footer() {
               moments from Leafly.
             </p>
 
-            <form
-              className="leafly-footer-form"
-              onSubmit={(event) => event.preventDefault()}
-            >
+            {isSubmitted ? (
+              <div className="leafly-footer-success" role="status" aria-live="polite">
+                <span className="leafly-footer-success-check">✓</span>
+                <p>
+                  Thank you for joining the Leafly ritual. You&apos;ll be the first to hear about new teas, collections, and stories.
+                </p>
+              </div>
+            ) : (
+              <form
+                className="leafly-footer-form"
+                onSubmit={handleSubscribe}
+              >
+                <div className="leafly-footer-input-wrap">
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    aria-label="Email address"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    disabled={isSubmitting}
+                  />
+                  {error && <span className="leafly-footer-error">{error}</span>}
+                </div>
 
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                aria-label="Email address"
-              />
-
-              <button type="submit">
-                SUBSCRIBE
-                <span>→</span>
-              </button>
-
-            </form>
-
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    "SUBSCRIBING..."
+                  ) : (
+                    <>
+                      SUBSCRIBE
+                      <span>→</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
-
         </div>
-
 
         {/* =====================================================
             GOLD DIVIDER
             ===================================================== */}
-
         <div className="leafly-footer-divider">
           <span />
           <b>✦</b>
           <span />
         </div>
 
-
         {/* =====================================================
             LINK COLUMNS
             ===================================================== */}
-
         <div className="leafly-footer-links">
-
           {/* SHOP */}
-
           <div className="leafly-footer-column">
-
-            <p className="leafly-footer-column-title">
-              SHOP TEAS
-            </p>
-
+            <p className="leafly-footer-column-title">SHOP TEAS</p>
             {shopLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-              >
+              <Link key={link.label} to={link.href}>
                 {link.label}
               </Link>
             ))}
-
           </div>
-
 
           {/* EXPLORE */}
-
           <div className="leafly-footer-column">
-
-            <p className="leafly-footer-column-title">
-              EXPLORE LEAFLY
-            </p>
-
+            <p className="leafly-footer-column-title">EXPLORE LEAFLY</p>
             {exploreLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-              >
+              <Link key={link.label} to={link.href}>
                 {link.label}
               </Link>
             ))}
-
           </div>
-
 
           {/* CUSTOMER CARE */}
-
           <div className="leafly-footer-column">
-
-            <p className="leafly-footer-column-title">
-              CUSTOMER CARE
-            </p>
-
+            <p className="leafly-footer-column-title">CUSTOMER CARE</p>
             {careLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-              >
+              <Link key={link.label} to={link.href}>
                 {link.label}
               </Link>
             ))}
-
           </div>
 
-
-          {/* =================================================
-              CONNECT WITH US
-              ================================================= */}
-
+          {/* CONNECT WITH US */}
           <div className="leafly-footer-column">
-
-            <p className="leafly-footer-column-title">
-              CONNECT WITH US
-            </p>
-
-
-            {/* Instagram */}
+            <p className="leafly-footer-column-title">CONNECT WITH US</p>
 
             <a
-              href="#instagram"
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="leafly-footer-social-link"
               aria-label="Instagram"
             >
-
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <rect
-                  x="3"
-                  y="3"
-                  width="18"
-                  height="18"
-                  rx="5"
-                />
-
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="4"
-                />
-
-                <circle
-                  cx="17.5"
-                  cy="6.5"
-                  r="1"
-                  className="leafly-social-fill"
-                />
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="1" className="leafly-social-fill" />
               </svg>
-
-              <span>
-                Instagram
-              </span>
-
+              <span>Instagram</span>
             </a>
 
-
-            {/* Facebook */}
-
             <a
-              href="#facebook"
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="leafly-footer-social-link"
               aria-label="Facebook"
             >
-
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  d="
-                    M14 8h3V4h-3
-                    c-3.3 0-5 1.9-5 5v3H6v4h3v5h4v-5h3.5l.5-4H13V9
-                    c0-.7.3-1 1-1Z
-                  "
-                />
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 8h3V4h-3c-3.3 0-5 1.9-5 5v3H6v4h3v5h4v-5h3.5l.5-4H13V9c0-.7.3-1 1-1Z" />
               </svg>
-
-              <span>
-                Facebook
-              </span>
-
+              <span>Facebook</span>
             </a>
-
-
-            {/* Email */}
 
             <a
               href="mailto:hello@leaflytea.in"
               className="leafly-footer-social-link"
               aria-label="Email Leafly"
             >
-
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <rect
-                  x="3"
-                  y="5"
-                  width="18"
-                  height="14"
-                  rx="2"
-                />
-
-                <path
-                  d="m4 7 8 6 8-6"
-                />
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m4 7 8 6 8-6" />
               </svg>
-
-              <span>
-                hello@leaflytea.in
-              </span>
-
+              <span>hello@leaflytea.in</span>
             </a>
 
-
-            {/* Origin */}
-
             <p className="leafly-footer-origin">
-
               <span>◇</span>
-
               100% Single Origin
               <br />
-
               Authentic Indian Teas
-
             </p>
-
           </div>
-
         </div>
-
       </div>
-
 
       {/* =====================================================
           BOTTOM GOLD BAR
           ===================================================== */}
-
       <div className="leafly-footer-bottom">
-
         <div className="leafly-footer-bottom-inner">
+          <p>© {new Date().getFullYear()} Leafly. All rights reserved.</p>
 
-          <p>
-            © {new Date().getFullYear()} Leafly.
-            All rights reserved.
-          </p>
-
-          <p className="leafly-footer-motto">
-            REAL TEA. BETTER MOMENTS.
-          </p>
+          <p className="leafly-footer-motto">REAL TEA. BETTER MOMENTS.</p>
 
           <div className="leafly-footer-legal">
-
-            <a href="/privacy">
-              Privacy Policy
-            </a>
-
+            <Link to="/shipping-policy">Shipping Policy</Link>
             <span>•</span>
-
-            <a href="/terms">
-              Terms & Conditions
-            </a>
-
+            <Link to="/freshness-guarantee">Freshness Guarantee</Link>
+            <span>•</span>
+            <Link to="/faqs">FAQs</Link>
           </div>
-
         </div>
-
       </div>
-
     </footer>
   );
 }

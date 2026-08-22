@@ -292,65 +292,75 @@
 
 .leafly-footer-form {
   display: grid;
-
-  grid-template-columns:
-    minmax(0, 1fr)
-    auto;
-
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
-
   width: 100%;
+}
+
+.leafly-footer-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.leafly-footer-error {
+  color: #ff9e9e;
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+
+.leafly-footer-success {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(201, 162, 75, 0.12);
+  border: 1px solid rgba(201, 162, 75, 0.3);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.leafly-footer-success-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #c9a24b;
+  color: #071f16;
+  font-weight: 800;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.leafly-footer-success p {
+  margin: 0;
+  color: #f7f3ec;
+  font-size: 12.5px;
+  line-height: 1.55;
+  letter-spacing: 0.2px;
 }
 
 .leafly-footer-form input {
   width: 100%;
   min-width: 0;
-
   height: 46px;
-
   padding: 0 14px;
-
   box-sizing: border-box;
-
-  border:
-    1px solid
-    rgba(
-      201,
-      162,
-      75,
-      0.35
-    );
-
+  border: 1px solid rgba(201, 162, 75, 0.35);
   border-radius: 5px;
-
   outline: none;
-
-  background:
-    rgba(
-      0,
-      0,
-      0,
-      0.16
-    );
-
+  background: rgba(0, 0, 0, 0.16);
   color: #f7f3ec;
-
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
-
+  font-family: Inter, Arial, sans-serif;
   font-size: 11px;
 }
 
 .leafly-footer-form input::placeholder {
-  color:
-    rgba(
-      247,
-      243,
-      236,
-      0.42
-    );
+  color: rgba(247, 243, 236, 0.42);
 }
 
 .leafly-footer-form input:focus {
@@ -359,53 +369,36 @@
 
 .leafly-footer-form button {
   min-width: 125px;
-
   height: 46px;
-
   padding: 0 20px;
-
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
-
   gap: 13px;
-
   border: none;
-
   border-radius: 5px;
-
   background: #c9a24b;
-
   color: #092419;
-
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
-
+  font-family: Inter, Arial, sans-serif;
   font-size: 10px;
-
   font-weight: 800;
-
   letter-spacing: 1.4px;
-
   cursor: pointer;
+  transition: background 250ms ease, transform 250ms ease;
+}
 
-  transition:
-    background 250ms ease,
-    transform 250ms ease;
+.leafly-footer-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .leafly-footer-form button span {
   font-size: 15px;
-
   font-weight: 400;
 }
 
-.leafly-footer-form button:hover {
+.leafly-footer-form button:hover:not(:disabled) {
   background: #e0bc68;
-
   transform: translateY(-2px);
 }
 

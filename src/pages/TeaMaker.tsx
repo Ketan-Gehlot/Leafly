@@ -15,7 +15,6 @@ import pepperImg from "../assets/tea-maker/ingredients/black-pepper.webp";
 import saltImg from "../assets/tea-maker/ingredients/black-salt.webp";
 import honeyImg from "../assets/tea-maker/ingredients/honey.webp";
 
-import kettleImg from "../assets/tea-maker/vessels/glass-kettle.webp";
 import cupImg from "../assets/tea-maker/vessels/cup-tea.webp";
 
 // Category-specific pouring images
@@ -504,26 +503,58 @@ export default function TeaMaker() {
     return currentCat.balancedColor;
   };
 
-  // Dynamic Liquid Color during Steeping (starts pale warm water and subtly transitions to rich tea tone)
-  const getSteepingLiquidStyle = () => {
-    const targetColor = getTargetBrewedColor();
+  // Dynamic Liquid Colors for Handcrafted SVG Glass Kettle
+  const getDynamicLiquidColors = () => {
     if (brewingSubStage === "heating") {
       return {
-        background: "linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(235, 225, 205, 0.5) 100%)",
-        opacity: 0.7,
+        top: "#ffffff",
+        mid: "#f6efe0",
+        bottom: "#ebdcb6",
+        opacity: 0.72,
       };
     }
-    if (brewingSubStage === "adding-tea" || brewingSubStage === "infusing-ingredients") {
+    const cat = TEA_CATEGORIES[selectedTea];
+    const targetMid = strength === "Strong" ? cat.strongColor : cat.balancedColor;
+    const progressFactor = brewingSubStage === "steeping" ? 0.85 + steepProgress * 0.15 : 0.85;
+
+    if (selectedTea === "Green") {
       return {
-        background: `linear-gradient(180deg, rgba(245, 238, 220, 0.6) 0%, ${targetColor}44 100%)`,
-        opacity: 0.8,
+        top: "#e2edbd",
+        mid: targetMid,
+        bottom: "#6e8d35",
+        opacity: Math.min(1, 0.82 * progressFactor),
       };
     }
-    // "steeping" or "pouring"
+    if (selectedTea === "White") {
+      return {
+        top: "#fbf6e8",
+        mid: targetMid,
+        bottom: "#b8aa70",
+        opacity: Math.min(1, 0.78 * progressFactor),
+      };
+    }
+    if (selectedTea === "Black") {
+      return {
+        top: "#f0a871",
+        mid: targetMid,
+        bottom: "#682506",
+        opacity: Math.min(1, 0.92 * progressFactor),
+      };
+    }
+    if (selectedTea === "Oolong") {
+      return {
+        top: "#f5d098",
+        mid: targetMid,
+        bottom: "#85490a",
+        opacity: Math.min(1, 0.88 * progressFactor),
+      };
+    }
+    // Pu-erh
     return {
-      background: `linear-gradient(180deg, ${targetColor}99 0%, ${targetColor} 100%)`,
-      opacity: 0.75 + steepProgress * 0.25,
-      transition: "background 1.5s ease, opacity 1.5s ease",
+      top: "#b85c3f",
+      mid: targetMid,
+      bottom: "#350e04",
+      opacity: Math.min(1, 0.95 * progressFactor),
     };
   };
 
@@ -979,7 +1010,7 @@ export default function TeaMaker() {
                 {/* PHASES A, B, C, D: HEATING, ADDING TEA, ADDING INGREDIENTS & STEEPING (Teapot on Gas Burner) */}
                 {brewingSubStage !== "pouring" && (
                   <div className="tm-ritual-phase-a">
-                    {/* Atmospheric rising steam / vapor */}
+                    {/* Atmospheric rising steam / vapor above kettle */}
                     <div className="tm-pot-steam-plume" aria-hidden="true">
                       <span className="tm-steam-vapor sv-1" />
                       <span className="tm-steam-vapor sv-2" />
@@ -1024,39 +1055,203 @@ export default function TeaMaker() {
                       </div>
                     )}
 
-                    {/* Open Glass Kettle / Pot on Burner */}
-                    <div className="tm-open-pot-composition">
-                      <img
-                        src={kettleImg}
-                        alt="Teapot on Burner"
-                        className="tm-open-pot-img"
-                      />
+                    {/* Handcrafted Artisan Glass Kettle */}
+                    <div className="tm-kettle-stage-wrapper">
+                      {(() => {
+                        const liq = getDynamicLiquidColors();
+                        return (
+                          <svg
+                            className="tm-kettle-svg"
+                            viewBox="0 0 300 200"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-label="Artisan Glass Teapot"
+                          >
+                            <defs>
+                              {/* Dynamic Liquid Gradient */}
+                              <linearGradient id="tm-kettle-liq-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stopColor={liq.top} stopOpacity={liq.opacity} />
+                                <stop offset="50%" stopColor={liq.mid} stopOpacity={liq.opacity} />
+                                <stop offset="100%" stopColor={liq.bottom} stopOpacity={Math.min(1, liq.opacity + 0.08)} />
+                              </linearGradient>
 
-                      {/* Gradual liquid colour reservoir inside the pot (starts pale warm water -> deepens to brewed tea) */}
-                      <div
-                        className="tm-pot-liquid-reservoir"
-                        style={getSteepingLiquidStyle()}
-                      >
-                        {/* Subtle movement of submerged leaves and selected ingredients inside the simmer */}
-                        {brewingSubStage === "steeping" && (
-                          <div className="tm-pot-steeping-contents" aria-hidden="true">
-                            <span className="tm-simmer-bubble sb-1" />
-                            <span className="tm-simmer-bubble sb-2" />
-                            <span className="tm-simmer-bubble sb-3" />
-                          </div>
-                        )}
-                      </div>
+                              {/* Glass Highlights */}
+                              <linearGradient id="tm-kettle-shine-l" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
+                                <stop offset="50%" stopColor="#ffffff" stopOpacity="0.12" />
+                                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                              </linearGradient>
+
+                              <linearGradient id="tm-kettle-shine-r" x1="100%" y1="0%" x2="0%" y2="0%">
+                                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+                                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                              </linearGradient>
+
+                              {/* Gold Accents */}
+                              <linearGradient id="tm-gold-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#f3deb3" />
+                                <stop offset="45%" stopColor="#c9a24b" />
+                                <stop offset="100%" stopColor="#7a5818" />
+                              </linearGradient>
+
+                              {/* Walnut Handle */}
+                              <linearGradient id="tm-walnut-handle" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#3d2919" />
+                                <stop offset="50%" stopColor="#22160d" />
+                                <stop offset="100%" stopColor="#110905" />
+                              </linearGradient>
+
+                              {/* Clip Path for interior liquid */}
+                              <clipPath id="tm-kettle-body-interior-clip">
+                                <path d="M 102,48 C 74,72 68,136 86,164 C 102,184 122,186 150,186 C 178,186 198,184 214,164 C 232,136 226,72 198,48 Z" />
+                              </clipPath>
+                            </defs>
+
+                            {/* 1. SPOUT (LEFT) */}
+                            <path
+                              d="M 96,78 C 64,66 38,36 36,16 C 43,16 52,24 62,40 C 74,60 85,92 90,116 Z"
+                              fill="rgba(242, 248, 245, 0.45)"
+                              stroke="rgba(255, 255, 255, 0.8)"
+                              strokeWidth="1.6"
+                            />
+                            <path
+                              d="M 36,16 C 37,15 41,15 42,16 C 40,18 38,18 36,16 Z"
+                              fill="#c9a24b"
+                              stroke="#8c6823"
+                              strokeWidth="0.8"
+                            />
+
+                            {/* 2. WALNUT HANDLE (RIGHT) */}
+                            <path
+                              d="M 204,40 C 262,30 278,142 212,166"
+                              fill="none"
+                              stroke="url(#tm-walnut-handle)"
+                              strokeWidth="11"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              d="M 204,40 C 262,30 278,142 212,166"
+                              fill="none"
+                              stroke="rgba(255, 255, 255, 0.22)"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              transform="translate(-1, -1)"
+                            />
+                            <circle cx="204" cy="40" r="5" fill="url(#tm-gold-accent)" stroke="#5a4214" strokeWidth="1" />
+                            <circle cx="212" cy="166" r="5" fill="url(#tm-gold-accent)" stroke="#5a4214" strokeWidth="1" />
+
+                            {/* 3. DYNAMIC TEA LIQUID IN THE KETTLE */}
+                            <g clipPath="url(#tm-kettle-body-interior-clip)">
+                              <rect x="60" y="62" width="180" height="130" fill="url(#tm-kettle-liq-grad)" />
+
+                              {/* Water Simmer Wave Surface */}
+                              <path
+                                className="tm-kettle-liquid-wave"
+                                d="M 60,66 Q 105,60 150,66 Q 195,72 240,66 L 240,195 L 60,195 Z"
+                                fill="url(#tm-kettle-liq-grad)"
+                                opacity="0.95"
+                              />
+
+                              {/* Rising Simmer Bubbles */}
+                              <g className="tm-kettle-bubbles-group">
+                                <circle cx="110" cy="172" r="2.2" fill="#ffffff" opacity="0.65" className="tm-kettle-bubble kb-1" />
+                                <circle cx="130" cy="176" r="2.8" fill="#ffffff" opacity="0.75" className="tm-kettle-bubble kb-2" />
+                                <circle cx="150" cy="174" r="2.0" fill="#ffffff" opacity="0.6" className="tm-kettle-bubble kb-3" />
+                                <circle cx="168" cy="178" r="3.2" fill="#ffffff" opacity="0.8" className="tm-kettle-bubble kb-4" />
+                                <circle cx="186" cy="172" r="2.2" fill="#ffffff" opacity="0.65" className="tm-kettle-bubble kb-5" />
+                                <circle cx="140" cy="180" r="1.6" fill="#ffffff" opacity="0.7" className="tm-kettle-bubble kb-6" />
+                              </g>
+
+                              {/* Submerged tea leaves during steeping */}
+                              {brewingSubStage === "steeping" && (
+                                <g className="tm-kettle-steeping-leaves" opacity="0.5">
+                                  <path d="M 120,136 Q 130,126 135,138 Q 128,145 120,136 Z" fill="#314526" />
+                                  <path d="M 165,148 Q 174,139 179,150 Q 172,156 165,148 Z" fill="#314526" />
+                                  <path d="M 144,116 Q 153,107 157,118 Q 150,124 144,116 Z" fill="#314526" />
+                                </g>
+                              )}
+
+                              {/* Kettle bottom glow */}
+                              <ellipse cx="150" cy="182" rx="55" ry="9" fill="rgba(255, 210, 120, 0.4)" />
+                            </g>
+
+                            {/* 4. TRANSPARENT GLASS BELLY & SPECULAR HIGHLIGHTS */}
+                            <path
+                              d="M 104,30 C 76,58 66,124 86,164 C 102,186 122,188 150,188 C 178,188 198,186 214,164 C 234,124 224,58 196,30 Z"
+                              fill="rgba(255, 255, 255, 0.08)"
+                              stroke="rgba(255, 255, 255, 0.75)"
+                              strokeWidth="2"
+                            />
+
+                            {/* Left shine */}
+                            <path
+                              d="M 106,40 C 84,66 78,122 94,156"
+                              fill="none"
+                              stroke="url(#tm-kettle-shine-l)"
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                            />
+                            {/* Right shine */}
+                            <path
+                              d="M 194,40 C 216,66 222,122 206,156"
+                              fill="none"
+                              stroke="url(#tm-kettle-shine-r)"
+                              strokeWidth="2.2"
+                              strokeLinecap="round"
+                            />
+                            {/* Base contour */}
+                            <ellipse cx="150" cy="185" rx="48" ry="4.5" fill="none" stroke="rgba(255, 255, 255, 0.48)" strokeWidth="1.5" />
+
+                            {/* 5. LID & BRASS FINIAL */}
+                            <rect x="118" y="26" width="64" height="6" rx="2.5" fill="url(#tm-gold-accent)" stroke="#74551c" strokeWidth="0.8" />
+                            <path
+                              d="M 124,26 C 124,14 176,14 176,26 Z"
+                              fill="rgba(255, 255, 255, 0.22)"
+                              stroke="rgba(255, 255, 255, 0.82)"
+                              strokeWidth="1.4"
+                            />
+                            <ellipse cx="150" cy="25" rx="24" ry="2.8" fill="rgba(255, 255, 255, 0.35)" />
+                            <circle cx="150" cy="9" r="5.5" fill="url(#tm-gold-accent)" stroke="#74551c" strokeWidth="0.8" />
+                            <circle cx="148" cy="7.5" r="1.6" fill="#ffffff" opacity="0.8" />
+                            <rect x="148.8" y="14" width="2.4" height="5" fill="url(#tm-gold-accent)" />
+                          </svg>
+                        );
+                      })()}
                     </div>
 
-                    {/* Subtle Gas Flame Station Underneath */}
-                    <div className="tm-burner-station" aria-hidden="true">
-                      <div className="tm-burner-grate" />
-                      <div className="tm-gas-flames">
-                        <span className="flame fl-1" />
-                        <span className="flame fl-2" />
-                        <span className="flame fl-3" />
-                        <span className="flame fl-4" />
-                        <span className="flame fl-5" />
+                    {/* Realistic Animated Gas Flame & Burner Station Underneath Kettle */}
+                    <div className="tm-flame-burner-station" aria-hidden="true">
+                      {/* Radiant Heat Glow Aura */}
+                      <div className="tm-burner-glow-aura" />
+
+                      {/* 5 Soft Realistic Flickering Flame Tongues */}
+                      <div className="tm-flame-tongues-cluster">
+                        <div className="tm-flame-tongue ft-1">
+                          <span className="ft-outer-tongue" />
+                          <span className="ft-blue-core" />
+                        </div>
+                        <div className="tm-flame-tongue ft-2">
+                          <span className="ft-outer-tongue" />
+                          <span className="ft-blue-core" />
+                        </div>
+                        <div className="tm-flame-tongue ft-3">
+                          <span className="ft-outer-tongue" />
+                          <span className="ft-blue-core" />
+                        </div>
+                        <div className="tm-flame-tongue ft-4">
+                          <span className="ft-outer-tongue" />
+                          <span className="ft-blue-core" />
+                        </div>
+                        <div className="tm-flame-tongue ft-5">
+                          <span className="ft-outer-tongue" />
+                          <span className="ft-blue-core" />
+                        </div>
+                      </div>
+
+                      {/* Cast-iron Burner Grate */}
+                      <div className="tm-cast-iron-burner-grate">
+                        <div className="tm-burner-outer-ring" />
+                        <div className="tm-burner-center-hub" />
                       </div>
                     </div>
                   </div>

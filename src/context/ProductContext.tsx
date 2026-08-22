@@ -15,7 +15,21 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem("leafly-products");
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Merge with initialProducts to guarantee rating and reviewCount exist
+          return initialProducts.map((initP) => {
+            const savedP = parsed.find((p: Product) => p.id === initP.id);
+            if (!savedP) return initP;
+            return {
+              ...initP,
+              ...savedP,
+              rating: savedP.rating ?? initP.rating,
+              reviewCount: savedP.reviewCount ?? initP.reviewCount,
+            };
+          });
+        }
+        return initialProducts;
       } catch {
         return initialProducts;
       }

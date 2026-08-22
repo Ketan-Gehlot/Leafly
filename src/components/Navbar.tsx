@@ -8,38 +8,12 @@ import "./Navbar.css";
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Shop", path: "/shop" },
-  {
-    label: "Tea Collections",
-    path: "/tea-collections",
-  },
-  {
-  label: "Tea Maker",
-  path: "/tea-maker",
-  },
-  {
-    label: "Why Leafly",
-    path: "/why-leafly",
-  },
-  {
-    label: "Gifting",
-    path: "/gifting",
-  },
-  {
-    label: "Journal",
-    path: "/journal",
-  },
-  {
-    label: "About",
-    path: "/about",
-  },
-  {
-    label: "Contact",
-    path: "/contact",
-  },
-  {
-    label: "Admin",
-    path: "/admin",
-  },
+  { label: "Teaware", path: "/teaware" },
+  { label: "Tea Collections", path: "/tea-collections" },
+  { label: "Tea Maker", path: "/tea-maker" },
+  { label: "Why Leafly", path: "/why-leafly" },
+  { label: "Gifting", path: "/gifting" },
+  { label: "Journal", path: "/journal" },
 ];
 
 export default function Navbar() {

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { type ProductVariantKey } from "../data/products";
+import { type Product, type ProductVariantKey } from "../data/products";
+import { teawareProducts } from "../data/teaware";
 import { useProducts } from "../context/ProductContext";
 import Footer from "../components/Footer";
 import "./ProductDetail.css";
@@ -19,7 +20,25 @@ export default function ProductDetail() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const product = products.find((p) => p.id === Number(id));
+  const teawareItem = teawareProducts.find((t) => t.id === Number(id));
+  const product: Product | undefined = products.find((p) => p.id === Number(id)) || (teawareItem ? {
+    id: teawareItem.id,
+    name: teawareItem.name,
+    category: "Green",
+    origin: teawareItem.material,
+    caffeine: "Low",
+    weight: teawareItem.capacity || "1 Unit",
+    price: teawareItem.price,
+    oldPrice: teawareItem.oldPrice,
+    badge: teawareItem.badge,
+    image: teawareItem.image,
+    variants: {
+      "100g": { weight: "100g", price: teawareItem.price, oldPrice: teawareItem.oldPrice },
+      "250g": { weight: "250g", price: teawareItem.price },
+    },
+    rating: teawareItem.rating,
+    reviewCount: teawareItem.reviewCount,
+  } : undefined);
 
   /* --- product not found ----------------------------------- */
 

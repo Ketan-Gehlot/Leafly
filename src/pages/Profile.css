@@ -1,10 +1,17 @@
+/* =========================================================
+   LEAFLY — PROFILE / ACCOUNT DASHBOARD
+   Mobile-First, Fully Responsive & Accessible
+   ========================================================= */
+
 .profile-page {
   width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   padding-top: 88px;
   background: #f7f3ec;
   color: #0b2b1e;
   overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .profile-page * {
@@ -23,6 +30,7 @@
 .profile-page textarea,
 .profile-page select {
   font: inherit;
+  box-sizing: border-box;
 }
 
 .profile-page button {
@@ -35,14 +43,21 @@
   text-decoration: none;
 }
 
+/* =========================================================
+   1. MAIN PAGE LAYOUT & SHELL
+   ========================================================= */
+
 .profile-page-shell {
   width: min(1280px, calc(100% - 32px));
+  max-width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
-  gap: 1.2rem;
+  gap: 1.5rem;
   align-items: start;
-  padding: 1.25rem 0 2.5rem;
+  padding: 1.5rem 0 3rem;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .profile-sidebar,
@@ -55,16 +70,24 @@
   border-radius: 18px;
 }
 
+/* =========================================================
+   2. PROFILE SIDEBAR & NAVIGATION (DESKTOP)
+   ========================================================= */
+
 .profile-sidebar {
   position: sticky;
   top: 96px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.2rem 0.85rem;
+  padding: 1.35rem 1rem;
   background: #faf7f0;
   border: 1px solid rgba(11, 43, 30, 0.10);
   box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-sidebar-brand {
@@ -92,20 +115,24 @@
   display: flex;
   flex-direction: column;
   gap: 0.38rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .profile-sidebar-item {
   width: 100%;
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.75rem 0.8rem;
+  padding: 0.75rem 0.85rem;
   border-radius: 12px;
   background: transparent;
   color: rgba(11, 43, 30, 0.78);
   font-size: 0.88rem;
   text-align: left;
-  transition: background 0.25s ease, transform 0.25s ease, color 0.25s ease;
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  box-sizing: border-box;
 }
 
 .profile-sidebar-item:hover,
@@ -117,6 +144,7 @@
 .profile-sidebar-item.active {
   background: #edf3ee;
   color: #0b2b1e;
+  font-weight: 600;
   box-shadow: inset 0 0 0 1px rgba(11, 43, 30, 0.04);
 }
 
@@ -124,13 +152,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
 }
 
 .profile-sidebar-icon svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   stroke: currentColor;
   fill: none;
   stroke-width: 1.8;
@@ -149,12 +178,15 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.75rem 0.8rem;
+  min-height: 44px;
+  padding: 0.75rem 0.85rem;
   border-radius: 12px;
   margin-top: auto;
   background: transparent;
   color: rgba(11, 43, 30, 0.8);
-  transition: background 0.25s ease, color 0.25s ease;
+  font-size: 0.88rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  box-sizing: border-box;
 }
 
 .profile-sidebar-logout:hover,
@@ -163,33 +195,45 @@
   color: #0b2b1e;
 }
 
+/* =========================================================
+   3. MAIN CONTENT CONTAINER & HERO (DESKTOP)
+   ========================================================= */
+
 .profile-main-content {
   display: grid;
-  gap: 1.15rem;
+  gap: 1.25rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-hero {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr) minmax(260px, 420px);
-  gap: 1.1rem;
-  padding: 1.2rem 1.2rem 1.2rem 1.1rem;
+  grid-template-columns: 160px minmax(0, 1fr) minmax(240px, 380px);
+  gap: 1.35rem;
+  padding: 1.5rem;
   background: #faf7f0;
   border: 1px solid rgba(11, 43, 30, 0.10);
   box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-avatar-wrap {
   position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.6rem 0;
+  width: fit-content;
+  margin: 0 auto;
+  flex-shrink: 0;
 }
 
 .profile-avatar {
-  width: 136px;
-  height: 136px;
+  width: 140px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,24 +241,58 @@
   background: linear-gradient(135deg, #0b2b1e, #173f31);
   color: #f7f3ec;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 2.1rem;
+  font-size: 2.2rem;
   letter-spacing: -0.06em;
   box-shadow: 0 12px 30px rgba(11, 43, 30, 0.12);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-avatar-custom-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-avatar-default {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-default-leafly-logo {
+  position: absolute;
+  width: 72%;
+  height: auto;
+  opacity: 0.22;
+  filter: brightness(0) invert(1);
 }
 
 .profile-avatar-edit {
   position: absolute;
-  right: 18px;
-  bottom: 12px;
-  width: 2.2rem;
-  height: 2.2rem;
+  right: 4px;
+  bottom: 4px;
+  width: 2.4rem;
+  height: 2.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   background: #c9a24b;
   color: #0b2b1e;
-  box-shadow: 0 8px 20px rgba(11, 43, 30, 0.12);
+  box-shadow: 0 6px 16px rgba(11, 43, 30, 0.18);
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 2;
+}
+
+.profile-avatar-edit:hover,
+.profile-avatar-edit:focus-visible {
+  transform: scale(1.08);
+  background: #d8b15d;
 }
 
 .profile-avatar-edit svg {
@@ -231,14 +309,17 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0.4rem 0;
+  padding: 0.2rem 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-eyebrow,
 .profile-card-kicker {
-  margin: 0 0 0.7rem;
+  margin: 0 0 0.6rem;
   color: #b98528;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.26rem;
   text-transform: uppercase;
@@ -251,58 +332,89 @@
   color: #0b2b1e;
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 400;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-hero-copy h1 {
-  font-size: clamp(2.4rem, 3vw, 4rem);
-  line-height: 0.96;
+  font-size: clamp(2rem, 3.2vw, 3.6rem);
+  line-height: 1.05;
 }
 
 .profile-quote {
-  margin: 0.85rem 0 1.1rem;
+  margin: 0.75rem 0 1.1rem;
   color: rgba(11, 43, 30, 0.7);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
   line-height: 1.5;
   font-style: italic;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-meta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1.35rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-meta-row div {
   display: grid;
   gap: 0.25rem;
+  min-width: 0;
 }
 
 .profile-meta-label {
   color: rgba(11, 43, 30, 0.6);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14rem;
   text-transform: uppercase;
 }
 
 .profile-meta-row strong {
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  color: #0b2b1e;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile-avatar-reset-btn {
+  margin-top: 0.75rem;
+  background: transparent;
+  color: #b98528;
+  font-size: 0.78rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: color 0.2s ease;
+  width: fit-content;
+}
+
+.profile-avatar-reset-btn:hover {
   color: #0b2b1e;
 }
 
 .profile-hero-image-wrap {
-  min-height: 260px;
+  min-height: 240px;
+  height: 100%;
   border-radius: 16px;
   overflow: hidden;
   background: #e9e0d2;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-hero-image-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.4s ease;
 }
 
@@ -311,18 +423,27 @@
 }
 
 .profile-notice {
-  padding: 0.8rem 1rem;
+  padding: 0.9rem 1.2rem;
   border: 1px solid rgba(11, 43, 30, 0.08);
   border-radius: 12px;
   background: rgba(201, 162, 75, 0.08);
   color: #0b2b1e;
   font-size: 0.92rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
 }
+
+/* =========================================================
+   4. SUMMARY CARDS & OVERVIEW GRID
+   ========================================================= */
 
 .profile-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.15rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-summary-card,
@@ -330,18 +451,22 @@
   background: #faf7f0;
   border: 1px solid rgba(11, 43, 30, 0.10);
   box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-summary-card {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.1rem 1rem 1rem;
+  padding: 1.35rem 1.25rem 1.25rem;
 }
 
 .profile-summary-header {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 0.7rem;
 }
@@ -357,14 +482,15 @@
 
 .profile-summary-total {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   line-height: 1;
   color: #0b2b1e;
 }
 
 .profile-summary-body {
   display: grid;
-  gap: 0.45rem;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .profile-summary-line {
@@ -374,43 +500,16 @@
   gap: 0.5rem;
   color: rgba(11, 43, 30, 0.7);
   font-size: 0.86rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-.profile-summary-button,
-.profile-primary-button,
-.profile-secondary-button,
-.profile-edit-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12rem;
-  text-transform: uppercase;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+.profile-summary-line span {
+  color: rgba(11, 43, 30, 0.65);
 }
 
-.profile-summary-button,
-.profile-primary-button {
-  background: #0b2b1e;
-  color: #f7f3ec;
-}
-
-.profile-summary-button:hover,
-.profile-primary-button:hover,
-.profile-secondary-button:hover,
-.profile-edit-button:hover,
-.profile-summary-button:focus-visible,
-.profile-primary-button:focus-visible,
-.profile-secondary-button:focus-visible,
-.profile-edit-button:focus-visible {
-  transform: translateY(-1px);
-}
-
-.profile-summary-button {
-  margin-top: auto;
+.profile-summary-line strong {
+  color: #0b2b1e;
 }
 
 .profile-mini-list {
@@ -454,16 +553,64 @@
   color: #0b2b1e;
   font-size: 0.94rem;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
+
+.profile-summary-button,
+.profile-primary-button,
+.profile-secondary-button,
+.profile-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.profile-summary-button,
+.profile-primary-button {
+  background: #0b2b1e;
+  color: #f7f3ec;
+}
+
+.profile-summary-button:hover,
+.profile-primary-button:hover,
+.profile-secondary-button:hover,
+.profile-edit-button:hover,
+.profile-summary-button:focus-visible,
+.profile-primary-button:focus-visible,
+.profile-secondary-button:focus-visible,
+.profile-edit-button:focus-visible {
+  transform: translateY(-1px);
+}
+
+.profile-summary-button {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* =========================================================
+   5. PERSONAL DETAILS & PREFERENCES CARDS
+   ========================================================= */
 
 .profile-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 1.15rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-card {
-  padding: 1.2rem 1.1rem 1rem;
+  padding: 1.5rem 1.35rem 1.25rem;
 }
 
 .profile-card-header {
@@ -475,19 +622,21 @@
 }
 
 .profile-card h2 {
-  font-size: clamp(1.8rem, 2.2vw, 2.7rem);
+  font-size: clamp(1.6rem, 2.2vw, 2.4rem);
   line-height: 1.05;
 }
 
 .profile-edit-button {
   background: #edf3ee;
   color: #0b2b1e;
+  flex-shrink: 0;
 }
 
 .profile-details-list,
 .profile-preference-list {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .profile-detail-row,
@@ -495,11 +644,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.8rem;
-  padding: 0.7rem 0.8rem;
+  gap: 0.85rem;
+  padding: 0.8rem 0.95rem;
   background: rgba(11, 43, 30, 0.02);
   border: 1px solid rgba(11, 43, 30, 0.06);
   border-radius: 10px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-detail-row span,
@@ -508,6 +660,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.08rem;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .profile-detail-row strong,
@@ -515,22 +668,29 @@
   color: #0b2b1e;
   font-size: 0.95rem;
   text-align: right;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .profile-subtitle {
-  margin: 0 0 0.9rem;
+  margin: 0 0 1rem;
   color: rgba(11, 43, 30, 0.72);
   line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-edit-form {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.85rem;
+  width: 100%;
 }
 
 .profile-form-field {
   display: grid;
   gap: 0.45rem;
+  width: 100%;
 }
 
 .profile-form-field span {
@@ -542,11 +702,13 @@
 
 .profile-form-field input {
   width: 100%;
+  min-height: 44px;
   padding: 0.8rem 0.85rem;
   border-radius: 8px;
   border: 1px solid rgba(11, 43, 30, 0.12);
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.6);
   color: #0b2b1e;
+  font-size: 14px;
 }
 
 .profile-form-field input:focus {
@@ -558,8 +720,9 @@
 .profile-edit-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.7rem;
-  margin-top: 0.3rem;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  width: 100%;
 }
 
 .profile-secondary-button {
@@ -573,400 +736,8 @@
   font-size: 0.92rem;
 }
 
-.profile-recommendations-card {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr) minmax(240px, 330px);
-  gap: 1rem;
-  padding: 1rem;
-  border: 1px solid rgba(11, 43, 30, 0.10);
-  background: #faf7f0;
-  box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
-}
-
-.profile-recommendations-image {
-  min-height: 270px;
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.profile-recommendations-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.profile-recommendations-copy {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0.4rem 0.2rem;
-}
-
-.profile-recommendations-copy h2 {
-  font-size: clamp(2rem, 3vw, 3rem);
-  line-height: 1.02;
-  margin-bottom: 0.7rem;
-}
-
-.profile-recommendations-copy p {
-  margin: 0 0 1rem;
-  color: rgba(11, 43, 30, 0.72);
-  line-height: 1.7;
-}
-
-.profile-recommendations-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
-  align-items: stretch;
-}
-
-.profile-recommendation-item {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgba(11, 43, 30, 0.08);
-  background: rgba(255, 255, 255, 0.24);
-  border-radius: 14px;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.profile-recommendation-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(11, 43, 30, 0.06);
-}
-
-.profile-recommendation-item img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-}
-
-.profile-recommendation-meta {
-  display: grid;
-  gap: 0.35rem;
-  padding: 0.9rem 0.85rem 0.8rem;
-}
-
-.profile-recommendation-meta p {
-  margin: 0;
-  color: #0b2b1e;
-  font-weight: 600;
-}
-
-.profile-recommendation-meta span {
-  color: rgba(11, 43, 30, 0.64);
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08rem;
-}
-
-.profile-recommendation-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-top: 0.2rem;
-}
-
-.profile-recommendation-row strong {
-  color: #0b2b1e;
-}
-
-.profile-wishlist-toggle {
-  width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: rgba(11, 43, 30, 0.04);
-  color: #0b2b1e;
-}
-
-.profile-wishlist-toggle.saved {
-  background: rgba(201, 162, 75, 0.18);
-  color: #916a23;
-}
-
-.profile-promises {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
-  padding: 0.5rem 0 2rem;
-}
-
-.profile-promise-item {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-start;
-  padding: 1rem 0.9rem;
-  border-radius: 14px;
-  background: #faf7f0;
-  border: 1px solid rgba(11, 43, 30, 0.10);
-  box-shadow: 0 8px 25px rgba(11, 43, 30, 0.04);
-}
-
-.profile-promise-icon {
-  width: 2.4rem;
-  height: 2.4rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(201, 162, 75, 0.12);
-  color: #0b2b1e;
-}
-
-.profile-promise-icon svg {
-  width: 17px;
-  height: 17px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.profile-promise-item h3 {
-  margin: 0 0 0.35rem;
-  color: #0b2b1e;
-  font-size: 0.82rem;
-  letter-spacing: 0.14rem;
-  text-transform: uppercase;
-}
-
-.profile-promise-item p {
-  margin: 0;
-  color: rgba(11, 43, 30, 0.7);
-  font-size: 0.85rem;
-  line-height: 1.6;
-}
-
-.profile-logout-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(11, 43, 30, 0.3);
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.profile-logout-modal {
-  width: min(420px, calc(100% - 20px));
-  background: #faf7f0;
-  border: 1px solid rgba(11, 43, 30, 0.10);
-  box-shadow: 0 14px 34px rgba(11, 43, 30, 0.12);
-  padding: 1.2rem 1rem 1rem;
-}
-
-.profile-logout-modal h3 {
-  margin: 0 0 1.1rem;
-  color: #0b2b1e;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.8rem, 2vw, 2.3rem);
-  line-height: 1.1;
-  font-weight: 400;
-}
-
-.profile-logout-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.65rem;
-}
-
-.profile-back-to-top {
-  position: fixed;
-  right: 1.6rem;
-  bottom: 1.6rem;
-  width: 3rem;
-  height: 3rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(247, 243, 236, 0.92);
-  color: #0b2b1e;
-  border: 1px solid rgba(11, 43, 30, 0.12);
-  box-shadow: 0 10px 22px rgba(11, 43, 30, 0.08);
-  z-index: 25;
-}
-
-.profile-back-to-top:hover,
-.profile-back-to-top:focus-visible {
-  transform: translateY(-1px);
-}
-
-@media (max-width: 1100px) {
-  .profile-page-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-sidebar {
-    position: static;
-  }
-
-  .profile-sidebar-nav {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 0.2rem;
-    scrollbar-width: thin;
-  }
-
-  .profile-sidebar-item {
-    white-space: nowrap;
-  }
-
-  .profile-summary-grid,
-  .profile-detail-grid,
-  .profile-promises {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .profile-recommendations-card {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 800px) {
-  .profile-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-avatar-wrap {
-    justify-content: flex-start;
-    padding-left: 0.4rem;
-  }
-
-  .profile-recommendations-list {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-summary-grid,
-  .profile-detail-grid,
-  .profile-promises {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .profile-page {
-    padding-top: 76px;
-  }
-
-  .profile-page-shell {
-    width: min(100% - 16px, 1280px);
-    padding-top: 0.75rem;
-  }
-
-  .profile-sidebar {
-    padding: 0.8rem 0.7rem;
-  }
-
-  .profile-hero,
-  .profile-summary-card,
-  .profile-card,
-  .profile-recommendations-card {
-    border-radius: 14px;
-  }
-
-  .profile-hero {
-    padding: 0.9rem;
-  }
-
-  .profile-avatar {
-    width: 110px;
-    height: 110px;
-  }
-
-  .profile-hero-copy h1 {
-    font-size: 2.3rem;
-  }
-
-  .profile-card h2,
-  .profile-recommendations-copy h2 {
-    font-size: 1.8rem;
-  }
-
-  .profile-edit-actions,
-  .profile-logout-actions {
-    flex-direction: column;
-  }
-
-  .profile-edit-actions > button,
-  .profile-logout-actions > button {
-    width: 100%;
-  }
-}
-
-@media (max-width: 380px) {
-  .profile-page-shell {
-    width: min(100% - 12px, 1280px);
-  }
-
-  .profile-meta-row {
-    display: grid;
-  }
-
-  .profile-hero-copy h1 {
-    font-size: 2rem;
-  }
-
-  .profile-sidebar-item {
-    font-size: 0.8rem;
-  }
-}
-
 /* =========================================================
-   CUSTOM AVATAR & RESET STYLES
-   ========================================================= */
-
-.profile-avatar-custom-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.profile-avatar-default {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.profile-default-leafly-logo {
-  position: absolute;
-  width: 72%;
-  height: auto;
-  opacity: 0.22;
-  filter: brightness(0) invert(1);
-}
-
-.profile-avatar-reset-btn {
-  margin-top: 0.5rem;
-  background: transparent;
-  color: #b98528;
-  font-size: 0.78rem;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
-  transition: color 0.2s ease;
-}
-
-.profile-avatar-reset-btn:hover {
-  color: #0b2b1e;
-}
-
-/* =========================================================
-   COUPONS VIEW
+   6. COUPONS VIEW
    ========================================================= */
 
 .profile-coupons-view {
@@ -974,6 +745,8 @@
   border: 1px solid rgba(11, 43, 30, 0.10);
   box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
   padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-coupons-count-badge {
@@ -986,6 +759,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   border: 1px solid rgba(11, 43, 30, 0.1);
+  flex-shrink: 0;
 }
 
 .profile-coupons-grid {
@@ -993,6 +767,7 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.15rem;
   margin-top: 1.25rem;
+  width: 100%;
 }
 
 .profile-coupon-card {
@@ -1007,6 +782,9 @@
   position: relative;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .profile-coupon-card:hover {
@@ -1031,6 +809,8 @@
   font-weight: 700;
   color: #0b2b1e;
   letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-coupon-status {
@@ -1039,6 +819,7 @@
   letter-spacing: 0.08em;
   padding: 0.2rem 0.55rem;
   border-radius: 10px;
+  flex-shrink: 0;
 }
 
 .profile-coupon-status.available {
@@ -1060,6 +841,8 @@
   font-size: 1.8rem;
   color: #0b2b1e;
   font-weight: 400;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-coupon-condition {
@@ -1067,6 +850,8 @@
   color: rgba(11, 43, 30, 0.75);
   font-size: 0.85rem;
   line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-coupon-bottom {
@@ -1077,11 +862,13 @@
   margin-top: 0.5rem;
   padding-top: 0.75rem;
   border-top: 1px dashed rgba(11, 43, 30, 0.12);
+  width: 100%;
 }
 
 .profile-coupon-code-box {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .profile-coupon-code-box span {
@@ -1092,20 +879,24 @@
 
 .profile-coupon-code-box strong {
   font-family: monospace;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 3.5vw, 1.1rem);
   letter-spacing: 0.08em;
   color: #0b2b1e;
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 .profile-coupon-copy-btn {
-  padding: 0.4rem 0.85rem;
+  min-height: 38px;
+  padding: 0.45rem 0.9rem;
   border-radius: 8px;
   background: #0b2b1e;
   color: #f7f3ec;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.05em;
   transition: background 0.2s ease;
+  flex-shrink: 0;
 }
 
 .profile-coupon-copy-btn:hover {
@@ -1116,10 +907,12 @@
   margin: 0;
   font-size: 0.72rem;
   color: rgba(11, 43, 30, 0.5);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* =========================================================
-   NOTIFICATIONS VIEW & TOGGLES
+   7. NOTIFICATIONS VIEW & TOGGLES
    ========================================================= */
 
 .profile-notifications-view,
@@ -1129,6 +922,8 @@
   border: 1px solid rgba(11, 43, 30, 0.10);
   box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
   padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-notif-list {
@@ -1136,6 +931,7 @@
   flex-direction: column;
   gap: 1rem;
   margin-top: 1.25rem;
+  width: 100%;
 }
 
 .profile-notif-row {
@@ -1143,10 +939,17 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1.1rem;
   background: #fff;
   border-radius: 12px;
   border: 1px solid rgba(11, 43, 30, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-notif-info {
+  min-width: 0;
+  flex: 1;
 }
 
 .profile-notif-info h3 {
@@ -1154,20 +957,24 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #0b2b1e;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-notif-info p {
   margin: 0;
   font-size: 0.85rem;
   color: rgba(11, 43, 30, 0.7);
-  line-height: 1.4;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 46px;
+  height: 26px;
   flex-shrink: 0;
 }
 
@@ -1186,14 +993,14 @@
   bottom: 0;
   background-color: #d1c7b7;
   transition: 0.3s ease;
-  border-radius: 24px;
+  border-radius: 26px;
 }
 
 .profile-switch-slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 20px;
+  width: 20px;
   left: 3px;
   bottom: 3px;
   background-color: white;
@@ -1211,7 +1018,7 @@
 }
 
 /* =========================================================
-   SECURITY VIEW
+   8. SECURITY VIEW
    ========================================================= */
 
 .profile-security-badge {
@@ -1223,6 +1030,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+  flex-shrink: 0;
 }
 
 .profile-security-grid {
@@ -1230,6 +1038,7 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.15rem;
   margin-top: 1.25rem;
+  width: 100%;
 }
 
 .profile-security-item {
@@ -1240,11 +1049,15 @@
   background: #fff;
   border-radius: 12px;
   border: 1px solid rgba(11, 43, 30, 0.08);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .profile-security-icon {
   font-size: 1.35rem;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .profile-security-item h3 {
@@ -1252,6 +1065,8 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #0b2b1e;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-security-item p {
@@ -1259,20 +1074,717 @@
   font-size: 0.84rem;
   color: rgba(11, 43, 30, 0.7);
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-@media (max-width: 600px) {
+/* =========================================================
+   9. RECOMMENDATIONS SECTION
+   ========================================================= */
+
+.profile-recommendations-card {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) minmax(240px, 330px);
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(11, 43, 30, 0.10);
+  background: #faf7f0;
+  box-shadow: 0 8px 25px rgba(11, 43, 30, 0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-recommendations-image {
+  min-height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.profile-recommendations-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-recommendations-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.4rem 0.2rem;
+  min-width: 0;
+}
+
+.profile-recommendations-copy h2 {
+  font-size: clamp(1.8rem, 2.5vw, 2.8rem);
+  line-height: 1.05;
+  margin-bottom: 0.7rem;
+}
+
+.profile-recommendations-copy p {
+  margin: 0 0 1.1rem;
+  color: rgba(11, 43, 30, 0.72);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile-recommendations-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.profile-recommendation-item {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
+}
+
+.profile-recommendation-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(11, 43, 30, 0.06);
+}
+
+.profile-recommendation-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.profile-recommendation-meta {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 0.85rem 0.8rem;
+  min-width: 0;
+}
+
+.profile-recommendation-meta p {
+  margin: 0;
+  color: #0b2b1e;
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile-recommendation-meta span {
+  color: rgba(11, 43, 30, 0.64);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+}
+
+.profile-recommendation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.profile-recommendation-row strong {
+  color: #0b2b1e;
+}
+
+/* =========================================================
+   10. PROMISES SECTION
+   ========================================================= */
+
+.profile-promises {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  padding: 0.5rem 0 2.5rem;
+  width: 100%;
+}
+
+.profile-promise-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1.1rem 1rem;
+  border-radius: 14px;
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.10);
+  box-shadow: 0 8px 25px rgba(11, 43, 30, 0.04);
+  min-width: 0;
+  width: 100%;
+}
+
+.profile-promise-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(201, 162, 75, 0.12);
+  color: #0b2b1e;
+  flex-shrink: 0;
+}
+
+.profile-promise-icon svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.profile-promise-item h3 {
+  margin: 0 0 0.35rem;
+  color: #0b2b1e;
+  font-size: 0.82rem;
+  letter-spacing: 0.14rem;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile-promise-item p {
+  margin: 0;
+  color: rgba(11, 43, 30, 0.7);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* =========================================================
+   11. MODALS & OVERLAYS
+   ========================================================= */
+
+.profile-logout-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 43, 30, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.profile-logout-modal {
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #faf7f0;
+  border: 1px solid rgba(11, 43, 30, 0.10);
+  box-shadow: 0 16px 40px rgba(11, 43, 30, 0.2);
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.profile-logout-modal h3 {
+  margin: 0 0 1.25rem;
+  color: #0b2b1e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  line-height: 1.2;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile-logout-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* =========================================================
+   12. BACK TO TOP BUTTON
+   ========================================================= */
+
+.profile-back-to-top {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #faf7f0;
+  color: #0b2b1e;
+  border: 1px solid rgba(11, 43, 30, 0.14);
+  box-shadow: 0 10px 22px rgba(11, 43, 30, 0.12);
+  z-index: 90;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.profile-back-to-top:hover,
+.profile-back-to-top:focus-visible {
+  transform: translateY(-2px);
+  background: #ffffff;
+}
+
+/* =========================================================
+   13. COMPREHENSIVE RESPONSIVE BREAKPOINTS
+   ========================================================= */
+
+/* TABLETS & DESKTOPS (769px to 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .profile-page-shell {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 1.25rem;
+    width: min(100% - 32px, 1280px);
+  }
+
+  .profile-sidebar {
+    padding: 1.1rem 0.85rem;
+  }
+
+  .profile-sidebar-item {
+    font-size: 0.82rem;
+    padding: 0.65rem 0.75rem;
+    gap: 0.5rem;
+  }
+}
+
+/* MOBILE LAYOUT (<= 768px) */
+@media (max-width: 768px) {
+  .profile-page {
+    padding-top: 76px;
+    overflow-x: hidden;
+  }
+
+  .profile-page-shell {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 12px 16px 36px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  /* FULL-WIDTH MOBILE ACCOUNT CARD */
+  .profile-sidebar {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 0 20px;
+    padding: 16px;
+    border-radius: 16px;
+    background: #faf7f0;
+    border: 1px solid rgba(11, 43, 30, 0.10);
+    box-shadow: 0 6px 20px rgba(11, 43, 30, 0.04);
+    box-sizing: border-box;
+    gap: 12px;
+  }
+
+  .profile-sidebar-brand {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 0 10px;
+    border-bottom: 1px solid rgba(11, 43, 30, 0.08);
+    box-sizing: border-box;
+  }
+
+  .profile-sidebar-brand span {
+    font-size: 0.95rem;
+    letter-spacing: 0.26rem;
+    font-weight: 700;
+    color: #0b2b1e;
+  }
+
+  .profile-sidebar-brand small {
+    font-size: 0.7rem;
+    letter-spacing: 0.14rem;
+    color: rgba(11, 43, 30, 0.6);
+  }
+
+  /* 2-COLUMN NAVIGATION GRID */
+  .profile-sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+  }
+
+  .profile-sidebar-item {
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(11, 43, 30, 0.08);
+    background: rgba(255, 255, 255, 0.7);
+    color: #0b2b1e;
+    font-size: 13px;
+    font-weight: 600;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .profile-sidebar-item span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .profile-sidebar-item .profile-sidebar-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-sidebar-item .profile-sidebar-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .profile-sidebar-item.active {
+    background: #0b2b1e;
+    color: #f7f3ec;
+    border-color: #0b2b1e;
+  }
+
+  .profile-sidebar-item.active .profile-sidebar-icon {
+    color: #c9a24b;
+  }
+
+  .profile-sidebar-divider {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: rgba(11, 43, 30, 0.08);
+    margin: 2px 0;
+  }
+
+  .profile-sidebar-logout {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(180, 50, 50, 0.2);
+    background: rgba(180, 50, 50, 0.04);
+    color: #9c2727;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-top: 0;
+  }
+
+  .profile-sidebar-logout:hover {
+    background: rgba(180, 50, 50, 0.08);
+    border-color: #9c2727;
+  }
+
+  /* PROFILE MAIN CONTENT */
+  .profile-main-content {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .profile-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px 16px;
+    gap: 1.25rem;
+    border-radius: 16px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .profile-avatar-wrap {
+    margin: 0 auto;
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    font-size: 1.9rem;
+  }
+
+  .profile-avatar-edit {
+    width: 2.2rem;
+    height: 2.2rem;
+    right: 2px;
+    bottom: 2px;
+  }
+
+  .profile-hero-copy {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .profile-hero-copy h1 {
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
+  }
+
+  .profile-meta-row {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+
+  .profile-meta-row div {
+    background: rgba(11, 43, 30, 0.025);
+    border: 1px solid rgba(11, 43, 30, 0.06);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .profile-avatar-reset-btn {
+    margin: 0.75rem auto 0;
+    text-align: center;
+  }
+
+  .profile-hero-image-wrap {
+    width: 100%;
+    max-width: 100%;
+    height: 220px;
+    min-height: 180px;
+    margin-top: 0.25rem;
+  }
+
+  .profile-summary-card,
+  .profile-card,
+  .profile-recommendations-card,
+  .profile-promises {
+    border-radius: 16px;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .profile-card h2,
+  .profile-recommendations-copy h2 {
+    font-size: clamp(1.4rem, 5.5vw, 1.9rem);
+  }
+
+  .profile-summary-grid,
+  .profile-detail-grid,
+  .profile-promises,
   .profile-coupons-grid,
-  .profile-security-grid {
+  .profile-security-grid,
+  .profile-recommendations-list {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .profile-detail-row,
+  .profile-preference-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 0.85rem;
+  }
+
+  .profile-detail-row strong,
+  .profile-preference-row strong {
+    text-align: left;
+  }
+
+  .profile-edit-actions,
+  .profile-logout-actions {
+    flex-direction: column-reverse;
+    gap: 0.65rem;
+    width: 100%;
+  }
+
+  .profile-edit-actions > button,
+  .profile-logout-actions > button {
+    width: 100%;
+    min-height: 44px;
   }
 
   .profile-notif-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    padding: 1rem;
+    gap: 0.85rem;
+  }
+
+  .profile-recommendations-card {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 24px 16px;
+  }
+
+  .profile-recommendations-image {
+    min-height: 200px;
+    max-height: 240px;
+  }
+
+  .profile-recommendations-copy button {
+    width: 100%;
+  }
+
+  .profile-coupon-card {
+    padding: 1.15rem;
   }
 }
+
+/* SMALL MOBILE (<= 480px / 375px / 390px) */
+@media (max-width: 480px) {
+  .profile-page-shell {
+    padding: 8px 12px 28px;
+  }
+
+  .profile-sidebar {
+    padding: 14px 12px;
+    margin-bottom: 16px;
+    gap: 10px;
+  }
+
+  .profile-sidebar-item {
+    font-size: 12.5px;
+    padding: 8px 10px;
+    min-height: 46px;
+    gap: 6px;
+  }
+
+  .profile-sidebar-item .profile-sidebar-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .profile-sidebar-item .profile-sidebar-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .profile-hero,
+  .profile-summary-card,
+  .profile-card,
+  .profile-recommendations-card {
+    padding: 20px 14px;
+  }
+
+  .profile-avatar {
+    width: 110px;
+    height: 110px;
+    font-size: 1.7rem;
+  }
+
+  .profile-avatar-edit {
+    width: 2.1rem;
+    height: 2.1rem;
+    right: 0;
+    bottom: 0;
+  }
+
+  .profile-hero-copy h1 {
+    font-size: 1.85rem;
+  }
+
+  .profile-quote {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .profile-coupon-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .profile-coupon-copy-btn {
+    width: 100%;
+  }
+
+  .profile-hero-image-wrap {
+    height: 190px;
+    min-height: 170px;
+  }
+}
+
+/* VERY SMALL MOBILE (<= 360px / 320px) */
+@media (max-width: 360px) {
+  .profile-page-shell {
+    padding: 6px 10px 24px;
+  }
+
+  .profile-sidebar {
+    padding: 12px 10px;
+    gap: 8px;
+  }
+
+  .profile-sidebar-nav {
+    gap: 6px;
+  }
+
+  .profile-sidebar-item {
+    font-size: 11.5px;
+    padding: 7px 6px;
+    min-height: 44px;
+    gap: 5px;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+  }
+
+  .profile-hero-copy h1 {
+    font-size: 1.65rem;
+  }
+}
+
+/* =========================================================
+   14. ACCESSIBILITY: PREFERS-REDUCED-MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   *,
