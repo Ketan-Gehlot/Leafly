@@ -8,7 +8,7 @@ const teas = [
     subtitle: "FRESH & LUCATE",
     description:
       "Fresh, vibrant leaves with a naturally delicate character. A clean and refreshing cup created for quiet mornings and mindful moments.",
-    image: "/leafly-green-tea.png",
+    image: "/leafly-green-tea.webp",
   },
   {
     name: "White Tea",
@@ -16,7 +16,7 @@ const teas = [
     subtitle: "PURE & DELICATE",
     description:
       "Lightly handled leaves with an elegant, subtle character. Soft floral notes and a refined finish make this a beautifully gentle tea.",
-    image: "/leafly-white-tea.png",
+    image: "/leafly-white-tea.webp",
   },
   {
     name: "Black Tea",
@@ -24,7 +24,7 @@ const teas = [
     subtitle: "RICH & BOLD",
     description:
       "Rich, expressive leaves selected for depth and balance. A full-bodied cup with warmth, character, and a lingering finish.",
-    image: "/leafly-black-tea.png",
+    image: "/leafly-black-tea.webp",
   },
   {
     name: "Oolong Tea",
@@ -32,7 +32,7 @@ const teas = [
     subtitle: "COMPLEX & REFINED",
     description:
       "A beautifully layered tea between green and black. Complex aromas, rounded texture, and a graceful finish reveal something new in every sip.",
-    image: "/leafly-oolong-tea.png",
+    image: "/leafly-oolong-tea.webp",
   },
   {
     name: "Pu-erh Tea",
@@ -40,7 +40,7 @@ const teas = [
     subtitle: "DEEP & EARTHY",
     description:
       "A traditionally crafted tea with depth, warmth, and a beautifully rounded character. Slow-aged leaves reveal richer notes with every infusion.",
-    image: "/leafly-puer-tea.png",
+    image: "/leafly-puer-tea.webp",
   },
 ];
 

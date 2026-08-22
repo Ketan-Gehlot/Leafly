@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import deliveryBoyImg from "../assets/delivery-boy.png";
+import deliveryBoyImg from "../assets/delivery-boy.webp";
 import "./DeliveryAnimation.css";
 
 type DeliveryAnimationProps = {

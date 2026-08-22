@@ -4,14 +4,14 @@
    Uses the 8 official Leafly teaware image assets.
    ========================================================== */
 
-import storageCanisterImg from "../assets/teaware-storage-canister.png";
-import bambooTeaTrayImg from "../assets/bamboo-tea-tray.png";
-import glassInfuserTeapotImg from "../assets/glass-infuser-teapot.png";
-import cupSaucerImg from "../assets/teaware-cup-saucer.png";
-import bloomingTeaImg from "../assets/teaware-blooming-tea.png";
-import glassCupImg from "../assets/teaware-glass-cup.png";
-import marbleTeapotImg from "../assets/teaware-marble-teapot.png";
-import glassTeapotImg from "../assets/teaware-glass-teapot.png";
+import storageCanisterImg from "../assets/teaware-storage-canister.webp";
+import bambooTeaTrayImg from "../assets/bamboo-tea-tray.webp";
+import glassInfuserTeapotImg from "../assets/glass-infuser-teapot.webp";
+import cupSaucerImg from "../assets/teaware-cup-saucer.webp";
+import bloomingTeaImg from "../assets/teaware-blooming-tea.webp";
+import glassCupImg from "../assets/teaware-glass-cup.webp";
+import marbleTeapotImg from "../assets/teaware-marble-teapot.webp";
+import glassTeapotImg from "../assets/teaware-glass-teapot.webp";
 
 export type TeawareCategory =
   | "Teapots"

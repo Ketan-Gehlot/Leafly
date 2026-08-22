@@ -220,15 +220,14 @@ export default function Shop() {
 
     setAddingId(id);
 
-    window.setTimeout(() => {
-      addProductToCart(product, 1, currentVariant, finalPrice, finalOldPrice);
-      setAddingId(null);
-      setAddedId(id);
+    // Immediately add to cart and trigger centralized AddedToRitual animation
+    addProductToCart(product, 1, currentVariant, finalPrice, finalOldPrice);
+    setAddingId(null);
+    setAddedId(id);
 
-      window.setTimeout(() => {
-        setAddedId(null);
-      }, 1500);
-    }, 650);
+    window.setTimeout(() => {
+      setAddedId(null);
+    }, 1500);
   };
 
   /*
@@ -489,75 +488,68 @@ export default function Shop() {
 
         <div className="shop-product-grid">
 
-          {filteredProducts.map(
-            (product) => {
+          {filteredProducts.map((product, index) => {
+            const isWishlisted = isInWishlist(product.id);
+            const isAdding = addingId === product.id;
+            const isAdded = addedId === product.id;
 
-              const isWishlisted =
-                isInWishlist(
-                  product.id
-                );
+            return (
+              <article
+                className="shop-product-card"
+                key={product.id}
+              >
 
-              const isAdding =
-                addingId === product.id;
+                {/* PRODUCT IMAGE */}
 
-              const isAdded =
-                addedId === product.id;
+                <div className="product-image-wrap">
 
-              return (
-                <article
-                  className="shop-product-card"
-                  key={product.id}
-                >
+                  <img
+                    src={product.image}
+                    alt={`Leafly ${product.name}`}
+                    className="product-image"
+                    loading={index < 4 ? "eager" : "lazy"}
+                    decoding="async"
+                    {...(index < 2 ? { fetchPriority: "high" as const } : {})}
+                  />
 
-                  {/* PRODUCT IMAGE */}
+                  <span
+                    className={`product-badge ${product.badge.toLowerCase()}`}
+                  >
+                    {product.badge}
+                  </span>
 
-                  <div className="product-image-wrap">
+                  <button
+                    type="button"
+                    className={
+                      isWishlisted
+                        ? "wishlist-button active"
+                        : "wishlist-button"
+                    }
+                    aria-label={
+                      isWishlisted
+                        ? "Remove from wishlist"
+                        : "Add to wishlist"
+                    }
+                    aria-pressed={
+                      isWishlisted
+                    }
+                    onClick={() =>
+                      toggleWishlist(
+                        product.id
+                      )
+                    }
+                  >
+                    {isWishlisted
+                      ? "♥"
+                      : "♡"}
+                  </button>
 
-                    <img
-                      src={product.image}
-                      alt={`Leafly ${product.name}`}
-                      className="product-image"
-                      loading="lazy"
-                    />
-
-                    <span
-                      className={`product-badge ${product.badge.toLowerCase()}`}
-                    >
-                      {product.badge}
-                    </span>
-
-                    <button
-                      type="button"
-                      className={
-                        isWishlisted
-                          ? "wishlist-button active"
-                          : "wishlist-button"
-                      }
-                      aria-label={
-                        isWishlisted
-                          ? "Remove from wishlist"
-                          : "Add to wishlist"
-                      }
-                      aria-pressed={
-                        isWishlisted
-                      }
-                      onClick={() =>
-                        toggleWishlist(
-                          product.id
-                        )
-                      }
-                    >
-                      {isWishlisted
-                        ? "♥"
-                        : "♡"}
-                    </button>
-
-                  </div>
+                </div>
 
 
-                  {/* PRODUCT CONTENT */}
+                {/* PRODUCT CONTENT */}
 
-                  <div className="product-content">
+                <div className="product-content">
 
                     <p className="product-meta">
                       {product.origin} ·{" "}

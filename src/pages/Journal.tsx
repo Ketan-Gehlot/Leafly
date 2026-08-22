@@ -283,7 +283,9 @@ export default function Journal() {
           <img
             src={teaTastingImage}
             alt="Tea tasting table with different teas"
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
 
           <span className="journal-image-mark">

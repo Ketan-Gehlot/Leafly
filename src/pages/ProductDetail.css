@@ -361,6 +361,33 @@
   color: #c9a24b;
 }
 
+.pdp-coming-soon-btn {
+  flex: 1;
+  min-height: 52px;
+  min-width: 200px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px;
+  border: 1px solid rgba(201, 162, 75, 0.45);
+  border-radius: 4px;
+  background: linear-gradient(145deg, rgba(201, 162, 75, 0.16), rgba(201, 162, 75, 0.06));
+  color: #7d5915;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  user-select: none;
+  cursor: default;
+}
+
+.pdp-coming-soon-btn span {
+  color: #c9a24b;
+  font-size: 12px;
+}
+
 .pdp-wishlist-button {
   min-height: 52px;
   min-width: 52px;

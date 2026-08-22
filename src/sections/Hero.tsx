@@ -1,17 +1,44 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import heroVideo from "../assets/leafly-hero.mp4";
 import heroPoster from "../assets/leafly-hero-poster.webp";
 import "./Hero.css";
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const hero = heroRef.current;
+    if (!video || !hero || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="hero" className="hero-section">
+    <section id="hero" ref={heroRef} className="hero-section">
 
       {/* =====================================================
           FULLSCREEN BACKGROUND VIDEO
           ===================================================== */}
 
       <video
+        ref={videoRef}
         className="hero-background-video"
         src={heroVideo}
         poster={heroPoster}

@@ -1,9 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { teawareProducts, type TeawareItem, type TeawareCategory } from "../data/teaware";
-import type { CartProduct } from "../context/CartContext";
 import Footer from "../components/Footer";
 import "./Teaware.css";
 
@@ -17,19 +15,12 @@ const categories: Array<"All Teaware" | TeawareCategory> = [
 
 export default function Teaware() {
   const navigate = useNavigate();
-  const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const [category, setCategory] = useState<"All Teaware" | TeawareCategory>("All Teaware");
-  const [priceFilter, setPriceFilter] = useState("All Prices");
   const [sortBy, setSortBy] = useState("Featured Collection");
-  const [addingId, setAddingId] = useState<number | null>(null);
-  const [addedId, setAddedId] = useState<number | null>(null);
   const [selectedItem, setSelectedItem] = useState<TeawareItem | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
-
-  // Cart animation state
-  const [animatingItem, setAnimatingItem] = useState<TeawareItem | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,66 +46,17 @@ export default function Teaware() {
         if (category !== "All Teaware" && item.category !== category) {
           return false;
         }
-
-        if (priceFilter === "Under ₹1000") {
-          return item.price < 1000;
-        }
-        if (priceFilter === "₹1000 – ₹2000") {
-          return item.price >= 1000 && item.price <= 2000;
-        }
-        if (priceFilter === "Above ₹2000") {
-          return item.price > 2000;
-        }
-
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === "Price: Low to High") return a.price - b.price;
-        if (sortBy === "Price: High to Low") return b.price - a.price;
         if (sortBy === "Name: A to Z") return a.name.localeCompare(b.name);
         return 0; // Featured
       });
-  }, [category, priceFilter, sortBy]);
+  }, [category, sortBy]);
 
   const clearFilters = () => {
     setCategory("All Teaware");
-    setPriceFilter("All Prices");
     setSortBy("Featured Collection");
-  };
-
-  const handleAddToCart = (item: TeawareItem) => {
-    if (addingId === item.id) return;
-
-    setAddingId(item.id);
-    setAnimatingItem(item);
-
-    const cartProduct: CartProduct = {
-      id: item.id,
-      name: item.name,
-      category: item.category,
-      origin: item.material,
-      caffeine: "Teaware",
-      weight: item.capacity || "1 Unit",
-      price: item.price,
-      oldPrice: item.oldPrice,
-      badge: item.badge,
-      image: item.image,
-    };
-
-    addToCart(cartProduct, 1, "100g", item.price, item.oldPrice);
-
-    setTimeout(() => {
-      setAddingId(null);
-      setAddedId(item.id);
-    }, 450);
-
-    setTimeout(() => {
-      setAnimatingItem(null);
-    }, 1500);
-
-    setTimeout(() => {
-      setAddedId(null);
-    }, 2000);
   };
 
   const toggleWishlist = (item: TeawareItem) => {
@@ -131,7 +73,7 @@ export default function Teaware() {
         weight: item.capacity || "1 Unit",
         price: item.price,
         oldPrice: item.oldPrice,
-        badge: item.badge,
+        badge: "Coming Soon",
         image: item.image,
       });
     }
@@ -173,7 +115,7 @@ export default function Teaware() {
       <section className="teaware-collection" id="teaware-collection">
         <div className="teaware-collection-header">
           <div>
-            <p className="teaware-eyebrow">CURATED COLLECTION</p>
+            <p className="teaware-eyebrow">CURATED COLLECTION · COMING SOON</p>
             <h2>Teaware for every ritual.</h2>
           </div>
 
@@ -201,16 +143,10 @@ export default function Teaware() {
         {/* FILTER BAR */}
         <div className="teaware-filter-bar">
           <div className="teaware-filters">
-            <select
-              value={priceFilter}
-              onChange={(e) => setPriceFilter(e.target.value)}
-              aria-label="Filter by price"
-            >
-              <option>All Prices</option>
-              <option>Under ₹1000</option>
-              <option>₹1000 – ₹2000</option>
-              <option>Above ₹2000</option>
-            </select>
+            <span className="teaware-filter-status">
+              <span className="teaware-status-dot">✦</span>
+              Exclusive Artisan Edition · Launching Soon
+            </span>
           </div>
 
           <div className="teaware-sort">
@@ -222,32 +158,28 @@ export default function Teaware() {
               aria-label="Sort teaware"
             >
               <option>Featured Collection</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
               <option>Name: A to Z</option>
             </select>
           </div>
         </div>
 
         {/* ACTIVE FILTER SUMMARY */}
-        {(category !== "All Teaware" || priceFilter !== "All Prices") && (
+        {category !== "All Teaware" && (
           <div className="teaware-active-filters">
-            <span>Showing filtered results</span>
+            <span>Showing category: <strong>{category}</strong></span>
             <button type="button" onClick={clearFilters}>
-              Clear filters ×
+              Clear filter ×
             </button>
           </div>
         )}
 
         {/* PRODUCT GRID */}
         <div className="teaware-product-grid">
-          {filteredProducts.map((item) => {
+          {filteredProducts.map((item, index) => {
             const isWishlisted = isInWishlist(item.id);
-            const isAdding = addingId === item.id;
-            const isAdded = addedId === item.id;
 
             return (
-              <article className="teaware-card" key={item.id}>
+              <article className="teaware-card teaware-coming-soon-card" key={item.id}>
                 {/* PRODUCT IMAGE */}
                 <div
                   className="teaware-image-wrap"
@@ -258,11 +190,13 @@ export default function Teaware() {
                     src={item.image}
                     alt={`Leafly ${item.name}`}
                     className="teaware-image"
-                    loading="lazy"
+                    loading={index < 4 ? "eager" : "lazy"}
+                    decoding="async"
+                    {...(index < 2 ? { fetchPriority: "high" as const } : {})}
                   />
 
-                  <span className={`teaware-badge ${item.badge.toLowerCase()}`}>
-                    {item.badge}
+                  <span className="teaware-badge coming-soon">
+                    COMING SOON
                   </span>
 
                   <button
@@ -292,33 +226,17 @@ export default function Teaware() {
                     {item.name}
                   </h3>
 
-                  {/* RATING */}
-                  <div className="teaware-rating" aria-label={`${item.rating} out of 5 stars based on ${item.reviewCount} reviews`}>
-                    <div className="teaware-stars">
-                      {"★".repeat(Math.floor(item.rating))}
-                      <span className="teaware-rating-num">{item.rating.toFixed(1)}</span>
-                    </div>
-                    <span className="teaware-review-count">({item.reviewCount} reviews)</span>
-                  </div>
-
                   {/* SHORT DESCRIPTION */}
                   <p className="teaware-short-desc">
                     {item.description}
                   </p>
 
                   <p className="teaware-details">
-                    {item.capacity || "Standard Capacity"} · Food-Grade
+                    {item.capacity || "Standard Capacity"} · Food-Grade Craftsmanship
                   </p>
 
-                  <div className="teaware-price">
-                    <strong>₹{item.price.toLocaleString("en-IN")}</strong>
-                    {item.oldPrice && (
-                      <del>₹{item.oldPrice.toLocaleString("en-IN")}</del>
-                    )}
-                  </div>
-
                   {/* ACTIONS */}
-                  <div className="teaware-actions">
+                  <div className="teaware-actions coming-soon-actions">
                     <button
                       type="button"
                       className="teaware-details-button"
@@ -327,26 +245,10 @@ export default function Teaware() {
                       VIEW DETAILS
                     </button>
 
-                    <button
-                      type="button"
-                      className={isAdded ? "teaware-add-button added" : "teaware-add-button"}
-                      disabled={isAdding}
-                      onClick={() => handleAddToCart(item)}
-                    >
-                      {isAdding ? (
-                        <>
-                          <span className="teaware-spinner" />
-                          ADDING...
-                        </>
-                      ) : isAdded ? (
-                        <>ADDED ✓</>
-                      ) : (
-                        <>
-                          ADD TO CART
-                          <span>+</span>
-                        </>
-                      )}
-                    </button>
+                    <div className="teaware-coming-soon-badge-btn" aria-label="Coming Soon">
+                      <span>✦</span>
+                      COMING SOON
+                    </div>
                   </div>
                 </div>
               </article>
@@ -388,8 +290,8 @@ export default function Teaware() {
             </div>
 
             <div className="teaware-modal-info">
-              <span className={`teaware-badge ${selectedItem.badge.toLowerCase()}`}>
-                {selectedItem.badge}
+              <span className="teaware-badge coming-soon">
+                COMING SOON
               </span>
 
               <p className="teaware-meta">
@@ -397,21 +299,6 @@ export default function Teaware() {
               </p>
 
               <h2>{selectedItem.name}</h2>
-
-              <div className="teaware-rating">
-                <div className="teaware-stars">
-                  {"★".repeat(Math.floor(selectedItem.rating))}
-                  <span className="teaware-rating-num">{selectedItem.rating.toFixed(1)}</span>
-                </div>
-                <span className="teaware-review-count">({selectedItem.reviewCount} customer reviews)</span>
-              </div>
-
-              <div className="teaware-modal-price">
-                <strong>₹{selectedItem.price.toLocaleString("en-IN")}</strong>
-                {selectedItem.oldPrice && (
-                  <del>₹{selectedItem.oldPrice.toLocaleString("en-IN")}</del>
-                )}
-              </div>
 
               <p className="teaware-modal-desc">{selectedItem.description}</p>
 
@@ -428,38 +315,11 @@ export default function Teaware() {
               </div>
 
               <div className="teaware-modal-actions">
-                <button
-                  type="button"
-                  className="teaware-modal-add-btn"
-                  onClick={() => {
-                    handleAddToCart(selectedItem);
-                    setSelectedItem(null);
-                  }}
-                >
-                  ADD TO CART · ₹{selectedItem.price.toLocaleString("en-IN")}
-                </button>
+                <div className="teaware-modal-coming-soon-banner">
+                  <span>✦</span>
+                  COMING SOON · LAUNCHING SHORTLY
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* =====================================================
-          ANIMATION: CART POUCH TO TROLLEY
-          ===================================================== */}
-      {animatingItem && (
-        <div className="teaware-anim-overlay" aria-hidden="true">
-          <div className="teaware-anim-box">
-            <div className="teaware-anim-pouch" />
-            <div className="teaware-anim-trolley">
-              <div className="teaware-anim-wheels">
-                <span />
-                <span />
-              </div>
-            </div>
-            <div className="teaware-anim-success">
-              <span className="teaware-anim-mark">✓</span>
-              <span>ADDED TO RITUAL</span>
             </div>
           </div>
         </div>
@@ -483,3 +343,4 @@ export default function Teaware() {
     </main>
   );
 }
+

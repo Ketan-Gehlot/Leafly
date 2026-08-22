@@ -25,7 +25,7 @@ const collections: TeaCollection[] = [
     character: "Fresh & vegetal",
     caffeine: "Medium",
     origin: "Darjeeling",
-    image: "/leafly-green-tea.png",
+    image: "/leafly-green-tea.webp",
   },
   {
     id: "white",
@@ -36,7 +36,7 @@ const collections: TeaCollection[] = [
     character: "Floral & delicate",
     caffeine: "Low",
     origin: "Darjeeling",
-    image: "/leafly-white-tea.png",
+    image: "/leafly-white-tea.webp",
   },
   {
     id: "black",
@@ -47,7 +47,7 @@ const collections: TeaCollection[] = [
     character: "Bold & malty",
     caffeine: "High",
     origin: "Assam",
-    image: "/leafly-black-tea.png",
+    image: "/leafly-black-tea.webp",
   },
   {
     id: "oolong",
@@ -58,7 +58,7 @@ const collections: TeaCollection[] = [
     character: "Floral & layered",
     caffeine: "Medium",
     origin: "Darjeeling",
-    image: "/leafly-oolong-tea.png",
+    image: "/leafly-oolong-tea.webp",
   },
   {
     id: "puerh",
@@ -69,7 +69,7 @@ const collections: TeaCollection[] = [
     character: "Earthy & smooth",
     caffeine: "Medium",
     origin: "Assam",
-    image: "/leafly-puer-tea.png",
+    image: "/leafly-puer-tea.webp",
   },
 ];
 
@@ -81,7 +81,7 @@ const featuredProducts = [
     origin: "Darjeeling",
     weight: "50g",
     price: 699,
-    image: "/leafly-green-tea.png",
+    image: "/leafly-green-tea.webp",
   },
   {
     id: 2,
@@ -90,7 +90,7 @@ const featuredProducts = [
     origin: "Darjeeling",
     weight: "40g",
     price: 899,
-    image: "/leafly-white-tea.png",
+    image: "/leafly-white-tea.webp",
   },
   {
     id: 3,
@@ -99,7 +99,7 @@ const featuredProducts = [
     origin: "Darjeeling",
     weight: "50g",
     price: 749,
-    image: "/leafly-black-tea.png",
+    image: "/leafly-black-tea.webp",
   },
 ];
 

@@ -37,6 +37,7 @@ type CartContextType = {
   cartCount: number;
   subtotal: number;
   isCartOpen: boolean;
+  animatingProduct: CartProduct | null;
 
   addToCart: (
     product: CartProduct,
@@ -45,6 +46,8 @@ type CartContextType = {
     customPrice?: number,
     customOldPrice?: number
   ) => void;
+  triggerAddedAnimation: (product: CartProduct) => void;
+  closeAddedAnimation: () => void;
   increaseQuantity: (id: string | number) => void;
   decreaseQuantity: (id: string | number) => void;
   removeFromCart: (id: string | number) => void;
@@ -61,11 +64,15 @@ const CartContext = createContext<
 
 const STORAGE_KEY = "leafly-cart-v2";
 
+import AddedToRitualModal from "../components/AddedToRitualModal";
+
 export function CartProvider({
   children,
 }: {
   children: ReactNode;
 }) {
+  const [animatingProduct, setAnimatingProduct] = useState<CartProduct | null>(null);
+
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
       const saved =
@@ -117,6 +124,14 @@ export function CartProvider({
     }
   }, [items]);
 
+  const triggerAddedAnimation = (product: CartProduct) => {
+    setAnimatingProduct(product);
+  };
+
+  const closeAddedAnimation = () => {
+    setAnimatingProduct(null);
+  };
+
   const addToCart = (
     product: CartProduct,
     quantity = 1,
@@ -127,6 +142,9 @@ export function CartProvider({
     const itemPrice = typeof customPrice === "number" ? customPrice : product.price;
     const itemOldPrice = customOldPrice ?? product.oldPrice;
     const cartItemId = `${product.id}-${variant}`;
+
+    // Trigger shared "Added to Ritual" animation
+    setAnimatingProduct(product);
 
     setItems((current) => {
       const existingIndex = current.findIndex(
@@ -252,8 +270,11 @@ export function CartProvider({
         cartCount,
         subtotal,
         isCartOpen,
+        animatingProduct,
 
         addToCart,
+        triggerAddedAnimation,
+        closeAddedAnimation,
         increaseQuantity,
         decreaseQuantity,
         removeFromCart,
@@ -265,6 +286,10 @@ export function CartProvider({
       }}
     >
       {children}
+      <AddedToRitualModal
+        product={animatingProduct}
+        onClose={closeAddedAnimation}
+      />
     </CartContext.Provider>
   );
 }

@@ -18,17 +18,17 @@ import honeyImg from "../assets/tea-maker/ingredients/honey.webp";
 import cupImg from "../assets/tea-maker/vessels/cup-tea.webp";
 
 // Category-specific pouring images
-import pouringGreenImg from "../assets/pouring-green.png";
-import pouringWhiteImg from "../assets/pouring-white.png";
-import pouringBlackImg from "../assets/pouring-black.png";
-import pouringPuerhImg from "../assets/pouring-purerh.png";
+import pouringGreenImg from "../assets/pouring-green.webp";
+import pouringWhiteImg from "../assets/pouring-white.webp";
+import pouringBlackImg from "../assets/pouring-black.webp";
+import pouringPuerhImg from "../assets/pouring-purerh.webp";
 
 // Category-specific finished tea ready images
-import greenTeaMakerImg from "../assets/green-tea-maker.png";
-import whiteTeaMakerImg from "../assets/white-tea-maker.png";
-import blackTeaMakerImg from "../assets/black-tea-maker.png";
-import oolongTeaMakerImg from "../assets/oolong-tea-maker.png";
-import puerhTeaMakerImg from "../assets/puerh-tea-maker.png";
+import greenTeaMakerImg from "../assets/green-tea-maker.webp";
+import whiteTeaMakerImg from "../assets/white-tea-maker.webp";
+import blackTeaMakerImg from "../assets/black-tea-maker.webp";
+import oolongTeaMakerImg from "../assets/oolong-tea-maker.webp";
+import puerhTeaMakerImg from "../assets/puerh-tea-maker.webp";
 
 import lemonSliceEffect from "../assets/tea-maker/effects/lemon-slice.webp";
 import mintLeafEffect from "../assets/tea-maker/effects/mint-leaf.webp";
@@ -157,7 +157,7 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     leafColor: "#4f7743",
     notes: "Sweet Grass · Jasmine · Dewy Mountain Mist",
     matchedProductId: 1,
-    image: "/leafly-green-tea.png",
+    image: "/leafly-green-tea.webp",
     pouringImage: pouringGreenImg,
     readyImage: greenTeaMakerImg,
   },
@@ -173,7 +173,7 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     leafColor: "#8f967a",
     notes: "Wild Honeysuckle · White Peach · Melon Silk",
     matchedProductId: 2,
-    image: "/leafly-white-tea.png",
+    image: "/leafly-white-tea.webp",
     pouringImage: pouringWhiteImg,
     readyImage: whiteTeaMakerImg,
   },
@@ -189,7 +189,7 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     leafColor: "#3a2012",
     notes: "Muscatel Grape · Amber Malt · Forest Oak",
     matchedProductId: 3,
-    image: "/leafly-black-tea.png",
+    image: "/leafly-black-tea.webp",
     pouringImage: pouringBlackImg,
     readyImage: blackTeaMakerImg,
   },
@@ -205,7 +205,7 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     leafColor: "#574828",
     notes: "Roasted Orchid · Peach Blossom · Wild Forest Honey",
     matchedProductId: 4,
-    image: "/leafly-oolong-tea.png",
+    image: "/leafly-oolong-tea.webp",
     pouringImage: pouringBlackImg,
     readyImage: oolongTeaMakerImg,
   },
@@ -221,7 +221,7 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     leafColor: "#22130c",
     notes: "Petrichor · Dark Cocoa · Earthy Forest Moss",
     matchedProductId: 5,
-    image: "/leafly-puer-tea.png",
+    image: "/leafly-puer-tea.webp",
     pouringImage: pouringPuerhImg,
     readyImage: puerhTeaMakerImg,
   },

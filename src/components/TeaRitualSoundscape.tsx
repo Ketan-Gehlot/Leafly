@@ -117,7 +117,7 @@ export default function TeaRitualSoundscape() {
         <audio
           ref={audioRef}
           src={currentTrack.src}
-          preload="metadata"
+          preload="none"
         />
 
         <div className="tea-soundscape-header">

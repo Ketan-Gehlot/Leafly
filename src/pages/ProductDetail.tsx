@@ -79,19 +79,17 @@ export default function ProductDetail() {
     if (addingToCart) return;
     setAddingToCart(true);
 
-    window.setTimeout(() => {
-      addToCart(
-        product,
-        1,
-        selectedVariant,
-        currentPrice,
-        currentOldPrice
-      );
-      setAddingToCart(false);
-      setAddedToCart(true);
+    addToCart(
+      product,
+      1,
+      selectedVariant,
+      currentPrice,
+      currentOldPrice
+    );
+    setAddingToCart(false);
+    setAddedToCart(true);
 
-      window.setTimeout(() => setAddedToCart(false), 1500);
-    }, 650);
+    window.setTimeout(() => setAddedToCart(false), 1500);
   };
 
   const handleWishlistToggle = () => {
@@ -108,6 +106,8 @@ export default function ProductDetail() {
       : null;
 
   /* --- render ---------------------------------------------- */
+
+  const isTeaware = Boolean(teawareItem);
 
   return (
     <main className="product-detail-page">
@@ -127,7 +127,9 @@ export default function ProductDetail() {
         <div className="pdp-breadcrumb" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span>/</span>
-          <Link to="/shop">Shop</Link>
+          <Link to={isTeaware ? "/teaware" : "/shop"}>
+            {isTeaware ? "Teaware" : "Shop"}
+          </Link>
           <span>/</span>
           <strong>{product.name}</strong>
         </div>
@@ -145,9 +147,12 @@ export default function ProductDetail() {
             src={product.image}
             alt={`Leafly ${product.name}`}
             className="pdp-image"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
-          <span className={`pdp-badge ${product.badge.toLowerCase()}`}>
-            {product.badge}
+          <span className={`pdp-badge ${isTeaware ? "coming-soon" : product.badge.toLowerCase()}`}>
+            {isTeaware ? "Coming Soon" : product.badge}
           </span>
         </div>
 
@@ -158,15 +163,15 @@ export default function ProductDetail() {
 
           <p className="pdp-eyebrow">
             <span aria-hidden="true">✦</span>
-            {product.origin} · {product.category} Tea
+            {isTeaware ? `${teawareItem?.material} · ${teawareItem?.category}` : `${product.origin} · ${product.category} Tea`}
           </p>
 
           <h1 className="pdp-name">{product.name}</h1>
 
           <p className="pdp-description">
-            A carefully selected {product.category.toLowerCase()} tea from{" "}
-            {product.origin}, chosen for character, freshness and a memorable
-            tea-drinking ritual.
+            {isTeaware ? teawareItem?.description : (
+              `A carefully selected ${product.category.toLowerCase()} tea from ${product.origin}, chosen for character, freshness and a memorable tea-drinking ritual.`
+            )}
           </p>
 
           <div className="pdp-divider" aria-hidden="true">
@@ -175,90 +180,120 @@ export default function ProductDetail() {
             <span />
           </div>
 
-          {/* QUANTITY / WEIGHT VARIANT SELECTOR */}
-
-          <div className="pdp-variant-section">
-            <span className="pdp-variant-title">SELECT QUANTITY / WEIGHT</span>
-            <div className="pdp-variant-buttons" role="radiogroup" aria-label="Quantity options">
-              <button
-                type="button"
-                className={`pdp-variant-btn ${selectedVariant === "100g" ? "active" : ""}`}
-                onClick={() => setSelectedVariant("100g")}
-                role="radio"
-                aria-checked={selectedVariant === "100g"}
-              >
-                100g
-              </button>
-              <button
-                type="button"
-                className={`pdp-variant-btn ${selectedVariant === "250g" ? "active" : ""}`}
-                onClick={() => setSelectedVariant("250g")}
-                role="radio"
-                aria-checked={selectedVariant === "250g"}
-              >
-                250g
-              </button>
+          {/* QUANTITY / WEIGHT VARIANT SELECTOR (TEA ONLY) */}
+          {!isTeaware && (
+            <div className="pdp-variant-section">
+              <span className="pdp-variant-title">SELECT QUANTITY / WEIGHT</span>
+              <div className="pdp-variant-buttons" role="radiogroup" aria-label="Quantity options">
+                <button
+                  type="button"
+                  className={`pdp-variant-btn ${selectedVariant === "100g" ? "active" : ""}`}
+                  onClick={() => setSelectedVariant("100g")}
+                  role="radio"
+                  aria-checked={selectedVariant === "100g"}
+                >
+                  100g
+                </button>
+                <button
+                  type="button"
+                  className={`pdp-variant-btn ${selectedVariant === "250g" ? "active" : ""}`}
+                  onClick={() => setSelectedVariant("250g")}
+                  role="radio"
+                  aria-checked={selectedVariant === "250g"}
+                >
+                  250g
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* SPECS */}
-
           <div className="pdp-specs">
-            <div className="pdp-spec">
-              <span>ORIGIN</span>
-              <strong>{product.origin}</strong>
-            </div>
-            <div className="pdp-spec">
-              <span>TEA TYPE</span>
-              <strong>{product.category}</strong>
-            </div>
-            <div className="pdp-spec">
-              <span>WEIGHT</span>
-              <strong>{currentWeight}</strong>
-            </div>
-            <div className="pdp-spec">
-              <span>CAFFEINE</span>
-              <strong>{product.caffeine}</strong>
-            </div>
+            {isTeaware ? (
+              <>
+                <div className="pdp-spec">
+                  <span>MATERIAL</span>
+                  <strong>{teawareItem?.material}</strong>
+                </div>
+                <div className="pdp-spec">
+                  <span>CATEGORY</span>
+                  <strong>{teawareItem?.category}</strong>
+                </div>
+                <div className="pdp-spec">
+                  <span>CAPACITY</span>
+                  <strong>{teawareItem?.capacity || "Standard"}</strong>
+                </div>
+                <div className="pdp-spec">
+                  <span>STATUS</span>
+                  <strong>Coming Soon</strong>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="pdp-spec">
+                  <span>ORIGIN</span>
+                  <strong>{product.origin}</strong>
+                </div>
+                <div className="pdp-spec">
+                  <span>TEA TYPE</span>
+                  <strong>{product.category}</strong>
+                </div>
+                <div className="pdp-spec">
+                  <span>WEIGHT</span>
+                  <strong>{currentWeight}</strong>
+                </div>
+                <div className="pdp-spec">
+                  <span>CAFFEINE</span>
+                  <strong>{product.caffeine}</strong>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* PRICE */}
-
-          <div className="pdp-price-row">
-            <span className="pdp-price">
-              ₹{currentPrice.toLocaleString("en-IN")}
-            </span>
-            {currentOldPrice && (
-              <del className="pdp-old-price">
-                ₹{currentOldPrice.toLocaleString("en-IN")}
-              </del>
-            )}
-            {savings && (
-              <span className="pdp-savings">{savings}% OFF</span>
-            )}
-          </div>
+          {/* PRICE (TEA ONLY) */}
+          {!isTeaware && (
+            <div className="pdp-price-row">
+              <span className="pdp-price">
+                ₹{currentPrice.toLocaleString("en-IN")}
+              </span>
+              {currentOldPrice && (
+                <del className="pdp-old-price">
+                  ₹{currentOldPrice.toLocaleString("en-IN")}
+                </del>
+              )}
+              {savings && (
+                <span className="pdp-savings">{savings}% OFF</span>
+              )}
+            </div>
+          )}
 
           {/* ACTIONS */}
-
           <div className="pdp-actions">
-            <button
-              type="button"
-              className={`pdp-cart-button ${addedToCart ? "added" : ""}`}
-              disabled={addingToCart}
-              onClick={handleAddToCart}
-              aria-label={addedToCart ? "Added to cart" : `Add ${product.name} (${selectedVariant}) to cart`}
-            >
-              {addingToCart ? (
-                <>
-                  <span className="pdp-cart-spinner" aria-hidden="true" />
-                  ADDING...
-                </>
-              ) : addedToCart ? (
-                <>ADDED ✓</>
-              ) : (
-                <>ADD TO CART 🛒</>
-              )}
-            </button>
+            {isTeaware ? (
+              <div className="pdp-coming-soon-btn" aria-label="Coming Soon">
+                <span>✦</span>
+                COMING SOON · LAUNCHING SHORTLY
+              </div>
+            ) : (
+              <button
+                type="button"
+                className={`pdp-cart-button ${addedToCart ? "added" : ""}`}
+                disabled={addingToCart}
+                onClick={handleAddToCart}
+                aria-label={addedToCart ? "Added to cart" : `Add ${product.name} (${selectedVariant}) to cart`}
+              >
+                {addingToCart ? (
+                  <>
+                    <span className="pdp-cart-spinner" aria-hidden="true" />
+                    ADDING...
+                  </>
+                ) : addedToCart ? (
+                  <>ADDED ✓</>
+                ) : (
+                  <>ADD TO CART 🛒</>
+                )}
+              </button>
+            )}
 
             <button
               type="button"
