@@ -15,6 +15,7 @@ import { WishlistProvider } from "./context/WishlistContext";
 import { ProductProvider } from "./context/ProductContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SyncClerkToFirebase from "./components/SyncClerkToFirebase";
 
 /* Route-level code splitting — each page is a separate JS chunk.
    Only the Home bundle ships on initial page load. */
@@ -41,13 +42,14 @@ const CustomerSignup = lazy(() => import("./pages/CustomerSignup"));
 // Import your publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key");
-}
-
 function App() {
+  // If no key is present, we still wrap with ClerkProvider using a dummy key to prevent crashes,
+  // but Clerk components (SignIn/SignUp) will not work until a real key is provided.
+  const clerkKey = PUBLISHABLE_KEY || "pk_test_cGxhY2Vob2xkZXIuY2xlcmsuYWNjb3VudHMk";
+
   return (
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider publishableKey={clerkKey}>
+      <SyncClerkToFirebase />
       <AuthProvider>
       <ProductProvider>
         <CartProvider>
