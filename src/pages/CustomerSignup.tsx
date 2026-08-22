@@ -2,7 +2,7 @@ import { SignUp } from "@clerk/clerk-react";
 
 export default function CustomerSignup() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fdfaf6] py-12 px-4 sm:px-6 lg:px-8">
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#fdfaf6', padding: '2rem 1rem' }}>
       <SignUp path="/customer-signup" routing="path" signInUrl="/customer-login" />
     </div>
   );
