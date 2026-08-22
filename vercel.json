@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/__clerk/(.*)",
+      "destination": "https://clerk.leafly-gamma.vercel.app/v1/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
