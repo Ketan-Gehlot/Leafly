@@ -343,14 +343,14 @@
 
 /* =========================================================
    MOBILE HERO (<= 768px)
-   Refined luxury layout with unobstructed product logo & clear text hierarchy
+   Refined luxury editorial layout with balanced CTAs & clean hierarchy
    ========================================================= */
 
 @media (max-width: 768px) {
   .hero-section {
     width: 100%;
     max-width: 100%;
-    min-height: max(100svh, 720px);
+    min-height: max(100svh, 700px);
     height: auto;
     overflow: hidden;
     display: flex;
@@ -366,29 +366,29 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 48% center;
-    transform: scale(1.1) translateY(7%);
+    object-position: 46% center;
+    transform: scale(1.1) translateY(8%);
     transform-origin: center bottom;
   }
 
   /* Refined dual-gradient overlay:
-     - Deep contrast behind top-left headline and copy
-     - Pristine clarity over the tea pouch and gold Leafly brand logo */
+     - Rich dark emerald contrast behind top-left headline and copy
+     - Crisp luminous clarity over the tea pouch and gold Leafly brand logo */
   .hero-overlay {
     background:
       radial-gradient(
-        circle at 20% 20%,
-        rgba(2, 20, 14, 0.92) 0%,
-        rgba(2, 20, 14, 0.76) 42%,
+        circle at 22% 18%,
+        rgba(2, 20, 14, 0.94) 0%,
+        rgba(2, 20, 14, 0.8) 42%,
         rgba(2, 20, 14, 0.22) 75%,
         transparent 100%
       ),
       linear-gradient(
         180deg,
-        rgba(2, 20, 14, 0.88) 0%,
-        rgba(2, 20, 14, 0.65) 36%,
-        rgba(2, 20, 14, 0.08) 58%,
-        rgba(2, 20, 14, 0.14) 84%,
+        rgba(2, 20, 14, 0.9) 0%,
+        rgba(2, 20, 14, 0.68) 32%,
+        rgba(2, 20, 14, 0.08) 55%,
+        rgba(2, 20, 14, 0.12) 82%,
         rgba(2, 20, 14, 0.68) 100%
       );
   }
@@ -396,78 +396,80 @@
   .hero-vignette {
     background: linear-gradient(
       to bottom,
-      rgba(1, 17, 17, 0.5) 0%,
+      rgba(1, 17, 17, 0.45) 0%,
       transparent 18%,
       transparent 76%,
-      rgba(1, 17, 17, 0.72) 100%
+      rgba(1, 17, 17, 0.7) 100%
     );
   }
 
-  /* Content wrapper: positioned in the upper portion to leave the lower screen open for the product */
+  /* Content wrapper: structured in upper portion with generous breathing room */
   .hero-content-wrapper {
     min-height: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    padding-top: max(84px, calc(env(safe-area-inset-top, 0px) + 76px));
-    padding-bottom: 30px;
-    padding-left: clamp(20px, 5.5vw, 32px);
-    padding-right: clamp(20px, 5.5vw, 32px);
+    padding-top: max(82px, calc(env(safe-area-inset-top, 0px) + 74px));
+    padding-bottom: 24px;
+    padding-left: clamp(20px, 5.5vw, 30px);
+    padding-right: clamp(20px, 5.5vw, 30px);
     box-sizing: border-box;
     z-index: 5;
   }
 
   .hero-copy {
-    width: min(90vw, 460px);
-    max-width: 460px;
+    width: min(92vw, 440px);
+    max-width: 440px;
     margin-inline: 0;
     text-align: left;
   }
 
   /* Eyebrow */
   .hero-eyebrow {
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     font-size: 10px;
-    letter-spacing: 2.8px;
+    letter-spacing: 2.6px;
     line-height: 1.4;
   }
 
-  /* Main Title: responsive typography with perfect proportions */
+  /* Main Title: refined clamp typography */
   .hero-title {
-    font-size: clamp(34px, 9vw, 48px);
-    line-height: 1.02;
+    font-size: clamp(32px, 8.4vw, 44px);
+    line-height: 1.04;
     letter-spacing: -1.2px;
   }
 
   /* Description */
   .hero-description {
     width: 100%;
-    max-width: 380px;
-    margin: 16px 0 0;
-    font-size: 14px;
+    max-width: 360px;
+    margin: 14px 0 0;
+    font-size: 13.5px;
     line-height: 1.55;
     color: rgba(247, 243, 236, 0.88);
   }
 
-  /* Stacked CTA Buttons */
+  /* Balanced Mobile CTA Buttons (Not oversized full-width) */
   .hero-actions {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     justify-content: flex-start;
-    gap: 11px;
+    gap: 12px;
     width: 100%;
-    max-width: 290px;
-    margin-top: 24px;
+    margin-top: 22px;
   }
 
   .hero-primary-button,
   .hero-secondary-button {
-    width: 100%;
+    width: min(100%, 280px);
     min-height: 48px;
     font-size: 11px;
+    font-weight: 700;
     letter-spacing: 1.4px;
-    padding: 0 20px;
+    padding: 0 22px;
+    box-sizing: border-box;
   }
 
   .hero-primary-button {
@@ -547,11 +549,11 @@
 
 @media (max-width: 400px) {
   .hero-section {
-    min-height: max(100svh, 660px);
+    min-height: max(100svh, 640px);
   }
 
   .hero-content-wrapper {
-    padding-top: max(78px, calc(env(safe-area-inset-top, 0px) + 70px));
+    padding-top: max(76px, calc(env(safe-area-inset-top, 0px) + 68px));
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -567,9 +569,9 @@
   }
 
   .hero-title {
-    font-size: clamp(30px, 8.8vw, 40px);
+    font-size: clamp(28px, 8.5vw, 36px);
     letter-spacing: -0.8px;
-    line-height: 1.04;
+    line-height: 1.05;
   }
 
   .hero-description {
@@ -579,13 +581,13 @@
   }
 
   .hero-actions {
-    margin-top: 20px;
-    gap: 9px;
-    max-width: 100%;
+    margin-top: 18px;
+    gap: 10px;
   }
 
   .hero-primary-button,
   .hero-secondary-button {
+    width: min(100%, 260px);
     min-height: 44px;
     font-size: 10.5px;
   }
