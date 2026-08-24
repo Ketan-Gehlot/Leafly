@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components, react-hooks/set-state-in-effect */
 import { useState, useRef, useEffect, useMemo } from "react";
 import "./PhoneInput.css";
 

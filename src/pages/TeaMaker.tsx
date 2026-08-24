@@ -389,6 +389,18 @@ export default function TeaMaker() {
     sequenceTimeoutRef.current.push(tAddTea);
   };
 
+  // Transition from Steeping to Pouring Phase
+  const triggerPouringStage = () => {
+    clearAllTimeouts();
+    setBrewingSubStage("pouring");
+
+    // Pouring image shows briefly then transitions to final Step 8 Ready state
+    const tPour = window.setTimeout(() => {
+      setCurrentStep(8);
+    }, 2200);
+    sequenceTimeoutRef.current.push(tPour);
+  };
+
   // Countdown Timer in Step 7 (Steeping Stage)
   useEffect(() => {
     if (currentStep === 7 && brewingSubStage === "steeping" && !isTimerPaused) {
@@ -416,18 +428,6 @@ export default function TeaMaker() {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [currentStep, brewingSubStage, isTimerPaused, steepingTimeSec]);
-
-  // Transition from Steeping to Pouring Phase
-  const triggerPouringStage = () => {
-    clearAllTimeouts();
-    setBrewingSubStage("pouring");
-
-    // Pouring image shows briefly then transitions to final Step 8 Ready state
-    const tPour = window.setTimeout(() => {
-      setCurrentStep(8);
-    }, 2200);
-    sequenceTimeoutRef.current.push(tPour);
-  };
 
   const handlePauseResumeTimer = () => {
     setIsTimerPaused((prev) => !prev);

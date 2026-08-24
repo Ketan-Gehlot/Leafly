@@ -321,7 +321,9 @@ export default function Profile() {
     try {
       localStorage.removeItem(AVATAR_STORAGE_KEY);
       setNotice("Profile photo reset to default avatar.");
-    } catch {}
+    } catch {
+      // ignore
+    }
   };
 
   const handleEditDetails = () => {
@@ -365,7 +367,9 @@ export default function Profile() {
       const next = { ...prev, [key]: !prev[key] };
       try {
         localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(next));
-      } catch {}
+      } catch {
+        // ignore
+      }
       return next;
     });
     setNotifSaved(true);
@@ -379,7 +383,9 @@ export default function Profile() {
       setCopiedCode(code);
       setNotice(`Coupon ${code} copied to clipboard! Apply it at checkout.`);
       window.setTimeout(() => setCopiedCode(null), 2000);
-    } catch {}
+    } catch {
+      // ignore
+    }
   };
 
   const handleBackToTop = () => {
