@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { getProductSlug } from "../data/products";
 import Footer from "../components/Footer";
 import "./TeaCollections.css";
 
@@ -545,7 +546,11 @@ export default function TeaCollections() {
                   key={product.id}
                 >
 
-                  <div className="collections-product-image">
+                  <div
+                    className="collections-product-image"
+                    onClick={() => navigate(`/shop/${getProductSlug(product)}`)}
+                    style={{ cursor: "pointer" }}
+                  >
 
                     <img
                       src={product.image}
@@ -567,7 +572,10 @@ export default function TeaCollections() {
                       {product.weight}
                     </p>
 
-                    <h3>
+                    <h3
+                      onClick={() => navigate(`/shop/${getProductSlug(product)}`)}
+                      style={{ cursor: "pointer" }}
+                    >
                       {product.name}
                     </h3>
 

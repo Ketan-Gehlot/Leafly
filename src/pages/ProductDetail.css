@@ -27,9 +27,9 @@
   border: none;
   background: none;
   cursor: pointer;
-  color: rgba(11, 43, 30, 0.55);
+  color: rgba(11, 43, 30, 0.65);
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-decoration: none;
@@ -46,9 +46,19 @@
   gap: 6px;
   margin-top: 10px;
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
-  color: rgba(11, 43, 30, 0.45);
+  font-size: 12px;
+  color: rgba(11, 43, 30, 0.5);
   letter-spacing: 0.5px;
+}
+
+.pdp-breadcrumb a {
+  color: rgba(11, 43, 30, 0.6);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.pdp-breadcrumb a:hover {
+  color: #c9a24b;
 }
 
 .pdp-breadcrumb span {
@@ -56,8 +66,8 @@
 }
 
 .pdp-breadcrumb strong {
-  color: rgba(11, 43, 30, 0.7);
-  font-weight: 500;
+  color: rgba(11, 43, 30, 0.85);
+  font-weight: 600;
 }
 
 
@@ -108,10 +118,10 @@
   position: absolute;
   top: 18px;
   left: 18px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 3px;
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -120,6 +130,7 @@
 .pdp-badge.premium  { background: #0b2b1e; color: #c9a24b; }
 .pdp-badge.popular  { background: #c9a24b; color: #0b2b1e; }
 .pdp-badge.bestseller { background: #f7f3ec; color: #0b2b1e; border: 1px solid rgba(11,43,30,0.2); }
+.pdp-badge.coming-soon { background: #0b2b1e; color: #c9a24b; }
 
 
 /* ============================================================
@@ -137,34 +148,86 @@
   margin: 0 0 14px;
   color: #7c6540;
   font-family: Inter, Arial, sans-serif;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
 }
 
 .pdp-name {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   color: #0b2b1e;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(38px, 3.6vw, 58px);
+  font-size: clamp(34px, 3.6vw, 54px);
   font-weight: 400;
-  line-height: 1.0;
+  line-height: 1.05;
   letter-spacing: -1.5px;
 }
 
+/* RATING ROW */
+.pdp-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pdp-stars {
+  color: #c9a24b;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.pdp-rating-score {
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0b2b1e;
+}
+
+.pdp-rating-sep {
+  color: rgba(11, 43, 30, 0.3);
+}
+
+.pdp-review-count {
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+  color: rgba(11, 43, 30, 0.6);
+}
+
 .pdp-description {
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   color: rgba(11, 43, 30, 0.75);
   font-family: Inter, Arial, sans-serif;
-  font-size: 16.5px;
+  font-size: 15.5px;
   line-height: 1.7;
+}
+
+/* STOCK STATUS */
+.pdp-stock-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 12px;
+  background: rgba(30, 107, 74, 0.08);
+  border-radius: 4px;
+  color: #1e6b4a;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.pdp-stock-dot {
+  font-size: 8px;
+  color: #2e8b57;
 }
 
 .pdp-divider {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 24px 0;
+  margin: 22px 0;
   width: 130px;
 }
 
@@ -195,7 +258,7 @@
   margin-bottom: 8px;
   color: rgba(11, 43, 30, 0.65);
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -208,15 +271,15 @@
 }
 
 .pdp-variant-btn {
-  height: 34px;
-  min-width: 78px;
-  padding: 0 16px;
+  height: 38px;
+  min-width: 82px;
+  padding: 0 18px;
   border: 1px solid rgba(11, 43, 30, 0.2);
   border-radius: 999px;
   background: transparent;
   color: #315044;
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.8px;
   cursor: pointer;
@@ -244,7 +307,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .pdp-spec {
@@ -259,7 +322,7 @@
   margin-bottom: 3px;
   color: rgba(11, 43, 30, 0.6);
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 1.2px;
 }
@@ -280,13 +343,13 @@
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .pdp-price {
   color: #0b2b1e;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 38px;
+  font-size: 36px;
   font-weight: 400;
   letter-spacing: -0.5px;
 }
@@ -305,9 +368,71 @@
   border-radius: 3px;
   color: #011111;
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
+}
+
+
+/* ============================================================
+   QUANTITY SELECTOR
+   ============================================================ */
+
+.pdp-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pdp-qty-label {
+  color: rgba(11, 43, 30, 0.65);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.pdp-qty-selector {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(11, 43, 30, 0.2);
+  border-radius: 4px;
+  background: #faf7f0;
+  overflow: hidden;
+}
+
+.pdp-qty-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 16px;
+  color: #0b2b1e;
+  cursor: pointer;
+  transition: background 200ms ease;
+}
+
+.pdp-qty-btn:hover:not(:disabled) {
+  background: rgba(201, 162, 75, 0.15);
+}
+
+.pdp-qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pdp-qty-val {
+  width: 36px;
+  text-align: center;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0b2b1e;
 }
 
 
@@ -322,22 +447,22 @@
 }
 
 .pdp-cart-button {
-  flex: 1;
+  flex: 1.2;
   min-height: 52px;
-  min-width: 160px;
+  min-width: 150px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 0 28px;
+  padding: 0 24px;
   border: 1px solid #c9a24b;
   border-radius: 4px;
   background: #c9a24b;
   color: #011111;
   cursor: pointer;
   font-family: Inter, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
   letter-spacing: 1.5px;
   transition: background 280ms ease, border-color 280ms ease,
     color 280ms ease, transform 280ms ease;
@@ -361,6 +486,35 @@
   color: #c9a24b;
 }
 
+.pdp-buy-now-button {
+  flex: 1;
+  min-height: 52px;
+  min-width: 130px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border: 1px solid #0b2b1e;
+  border-radius: 4px;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  cursor: pointer;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  transition: background 280ms ease, border-color 280ms ease,
+    color 280ms ease, transform 280ms ease;
+}
+
+.pdp-buy-now-button:hover {
+  background: #173f2e;
+  border-color: #173f2e;
+  color: #d5ae59;
+  transform: translateY(-2px);
+}
+
 .pdp-coming-soon-btn {
   flex: 1;
   min-height: 52px;
@@ -375,7 +529,7 @@
   background: linear-gradient(145deg, rgba(201, 162, 75, 0.16), rgba(201, 162, 75, 0.06));
   color: #7d5915;
   font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -484,7 +638,7 @@
   color: #011111;
   cursor: pointer;
   font-family: Inter, Arial, sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
   transition: background 280ms ease, border-color 280ms ease, transform 280ms ease;
@@ -524,6 +678,7 @@
   }
 
   .pdp-cart-button,
+  .pdp-buy-now-button,
   .pdp-wishlist-button {
     width: 100%;
   }

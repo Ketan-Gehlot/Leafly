@@ -6,55 +6,54 @@ export interface Country {
   code: string;       // ISO 2-letter code, e.g. "IN"
   name: string;       // e.g. "India"
   dialCode: string;   // e.g. "+91"
-  flag: string;       // Unicode flag emoji e.g. "????"
   format?: string;    // e.g. "##### #####"
 }
 
 export const COUNTRIES: Country[] = [
-  { code: "IN", name: "India", dialCode: "+91", flag: "????", format: "##### #####" },
-  { code: "US", name: "United States", dialCode: "+1", flag: "????", format: "### ### ####" },
-  { code: "GB", name: "United Kingdom", dialCode: "+44", flag: "????", format: "#### ######" },
-  { code: "AE", name: "United Arab Emirates", dialCode: "+971", flag: "????", format: "## ### ####" },
-  { code: "CA", name: "Canada", dialCode: "+1", flag: "????", format: "### ### ####" },
-  { code: "AU", name: "Australia", dialCode: "+61", flag: "????", format: "### ### ###" },
-  { code: "SG", name: "Singapore", dialCode: "+65", flag: "????", format: "#### ####" },
-  { code: "DE", name: "Germany", dialCode: "+49", flag: "????", format: "### ########" },
-  { code: "FR", name: "France", dialCode: "+33", flag: "????", format: "# ## ## ## ##" },
-  { code: "JP", name: "Japan", dialCode: "+81", flag: "????", format: "## #### ####" },
-  { code: "SA", name: "Saudi Arabia", dialCode: "+966", flag: "????", format: "## ### ####" },
-  { code: "QA", name: "Qatar", dialCode: "+974", flag: "????", format: "#### ####" },
-  { code: "KW", name: "Kuwait", dialCode: "+965", flag: "????", format: "#### ####" },
-  { code: "OM", name: "Oman", dialCode: "+968", flag: "????", format: "#### ####" },
-  { code: "BH", name: "Bahrain", dialCode: "+973", flag: "????", format: "#### ####" },
-  { code: "MY", name: "Malaysia", dialCode: "+60", flag: "????", format: "## ### ####" },
-  { code: "NZ", name: "New Zealand", dialCode: "+64", flag: "????", format: "### ### ####" },
-  { code: "CH", name: "Switzerland", dialCode: "+41", flag: "????", format: "## ### ## ##" },
-  { code: "NL", name: "Netherlands", dialCode: "+31", flag: "????", format: "# ########" },
-  { code: "SE", name: "Sweden", dialCode: "+46", flag: "????", format: "## ### ## ##" },
-  { code: "NO", name: "Norway", dialCode: "+47", flag: "????", format: "### ## ###" },
-  { code: "DK", name: "Denmark", dialCode: "+45", flag: "????", format: "## ## ## ##" },
-  { code: "IT", name: "Italy", dialCode: "+39", flag: "????", format: "### ### ####" },
-  { code: "ES", name: "Spain", dialCode: "+34", flag: "????", format: "### ### ###" },
-  { code: "IE", name: "Ireland", dialCode: "+353", flag: "????", format: "## ### ####" },
-  { code: "BE", name: "Belgium", dialCode: "+32", flag: "????", format: "### ## ## ##" },
-  { code: "AT", name: "Austria", dialCode: "+43", flag: "????", format: "### #######" },
-  { code: "ZA", name: "South Africa", dialCode: "+27", flag: "????", format: "## ### ####" },
-  { code: "KR", name: "South Korea", dialCode: "+82", flag: "????", format: "## #### ####" },
-  { code: "HK", name: "Hong Kong", dialCode: "+852", flag: "????", format: "#### ####" },
-  { code: "TH", name: "Thailand", dialCode: "+66", flag: "????", format: "## ### ####" },
-  { code: "ID", name: "Indonesia", dialCode: "+62", flag: "????", format: "### ### ####" },
-  { code: "PH", name: "Philippines", dialCode: "+63", flag: "????", format: "### ### ####" },
-  { code: "VN", name: "Vietnam", dialCode: "+84", flag: "????", format: "## ### ####" },
-  { code: "BR", name: "Brazil", dialCode: "+55", flag: "????", format: "## ##### ####" },
-  { code: "MX", name: "Mexico", dialCode: "+52", flag: "????", format: "### ### ####" },
-  { code: "PT", name: "Portugal", dialCode: "+351", flag: "????", format: "### ### ###" },
-  { code: "PL", name: "Poland", dialCode: "+48", flag: "????", format: "### ### ###" },
-  { code: "GR", name: "Greece", dialCode: "+30", flag: "????", format: "### ### ####" },
-  { code: "TR", name: "Turkey", dialCode: "+90", flag: "????", format: "### ### ####" },
-  { code: "EG", name: "Egypt", dialCode: "+20", flag: "????", format: "## #### ####" },
-  { code: "NG", name: "Nigeria", dialCode: "+234", flag: "????", format: "### ### ####" },
-  { code: "KE", name: "Kenya", dialCode: "+254", flag: "????", format: "### ######" },
-  { code: "AR", name: "Argentina", dialCode: "+54", flag: "????", format: "## #### ####" },
+  { code: "IN", name: "India", dialCode: "+91", format: "##### #####" },
+  { code: "US", name: "United States", dialCode: "+1", format: "### ### ####" },
+  { code: "GB", name: "United Kingdom", dialCode: "+44", format: "#### ######" },
+  { code: "AE", name: "United Arab Emirates", dialCode: "+971", format: "## ### ####" },
+  { code: "CA", name: "Canada", dialCode: "+1", format: "### ### ####" },
+  { code: "AU", name: "Australia", dialCode: "+61", format: "### ### ###" },
+  { code: "SG", name: "Singapore", dialCode: "+65", format: "#### ####" },
+  { code: "DE", name: "Germany", dialCode: "+49", format: "### ########" },
+  { code: "FR", name: "France", dialCode: "+33", format: "# ## ## ## ##" },
+  { code: "JP", name: "Japan", dialCode: "+81", format: "## #### ####" },
+  { code: "SA", name: "Saudi Arabia", dialCode: "+966", format: "## ### ####" },
+  { code: "QA", name: "Qatar", dialCode: "+974", format: "#### ####" },
+  { code: "KW", name: "Kuwait", dialCode: "+965", format: "#### ####" },
+  { code: "OM", name: "Oman", dialCode: "+968", format: "#### ####" },
+  { code: "BH", name: "Bahrain", dialCode: "+973", format: "#### ####" },
+  { code: "MY", name: "Malaysia", dialCode: "+60", format: "## ### ####" },
+  { code: "NZ", name: "New Zealand", dialCode: "+64", format: "### ### ####" },
+  { code: "CH", name: "Switzerland", dialCode: "+41", format: "## ### ## ##" },
+  { code: "NL", name: "Netherlands", dialCode: "+31", format: "# ########" },
+  { code: "SE", name: "Sweden", dialCode: "+46", format: "## ### ## ##" },
+  { code: "NO", name: "Norway", dialCode: "+47", format: "### ## ###" },
+  { code: "DK", name: "Denmark", dialCode: "+45", format: "## ## ## ##" },
+  { code: "IT", name: "Italy", dialCode: "+39", format: "### ### ####" },
+  { code: "ES", name: "Spain", dialCode: "+34", format: "### ### ###" },
+  { code: "IE", name: "Ireland", dialCode: "+353", format: "## ### ####" },
+  { code: "BE", name: "Belgium", dialCode: "+32", format: "### ## ## ##" },
+  { code: "AT", name: "Austria", dialCode: "+43", format: "### #######" },
+  { code: "ZA", name: "South Africa", dialCode: "+27", format: "## ### ####" },
+  { code: "KR", name: "South Korea", dialCode: "+82", format: "## #### ####" },
+  { code: "HK", name: "Hong Kong", dialCode: "+852", format: "#### ####" },
+  { code: "TH", name: "Thailand", dialCode: "+66", format: "## ### ####" },
+  { code: "ID", name: "Indonesia", dialCode: "+62", format: "### ### ####" },
+  { code: "PH", name: "Philippines", dialCode: "+63", format: "### ### ####" },
+  { code: "VN", name: "Vietnam", dialCode: "+84", format: "## ### ####" },
+  { code: "BR", name: "Brazil", dialCode: "+55", format: "## ##### ####" },
+  { code: "MX", name: "Mexico", dialCode: "+52", format: "### ### ####" },
+  { code: "PT", name: "Portugal", dialCode: "+351", format: "### ### ###" },
+  { code: "PL", name: "Poland", dialCode: "+48", format: "### ### ###" },
+  { code: "GR", name: "Greece", dialCode: "+30", format: "### ### ####" },
+  { code: "TR", name: "Turkey", dialCode: "+90", format: "### ### ####" },
+  { code: "EG", name: "Egypt", dialCode: "+20", format: "## #### ####" },
+  { code: "NG", name: "Nigeria", dialCode: "+234", format: "### ### ####" },
+  { code: "KE", name: "Kenya", dialCode: "+254", format: "### ######" },
+  { code: "AR", name: "Argentina", dialCode: "+54", format: "## #### ####" },
 ];
 
 export interface PhoneInputProps {
@@ -199,8 +198,8 @@ export default function PhoneInput({
             aria-label={`Selected country: ${selectedCountry.name} (${selectedCountry.dialCode})`}
             disabled={disabled}
           >
-            <span className="leafly-phone-flag" aria-hidden="true">
-              {selectedCountry.flag}
+            <span className="leafly-phone-badge" aria-hidden="true">
+              {selectedCountry.code}
             </span>
             <span className="leafly-phone-dialcode">{selectedCountry.dialCode}</span>
             <svg
@@ -251,7 +250,7 @@ export default function PhoneInput({
                     onClick={() => setSearchQuery("")}
                     aria-label="Clear search"
                   >
-                    
+                    ✕
                   </button>
                 )}
               </div>
@@ -271,10 +270,10 @@ export default function PhoneInput({
                         aria-selected={isSelected}
                         onClick={() => handleCountrySelect(c)}
                       >
-                        <span className="leafly-phone-item-flag">{c.flag}</span>
+                        <span className="leafly-phone-item-badge">{c.code}</span>
                         <span className="leafly-phone-item-name">{c.name}</span>
                         <span className="leafly-phone-item-code">{c.dialCode}</span>
-                        {isSelected && <span className="leafly-phone-check">?</span>}
+                        {isSelected && <span className="leafly-phone-check">✓</span>}
                       </button>
                     );
                   })

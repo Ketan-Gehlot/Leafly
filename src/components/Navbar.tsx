@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/leafly-logo.webp";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useAuth } from "../context/AuthContext";
+import SearchModal from "./SearchModal";
 import "./Navbar.css";
 
 const navLinks = [
@@ -19,6 +21,8 @@ const navLinks = [
 export default function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const {
     cartCount,
@@ -185,6 +189,7 @@ export default function Navbar() {
           type="button"
           aria-label="Search"
           className="leafly-icon-button"
+          onClick={() => setSearchOpen(true)}
         >
           <svg
             width="20"
@@ -284,8 +289,8 @@ export default function Navbar() {
         {/* PROFILE */}
 
         <Link
-          to="/profile"
-          aria-label="Profile"
+          to={isAuthenticated ? "/profile" : "/login"}
+          aria-label={isAuthenticated ? "Account Sanctuary" : "Sign In"}
           className="leafly-icon-button"
           onClick={closeMenu}
         >
@@ -309,6 +314,110 @@ export default function Navbar() {
           </svg>
         </Link>
 
+      </div>
+
+
+      {/* =====================================================
+          MOBILE TOP ACTIONS
+      ===================================================== */}
+
+      <div className="leafly-mobile-top-actions">
+        <button
+          type="button"
+          aria-label="Search"
+          className="leafly-mobile-profile"
+          onClick={() => {
+            closeMenu();
+            setSearchOpen(true);
+          }}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4.5 4.5" />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          aria-label={`Wishlist, ${wishlistCount} items`}
+          className="leafly-mobile-profile leafly-wishlist-nav-button"
+          onClick={handleWishlistClick}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20.8 8.7c0 5.2-8.8 10.2-8.8 10.2S3.2 13.9 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z" />
+          </svg>
+          {wishlistCount > 0 && (
+            <span className="leafly-wishlist-count">
+              {wishlistCount > 99 ? "99+" : wishlistCount}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          aria-label={`Shopping cart, ${cartCount} items`}
+          className="leafly-mobile-profile leafly-cart-nav-button"
+          onClick={handleCartClick}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 1.9-1.4L21 7H6" />
+            <circle cx="10" cy="19" r="1.3" />
+            <circle cx="18" cy="19" r="1.3" />
+          </svg>
+          {cartCount > 0 && (
+            <span className="leafly-cart-count">
+              {cartCount > 99 ? "99+" : cartCount}
+            </span>
+          )}
+        </button>
+
+        <Link
+          to={isAuthenticated ? "/profile" : "/login"}
+          aria-label={isAuthenticated ? "Account Sanctuary" : "Sign In"}
+          className="leafly-mobile-profile"
+          onClick={closeMenu}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="8" r="3.5" />
+            <path d="M5 20c.8-3.5 3.2-5.5 7-5.5s6.2 2 7 5.5" />
+          </svg>
+        </Link>
       </div>
 
 
@@ -375,7 +484,13 @@ export default function Navbar() {
 
           {/* SEARCH */}
 
-          <button type="button">
+          <button
+            type="button"
+            onClick={() => {
+              closeMenu();
+              setSearchOpen(true);
+            }}
+          >
             Search
           </button>
 
@@ -412,18 +527,24 @@ export default function Navbar() {
           </button>
 
 
-          {/* PROFILE */}
+          {/* PROFILE / LOGIN */}
 
           <Link
-            to="/profile"
+            to={isAuthenticated ? "/profile" : "/login"}
             onClick={closeMenu}
           >
-            Profile
+            {isAuthenticated ? "Profile" : "Sign In"}
           </Link>
 
         </div>
 
       </div>
+
+      {/* SEARCH MODAL */}
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
 
     </header>
   );

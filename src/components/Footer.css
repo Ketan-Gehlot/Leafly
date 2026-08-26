@@ -74,10 +74,7 @@
 
   margin: 0 auto;
 
-  padding:
-    68px
-    clamp(24px, 5vw, 70px)
-    40px;
+  padding: 68px var(--leafly-page-gutter) 40px;
 
   box-sizing: border-box;
 }
@@ -187,8 +184,10 @@
 
 .leafly-footer-newsletter {
   width: 100%;
+  max-width: 520px;
 
-  padding: 28px;
+  padding: 36px 32px;
+  padding-block: 48px;
 
   border:
     1px solid
@@ -199,7 +198,7 @@
       0.38
     );
 
-  border-radius: 18px;
+  border-radius: var(--leafly-radius-xl);
 
   background:
     linear-gradient(
@@ -220,14 +219,11 @@
 
   margin: 0 0 14px;
 
-  color: #c9a24b;
+  color: var(--leafly-gold);
 
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family: var(--font-body);
 
-  font-size: 11px;
+  font-size: var(--leafly-text-xs);
 
   font-weight: 700;
 
@@ -235,25 +231,18 @@
 }
 
 .leafly-footer-eyebrow span {
-  font-size: 11px;
+  font-size: var(--leafly-text-xs);
 }
 
 .leafly-footer-newsletter h2 {
   margin: 0;
+  margin-bottom: 16px;
 
   color: #f7f3ec;
 
-  font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
+  font-family: var(--font-display);
 
-  font-size:
-    clamp(
-      28px,
-      3vw,
-      42px
-    );
+  font-size: clamp(28px, 3vw, 40px);
 
   font-weight: 400;
 
@@ -265,22 +254,19 @@
 .leafly-footer-newsletter-text {
   max-width: 520px;
 
-  margin: 16px 0 22px;
+  margin: 0 0 22px;
 
   color:
     rgba(
       247,
       243,
       236,
-      0.62
+      0.68
     );
 
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family: var(--font-body);
 
-  font-size: 12px;
+  font-size: var(--leafly-text-xs);
 
   line-height: 1.65;
 }
@@ -348,15 +334,16 @@
   width: 100%;
   min-width: 0;
   height: 46px;
-  padding: 0 14px;
+  min-height: 44px;
+  padding: 0 16px;
   box-sizing: border-box;
   border: 1px solid rgba(201, 162, 75, 0.35);
-  border-radius: 5px;
+  border-radius: var(--leafly-radius-md);
   outline: none;
   background: rgba(0, 0, 0, 0.16);
   color: #f7f3ec;
-  font-family: Inter, Arial, sans-serif;
-  font-size: 11px;
+  font-family: var(--font-body);
+  font-size: var(--leafly-text-sm);
 }
 
 .leafly-footer-form input::placeholder {
@@ -364,25 +351,26 @@
 }
 
 .leafly-footer-form input:focus {
-  border-color: #c9a24b;
+  border-color: var(--leafly-gold);
 }
 
 .leafly-footer-form button {
   min-width: 125px;
   height: 46px;
-  padding: 0 20px;
+  min-height: 44px;
+  padding: 0 24px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 13px;
   border: none;
-  border-radius: 5px;
-  background: #c9a24b;
-  color: #092419;
-  font-family: Inter, Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 1.4px;
+  border-radius: var(--leafly-radius-md);
+  background: var(--leafly-gold);
+  color: var(--leafly-green);
+  font-family: var(--font-body);
+  font-size: var(--leafly-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: none;
   cursor: pointer;
   transition: background 250ms ease, transform 250ms ease;
 }
@@ -390,11 +378,6 @@
 .leafly-footer-form button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-}
-
-.leafly-footer-form button span {
-  font-size: 15px;
-  font-weight: 400;
 }
 
 .leafly-footer-form button:hover:not(:disabled) {
@@ -625,12 +608,9 @@
       0.68
     );
 
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family: var(--font-body);
 
-  font-size: 11px;
+  font-size: var(--leafly-text-xs);
 
   line-height: 1.6;
 }
@@ -638,7 +618,7 @@
 .leafly-footer-origin span {
   margin-right: 7px;
 
-  color: #c9a24b;
+  color: var(--leafly-gold);
 }
 
 
@@ -670,9 +650,7 @@
 
   margin: 0 auto;
 
-  padding:
-    15px
-    clamp(24px, 5vw, 70px);
+  padding: 15px var(--leafly-page-gutter);
 
   box-sizing: border-box;
 
@@ -688,15 +666,13 @@
   gap: 25px;
 }
 
-.leafly-footer-bottom p {
+.leafly-footer-bottom p,
+.leafly-footer-copyright {
   margin: 0;
 
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family: var(--font-body);
 
-  font-size: 9px;
+  font-size: var(--leafly-text-xs);
 
   line-height: 1.4;
 }
@@ -725,12 +701,9 @@
 .leafly-footer-legal span {
   color: #092419;
 
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family: var(--font-body);
 
-  font-size: 9px;
+  font-size: var(--leafly-text-xs);
 
   text-decoration: none;
 }

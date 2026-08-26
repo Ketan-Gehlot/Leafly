@@ -21,6 +21,7 @@ export type ProductVariant = {
 export type Product = {
   id: number;
   name: string;
+  slug?: string;
   category: TeaCategory;
   origin: string;
   caffeine: "Low" | "Medium" | "High";
@@ -35,7 +36,19 @@ export type Product = {
   image: string;
   rating?: number;
   reviewCount?: number;
+  stock?: number;
+  inStock?: boolean;
+  description?: string;
 };
+
+export function getProductSlug(product: { id?: number; name: string; slug?: string }): string {
+  if (product.slug) return product.slug;
+  return product.name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 export const products: Product[] = [
   {

@@ -1,18 +1,9 @@
-/**
- * Frontend Prototype Coupon System
- * 
- * NOTE: This is currently a frontend prototype.
- * Frontend coupon evaluation is NOT secure against client-side tampering.
- * All discount calculation & code validation rules are structured here in a clean,
- * modular interface so they can later be validated or replaced by a backend API endpoint.
- */
-
-export type CouponDef = {
+export type UserCouponItem = {
   code: string;
   discountType: "fixed" | "percentage";
   discountValue: number;
   minOrderValue: number;
-  description: string;
+  status: "available" | "used" | "expired";
 };
 
 export type CouponValidationResult = {
@@ -32,28 +23,14 @@ export type AppliedCoupon = {
   minOrderValue: number;
 };
 
-// Available coupons prototype database (mirrors future backend lookup)
-export const PROTOTYPE_COUPONS: Record<string, CouponDef> = {
-  LEAFLY2026: {
-    code: "LEAFLY2026",
-    discountType: "fixed",
-    discountValue: 500,
-    minOrderValue: 1500,
-    description: "₹500 off on orders of ₹1,500 or more",
-  },
-  LEAFLY30: {
-    code: "LEAFLY30",
-    discountType: "percentage",
-    discountValue: 30,
-    minOrderValue: 0,
-    description: "30% off any eligible order subtotal",
-  },
-};
-
 /**
- * Validate a coupon code given the current cart subtotal
+ * Validate a coupon code strictly against the authenticated customer's owned vouchers
  */
-export function validateCoupon(inputCode: string, subtotal: number = 0): CouponValidationResult {
+export function validateCouponAgainstUserVouchers(
+  inputCode: string,
+  userCoupons: UserCouponItem[],
+  subtotal: number = 0
+): CouponValidationResult {
   const normalizedCode = inputCode.trim().toUpperCase();
 
   if (!normalizedCode) {
@@ -67,7 +44,9 @@ export function validateCoupon(inputCode: string, subtotal: number = 0): CouponV
     };
   }
 
-  const coupon = PROTOTYPE_COUPONS[normalizedCode];
+  const coupon = userCoupons.find(
+    (c) => c.code.trim().toUpperCase() === normalizedCode
+  );
 
   if (!coupon) {
     return {
@@ -76,7 +55,29 @@ export function validateCoupon(inputCode: string, subtotal: number = 0): CouponV
       discountType: "fixed",
       discountValue: 0,
       minOrderValue: 0,
-      message: "Invalid coupon code. Try LEAFLY2026 or LEAFLY30.",
+      message: "Coupon not available in your account.",
+    };
+  }
+
+  if (coupon.status === "used") {
+    return {
+      isValid: false,
+      code: normalizedCode,
+      discountType: coupon.discountType,
+      discountValue: coupon.discountValue,
+      minOrderValue: coupon.minOrderValue,
+      message: "This coupon has already been used.",
+    };
+  }
+
+  if (coupon.status === "expired") {
+    return {
+      isValid: false,
+      code: normalizedCode,
+      discountType: coupon.discountType,
+      discountValue: coupon.discountValue,
+      minOrderValue: coupon.minOrderValue,
+      message: "This coupon has expired.",
     };
   }
 
@@ -128,3 +129,4 @@ export function calculateDiscount(
   // fixed amount
   return Math.min(subtotal, discountValue);
 }
+

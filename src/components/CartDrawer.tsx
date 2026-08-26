@@ -42,6 +42,11 @@ export default function CartDrawer() {
     return null;
   }
 
+  const handleContinueShopping = () => {
+    closeCart();
+    navigate("/shop");
+  };
+
   return (
     <div className="leafly-cart-overlay" onClick={closeCart}>
       <aside
@@ -99,7 +104,7 @@ export default function CartDrawer() {
 
               <button
                 type="button"
-                onClick={closeCart}
+                onClick={handleContinueShopping}
               >
                 CONTINUE SHOPPING
               </button>
@@ -235,7 +240,7 @@ export default function CartDrawer() {
             <button
               type="button"
               className="leafly-continue-shopping"
-              onClick={() => navigate("/shop")}
+              onClick={handleContinueShopping}
             >
               CONTINUE SHOPPING
             </button>

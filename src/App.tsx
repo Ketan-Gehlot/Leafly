@@ -2,14 +2,16 @@ import {
   BrowserRouter,
   Route,
   Routes,
+  useNavigate,
 } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 import Navbar from "./components/Navbar";
 import CartDrawer from "./components/CartDrawer";
 import WishlistDrawer from "./components/WishlistDrawer";
 import ScrollToTop from "./components/ScrollToTop";
-import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
+import { CartProvider, useCart } from "./context/CartContext";
 import { OrderProvider } from "./context/OrderContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { CouponProvider } from "./context/CouponContext";
@@ -17,6 +19,8 @@ import { ProductProvider } from "./context/ProductContext";
 
 /* Route-level code splitting — each page is a separate JS chunk.
    Only the Home bundle ships on initial page load. */
+
+import AdminRoute from "./components/AdminRoute";
 
 const About = lazy(() => import("./pages/About"));
 const Checkout = lazy(() => import("./pages/Checkout"));
@@ -29,6 +33,8 @@ const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
 const Orders = lazy(() => import("./pages/Orders"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
 const Shop = lazy(() => import("./pages/Shop"));
 const Teaware = lazy(() => import("./pages/Teaware"));
 const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
@@ -39,18 +45,29 @@ const TeaMaker = lazy(() => import("./pages/TeaMaker"));
 const WhyLeafly = lazy(() => import("./pages/WhyLeafly"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
+function CartRedirect() {
+  const { openCart } = useCart();
+  const navigate = useNavigate();
+  useEffect(() => {
+    openCart();
+    navigate("/shop", { replace: true });
+  }, [openCart, navigate]);
+  return null;
+}
+
 function App() {
   return (
-    <ProductProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <OrderProvider>
-            <CouponProvider>
-              <BrowserRouter>
-                <ScrollToTop />
-                <Navbar />
+    <AuthProvider>
+      <ProductProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <OrderProvider>
+              <CouponProvider>
+                <BrowserRouter>
+                  <ScrollToTop />
+                  <Navbar />
 
-                <Suspense fallback={null}>
+                  <Suspense fallback={null}>
                   <Routes>
                     <Route
                       path="/"
@@ -63,13 +80,28 @@ function App() {
                     />
 
                     <Route
+                      path="/shop/:slug"
+                      element={<ProductDetail />}
+                    />
+
+                    <Route
                       path="/teaware"
                       element={<Teaware />}
                     />
 
                     <Route
+                      path="/teaware/:slug"
+                      element={<ProductDetail />}
+                    />
+
+                    <Route
                       path="/product/:id"
                       element={<ProductDetail />}
+                    />
+
+                    <Route
+                      path="/cart"
+                      element={<CartRedirect />}
                     />
 
                     <Route
@@ -126,6 +158,14 @@ function App() {
                       path="/profile"
                       element={<Profile />}
                     />
+                    <Route
+                      path="/login"
+                      element={<Login />}
+                    />
+                    <Route
+                      path="/signup"
+                      element={<Signup />}
+                    />
 
                     <Route
                       path="/shipping-policy"
@@ -156,7 +196,11 @@ function App() {
 
                     <Route
                       path="/admin"
-                      element={<AdminDashboard />}
+                      element={
+                        <AdminRoute>
+                          <AdminDashboard />
+                        </AdminRoute>
+                      }
                     />
 
                     <Route
@@ -174,6 +218,7 @@ function App() {
         </WishlistProvider>
       </CartProvider>
     </ProductProvider>
+  </AuthProvider>
   );
 }
 

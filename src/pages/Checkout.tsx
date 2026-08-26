@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import {
@@ -9,13 +10,12 @@ import {
 import DeliveryAnimation from "../components/DeliveryAnimation";
 import CouponRewardAnimation from "../components/CouponRewardAnimation";
 import PhoneInput from "../components/PhoneInput";
-import { validateCoupon, calculateDiscount, type AppliedCoupon } from "../utils/coupon";
+import { calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import { useCoupons } from "../context/CouponContext";
+import { useAuth } from "../context/AuthContext";
+import { COUNTRIES_LIST, INDIAN_STATES_AND_CITIES } from "../data/indianLocations";
 import Footer from "../components/Footer";
 import "./Checkout.css";
-
-type DeliveryMethod = "standard" | "express";
-type PaymentMethod = "card" | "upi" | "cod";
 
 type AddressForm = {
   fullName: string;
@@ -29,7 +29,10 @@ type AddressForm = {
 
 type FormErrors = Partial<Record<string, string>>;
 
-const SAVED_ADDRESSES_KEY = "leafly_saved_addresses";
+function getSavedAddressesKey(uid?: string | null): string | null {
+  return uid ? `leafly_saved_addresses_${uid}` : null;
+}
+
 const currencyFormatter = new Intl.NumberFormat("en-IN", {
   style: "currency",
   currency: "INR",
@@ -42,9 +45,11 @@ function generateOrderId() {
   return `LF-${datePart}-${randomPart}`;
 }
 
-function readSavedAddresses(): ShippingAddress[] {
+function readSavedAddresses(uid?: string | null): ShippingAddress[] {
+  const key = getSavedAddressesKey(uid);
+  if (!key) return [];
   try {
-    const saved = localStorage.getItem(SAVED_ADDRESSES_KEY);
+    const saved = localStorage.getItem(key);
     if (!saved) {
       return [];
     }
@@ -60,8 +65,8 @@ const defaultAddress: AddressForm = {
   fullName: "",
   addressLine1: "",
   addressLine2: "",
-  city: "",
-  state: "",
+  city: "Mumbai",
+  state: "Maharashtra",
   postalCode: "",
   country: "India",
 };
@@ -70,51 +75,148 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, clearCart } = useCart();
   const { addOrder } = useOrderContext();
-  const { grantWelcomeReward, markCouponUsed } = useCoupons();
+  const { grantPostOrderReward, markCouponUsed, validateUserCoupon } = useCoupons();
+  const { currentUser } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [shippingAddress, setShippingAddress] = useState<AddressForm>(() => {
-    const savedAddresses = readSavedAddresses();
-    if (savedAddresses.length > 0) {
-      const lastSaved = savedAddresses[0];
-      return {
-        fullName: lastSaved.fullName,
-        addressLine1: lastSaved.addressLine1,
-        addressLine2: lastSaved.addressLine2 ?? "",
-        city: lastSaved.city,
-        state: lastSaved.state,
-        postalCode: lastSaved.postalCode,
-        country: lastSaved.country,
-      };
-    }
-    return defaultAddress;
-  });
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("standard");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
-  const [saveAddress, setSaveAddress] = useState(() => {
-    const savedAddresses = readSavedAddresses();
-    return savedAddresses.length > 0;
-  });
+  const [email, setEmail] = useState(() => currentUser?.email || "");
+  const [phone, setPhone] = useState(() => currentUser?.phone || currentUser?.phoneNumber || "");
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [couponFeedback, setCouponFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const [deliveryMethod, setDeliveryMethod] = useState<"standard" | "express">("standard");
+  const [paymentMethod, setPaymentMethod] = useState<"pod" | "cod" | "upi" | "card">("pod");
+  const [saveAddress, setSaveAddress] = useState(true);
+  const [deliveryInstructions, setDeliveryInstructions] = useState("");
+
+  // Card payment form state
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const [cardName, setCardName] = useState("");
+
+  // UPI form state
   const [upiId, setUpiId] = useState("");
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
+
+  // Order submission feedback state
   const [isProcessing, setIsProcessing] = useState(false);
   const [isBursting, setIsBursting] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
 
-  // Coupon state
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
-  const [couponFeedback, setCouponFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [shippingAddress, setShippingAddress] = useState<AddressForm>(() => {
+    if (currentUser?.uid) {
+      const savedAddresses = readSavedAddresses(currentUser.uid);
+      if (savedAddresses.length > 0) {
+        const lastSaved = savedAddresses[0];
+        return {
+          fullName: lastSaved.fullName || currentUser?.displayName || currentUser?.name || "",
+          addressLine1: lastSaved.addressLine1 || "",
+          addressLine2: lastSaved.addressLine2 || "",
+          city: lastSaved.city || "Mumbai",
+          state: lastSaved.state || "Maharashtra",
+          postalCode: lastSaved.postalCode || "",
+          country: lastSaved.country || "India",
+        };
+      }
+      return {
+        ...defaultAddress,
+        fullName: currentUser?.displayName || currentUser?.name || "",
+      };
+    }
+    return { ...defaultAddress };
+  });
 
-  const deliveryFee = useMemo(
-    () => (deliveryMethod === "express" ? 99 : 0),
-    [deliveryMethod]
-  );
+  const prevUidRef = useRef<string | undefined>(currentUser?.uid);
+
+  // Synchronize with authenticated profile when logged in, or clear when logging out
+  useEffect(() => {
+    const prevUid = prevUidRef.current;
+    prevUidRef.current = currentUser?.uid;
+
+    if (currentUser?.uid) {
+      setEmail(currentUser.email || "");
+      setPhone(currentUser.phone || currentUser.phoneNumber || "");
+      setDeliveryInstructions("");
+      const savedAddresses = readSavedAddresses(currentUser.uid);
+      if (savedAddresses.length > 0) {
+        const lastSaved = savedAddresses[0];
+        setShippingAddress({
+          fullName: lastSaved.fullName || currentUser.displayName || currentUser.name || "",
+          addressLine1: lastSaved.addressLine1 || "",
+          addressLine2: lastSaved.addressLine2 || "",
+          city: lastSaved.city || "Mumbai",
+          state: lastSaved.state || "Maharashtra",
+          postalCode: lastSaved.postalCode || "",
+          country: lastSaved.country || "India",
+        });
+      } else {
+        setShippingAddress({
+          ...defaultAddress,
+          fullName: currentUser.displayName || currentUser.name || "",
+        });
+      }
+    } else if (prevUid) {
+      // User explicitly logged out: reset fields for safety
+      setEmail("");
+      setPhone("");
+      setDeliveryInstructions("");
+      setShippingAddress({ ...defaultAddress });
+      setAppliedCoupon(null);
+      setCouponFeedback(null);
+    }
+  }, [currentUser?.uid, currentUser?.email, currentUser?.displayName, currentUser?.name, currentUser?.phone, currentUser?.phoneNumber]);
+
+  const availableStates = useMemo(() => {
+    if (shippingAddress.country === "India") {
+      return Object.keys(INDIAN_STATES_AND_CITIES);
+    }
+    return [];
+  }, [shippingAddress.country]);
+
+  const availableCities = useMemo(() => {
+    if (shippingAddress.country === "India" && shippingAddress.state) {
+      return INDIAN_STATES_AND_CITIES[shippingAddress.state] || [];
+    }
+    return [];
+  }, [shippingAddress.country, shippingAddress.state]);
+
+  const handleCountryChange = (newCountry: string) => {
+    if (newCountry === "India") {
+      const defaultState = "Maharashtra";
+      const defaultCities = INDIAN_STATES_AND_CITIES[defaultState] || [];
+      setShippingAddress((prev) => ({
+        ...prev,
+        country: newCountry,
+        state: defaultState,
+        city: defaultCities[0] || "Mumbai",
+      }));
+    } else {
+      setShippingAddress((prev) => ({
+        ...prev,
+        country: newCountry,
+        state: "",
+        city: "",
+      }));
+    }
+  };
+
+  const handleStateChange = (newState: string) => {
+    const defaultCities = INDIAN_STATES_AND_CITIES[newState] || [];
+    setShippingAddress((prev) => ({
+      ...prev,
+      state: newState,
+      city: defaultCities[0] || "",
+    }));
+  };
+
+  const deliveryFee = useMemo(() => {
+    if (items.length === 0) return 0;
+    return deliveryMethod === "express" ? 150 : 0;
+  }, [deliveryMethod, items.length]);
 
   const discountAmount = useMemo(() => {
     if (!appliedCoupon) return 0;
@@ -134,7 +236,7 @@ export default function Checkout() {
   const handleApplyCoupon = (event?: React.FormEvent) => {
     if (event) event.preventDefault();
 
-    const result = validateCoupon(couponInput, subtotal);
+    const result = validateUserCoupon(couponInput, subtotal);
 
     if (result.isValid) {
       const discount = calculateDiscount(
@@ -178,68 +280,207 @@ export default function Checkout() {
 
   const validateCheckout = () => {
     const nextErrors: FormErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     if (!email.trim()) {
       nextErrors.email = "Email is required.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nextErrors.email = "Enter a valid email address.";
+    } else if (!emailRegex.test(email.trim())) {
+      nextErrors.email = "Please enter a valid email address.";
     }
 
-    if (!phone.trim()) {
-      nextErrors.phone = "Phone number is required.";
-    }
-
-    if (!shippingAddress.fullName.trim()) {
+    const trimmedName = shippingAddress.fullName.trim();
+    if (!trimmedName) {
       nextErrors.fullName = "Full name is required.";
+    } else if (trimmedName.length < 2) {
+      nextErrors.fullName = "Full name must contain at least 2 characters.";
+    } else if (
+      /^(abc|123|test|xyz|asdf|qwerty|none|null|admin|sample|demo|tabs\s+hajs)$/i.test(trimmedName) ||
+      /(.)\1{3,}/.test(trimmedName)
+    ) {
+      nextErrors.fullName = "Please enter a valid, legitimate human name.";
+    } else if (!/^[a-zA-Z\s.'-]+$/.test(trimmedName)) {
+      nextErrors.fullName = "Full name should only contain letters and spaces.";
     }
 
-    if (!shippingAddress.addressLine1.trim()) {
+    const trimmedAddress = shippingAddress.addressLine1.trim();
+    if (!trimmedAddress) {
       nextErrors.addressLine1 = "Address line 1 is required.";
+    } else if (trimmedAddress.length < 5) {
+      nextErrors.addressLine1 = "Please enter a complete street address (at least 5 characters).";
+    } else if (/^(asdf|test|bnsnlks|qwerty|xyz|12345)$/i.test(trimmedAddress) || /(.)\1{4,}/.test(trimmedAddress)) {
+      nextErrors.addressLine1 = "Please enter a valid street/house address.";
     }
 
-    if (!shippingAddress.city.trim()) {
+    const trimmedCity = shippingAddress.city.trim();
+    if (!trimmedCity) {
       nextErrors.city = "City is required.";
+    } else if (trimmedCity.length < 2) {
+      nextErrors.city = "City name is too short.";
+    } else if (/^(nskllkan|asdf|test|xyz|123)$/i.test(trimmedCity) || /(.)\1{3,}/.test(trimmedCity)) {
+      nextErrors.city = "Please enter a valid city name.";
     }
 
     if (!shippingAddress.state.trim()) {
       nextErrors.state = "State is required.";
     }
 
-    if (!shippingAddress.postalCode.trim()) {
-      nextErrors.postalCode = "Postal code is required.";
-    }
-
     if (!shippingAddress.country.trim()) {
       nextErrors.country = "Country is required.";
+    }
+
+    const cleanPostal = shippingAddress.postalCode.trim();
+    if (!cleanPostal) {
+      nextErrors.postalCode = "Postal/PIN code is required.";
+    } else if (shippingAddress.country === "India") {
+      if (!/^[1-9][0-9]{5}$/.test(cleanPostal)) {
+        nextErrors.postalCode = "Indian PIN code must be exactly 6 valid digits (e.g. 400001).";
+      }
+    } else if (cleanPostal.length < 4 || cleanPostal.length > 12) {
+      nextErrors.postalCode = "Please enter a valid postal code.";
+    }
+
+    const cleanPhoneDigits = phone.replace(/\D/g, "");
+    if (!phone.trim()) {
+      nextErrors.phone = "Phone number is required.";
+    } else if (shippingAddress.country === "India") {
+      const last10 = cleanPhoneDigits.slice(-10);
+      if (last10.length !== 10 || !/^[6-9]\d{9}$/.test(last10)) {
+        nextErrors.phone = "Please enter a valid 10-digit Indian mobile number (e.g. 9820012345).";
+      }
+    } else if (cleanPhoneDigits.length < 8 || cleanPhoneDigits.length > 15) {
+      nextErrors.phone = "Please enter a valid phone number with country code.";
     }
 
     if (paymentMethod === "card") {
       if (!cardNumber.trim()) {
         nextErrors.cardNumber = "Card number is required.";
       }
-
       if (!expiry.trim()) {
         nextErrors.expiry = "Expiry is required.";
       }
-
       if (!cvv.trim()) {
         nextErrors.cvv = "CVV is required.";
       }
-
       if (!cardName.trim()) {
         nextErrors.cardName = "Name on card is required.";
       }
     }
 
-    if (paymentMethod === "upi" && !upiId.trim()) {
-      nextErrors.upiId = "UPI ID is required.";
+    if (paymentMethod === "upi") {
+      const cleanUpi = upiId.trim();
+      if (!cleanUpi) {
+        nextErrors.upiId = "UPI ID (VPA) is required.";
+      } else if (!/^[\w.-]+@[\w.-]+$/.test(cleanUpi)) {
+        nextErrors.upiId = "Please enter a valid UPI ID (e.g. yourname@okaxis).";
+      }
     }
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handlePlaceOrder = () => {
+  const finishOrder = async (
+    orderId: string,
+    orderTotal: number,
+    orderSubtotal: number,
+    orderDiscount: number,
+    orderDeliveryFee: number
+  ) => {
+    const resolvedPaymentMethod =
+      paymentMethod === "card"
+        ? "Card"
+        : paymentMethod === "upi"
+          ? "UPI"
+          : "Pay on Delivery";
+
+    const order: Order = {
+      id: orderId,
+      userId: currentUser?.uid || "guest",
+      customerName: shippingAddress.fullName.trim(),
+      customerEmail: email.trim() || currentUser?.email || undefined,
+      customerPhone: phone.trim() || currentUser?.phone || undefined,
+      createdAt: new Date().toISOString(),
+      status: resolvedPaymentMethod === "Pay on Delivery" ? "Confirmed" : "Processing",
+      orderStatus: resolvedPaymentMethod === "Pay on Delivery" ? "Confirmed" : "Processing",
+      items: items.map((item) => ({
+        id: item.id || `${item.product.id}-${item.variant}`,
+        productId: item.product.id,
+        name: item.product.name,
+        variant: item.variant || item.weight,
+        weight: item.weight || item.variant,
+        image: item.product.image,
+        price: item.price,
+        quantity: item.quantity,
+        category: item.product.category,
+      })),
+      subtotal: orderSubtotal,
+      discount: orderDiscount,
+      couponCode: appliedCoupon?.code,
+      deliveryFee: orderDeliveryFee,
+      total: orderTotal,
+      deliveryMethod:
+        deliveryMethod === "express" ? "Express Delivery" : "Standard Delivery",
+      deliveryInstructions: deliveryInstructions.trim() || undefined,
+      paymentMethod: resolvedPaymentMethod,
+      paymentStatus: resolvedPaymentMethod === "Pay on Delivery" ? "Pay on Delivery" : "Pending",
+      shippingAddress: {
+        fullName: shippingAddress.fullName.trim(),
+        addressLine1: shippingAddress.addressLine1.trim(),
+        addressLine2: shippingAddress.addressLine2.trim(),
+        city: shippingAddress.city.trim(),
+        state: shippingAddress.state.trim(),
+        postalCode: shippingAddress.postalCode.trim(),
+        country: shippingAddress.country.trim(),
+      },
+    };
+
+    if (saveAddress && currentUser?.uid) {
+      const storageKey = getSavedAddressesKey(currentUser.uid);
+      if (storageKey) {
+        const savedAddresses = readSavedAddresses(currentUser.uid);
+        const nextSaved = [
+          {
+            fullName: order.shippingAddress.fullName,
+            addressLine1: order.shippingAddress.addressLine1,
+            addressLine2: order.shippingAddress.addressLine2,
+            city: order.shippingAddress.city,
+            state: order.shippingAddress.state,
+            postalCode: order.shippingAddress.postalCode,
+            country: order.shippingAddress.country,
+          },
+          ...savedAddresses.filter(
+            (address) =>
+              !(
+                address.fullName === order.shippingAddress.fullName &&
+                address.addressLine1 === order.shippingAddress.addressLine1 &&
+                address.city === order.shippingAddress.city &&
+                address.postalCode === order.shippingAddress.postalCode
+              )
+          ),
+        ].slice(0, 5);
+
+        localStorage.setItem(storageKey, JSON.stringify(nextSaved));
+      }
+    }
+
+    addOrder(order);
+    if (appliedCoupon?.code) {
+      markCouponUsed(appliedCoupon.code);
+    }
+    
+    // Grant post-order eligible coupon reward
+    grantPostOrderReward();
+
+    // Transition smoothly to delivery animation and clear purchased items from cart
+    setTimeout(() => {
+      clearCart();
+      setIsProcessing(false);
+      setIsBursting(false);
+      setDeliveryPhase("delivery");
+    }, 450);
+  };
+
+  const handlePlaceOrder = async () => {
     if (isProcessing) {
       return;
     }
@@ -253,90 +494,24 @@ export default function Checkout() {
     const isValid = validateCheckout();
 
     if (!isValid) {
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Please check all required shipping and contact details.",
+      }));
       return;
     }
 
     setIsBursting(true);
     setIsProcessing(true);
 
-    const order: Order = {
-      id: generateOrderId(),
-      createdAt: new Date().toISOString(),
-      status: "Processing",
-      items: items.map((item) => ({
-        id: item.id || `${item.product.id}-${item.variant}`,
-        productId: item.product.id,
-        name: item.product.name,
-        variant: item.variant || item.weight,
-        weight: item.weight || item.variant,
-        image: item.product.image,
-        price: item.price,
-        quantity: item.quantity,
-        category: item.product.category,
-      })),
-      subtotal,
-      discount: discountAmount,
-      couponCode: appliedCoupon?.code,
-      deliveryFee,
+    const orderId = generateOrderId();
+    finishOrder(
+      orderId,
       total,
-      deliveryMethod:
-        deliveryMethod === "express" ? "Express Delivery" : "Standard Delivery",
-      paymentMethod:
-        paymentMethod === "card"
-          ? "Card"
-          : paymentMethod === "upi"
-            ? "UPI"
-            : "Cash on Delivery",
-      shippingAddress: {
-        fullName: shippingAddress.fullName.trim(),
-        addressLine1: shippingAddress.addressLine1.trim(),
-        addressLine2: shippingAddress.addressLine2.trim(),
-        city: shippingAddress.city.trim(),
-        state: shippingAddress.state.trim(),
-        postalCode: shippingAddress.postalCode.trim(),
-        country: shippingAddress.country.trim(),
-      },
-    };
-
-    if (saveAddress) {
-      const savedAddresses = readSavedAddresses();
-      const nextSaved = [
-        {
-          fullName: order.shippingAddress.fullName,
-          addressLine1: order.shippingAddress.addressLine1,
-          addressLine2: order.shippingAddress.addressLine2,
-          city: order.shippingAddress.city,
-          state: order.shippingAddress.state,
-          postalCode: order.shippingAddress.postalCode,
-          country: order.shippingAddress.country,
-        },
-        ...savedAddresses.filter(
-          (address) =>
-            !(
-              address.fullName === order.shippingAddress.fullName &&
-              address.addressLine1 === order.shippingAddress.addressLine1 &&
-              address.city === order.shippingAddress.city &&
-              address.postalCode === order.shippingAddress.postalCode
-            )
-        ),
-      ].slice(0, 5);
-
-      localStorage.setItem(SAVED_ADDRESSES_KEY, JSON.stringify(nextSaved));
-    }
-
-    addOrder(order);
-    if (appliedCoupon?.code) {
-      markCouponUsed(appliedCoupon.code);
-    }
-    grantWelcomeReward();
-
-    // Allow the leaf burst to bloom naturally, then transition cleanly to delivery boy animation
-    setTimeout(() => {
-      clearCart();
-      setIsProcessing(false);
-      setIsBursting(false);
-      setDeliveryPhase("delivery");
-    }, 450);
+      subtotal,
+      discountAmount,
+      deliveryFee
+    );
   };
 
   if (items.length === 0 && deliveryPhase === "idle" && !isProcessing) {
@@ -394,18 +569,43 @@ export default function Checkout() {
 
       <div className="checkout-layout">
         <section className="checkout-column">
+          {!currentUser && (
+            <div className="checkout-auth-banner" role="alert">
+              <div className="checkout-auth-banner-content">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#c9a24b" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <div>
+                  <strong>Authentication Required to Order</strong>
+                  <p>Please log in or create an account to complete your checkout.</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="checkout-auth-banner-btn"
+                onClick={() => navigate("/login", { state: { from: { pathname: "/checkout" } } })}
+              >
+                SIGN IN / REGISTER
+              </button>
+            </div>
+          )}
+
           <div className="checkout-card">
             <div className="checkout-card-header">
               <p>CONTACT INFORMATION</p>
+              {currentUser && <span style={{ fontSize: "11px", color: "#a87d22", fontWeight: 600 }}>✦ Verified Account</span>}
             </div>
 
             <div className="checkout-field-grid two-up">
               <label className="checkout-field">
-                <span>Email</span>
+                <span>Email {currentUser ? "(Tied to your authenticated account)" : ""}</span>
                 <input
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
+                  readOnly={Boolean(currentUser?.email)}
+                  style={currentUser?.email ? { backgroundColor: "#f3efe6", cursor: "not-allowed" } : undefined}
                   aria-invalid={Boolean(errors.email)}
                 />
                 {errors.email && <small>{errors.email}</small>}
@@ -460,31 +660,75 @@ export default function Checkout() {
               </label>
 
               <label className="checkout-field">
-                <span>City</span>
-                <input
-                  type="text"
-                  value={shippingAddress.city}
-                  onChange={(event) => updateAddressField("city", event.target.value)}
-                  aria-invalid={Boolean(errors.city)}
-                />
-                {errors.city && <small>{errors.city}</small>}
+                <span>Country</span>
+                <select
+                  className="leafly-auth-select"
+                  value={shippingAddress.country}
+                  onChange={(event) => handleCountryChange(event.target.value)}
+                  aria-invalid={Boolean(errors.country)}
+                >
+                  {COUNTRIES_LIST.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                {errors.country && <small>{errors.country}</small>}
               </label>
 
               <label className="checkout-field">
-                <span>State</span>
-                <input
-                  type="text"
-                  value={shippingAddress.state}
-                  onChange={(event) => updateAddressField("state", event.target.value)}
-                  aria-invalid={Boolean(errors.state)}
-                />
+                <span>State / Province</span>
+                {shippingAddress.country === "India" ? (
+                  <select
+                    className="leafly-auth-select"
+                    value={shippingAddress.state}
+                    onChange={(event) => handleStateChange(event.target.value)}
+                    aria-invalid={Boolean(errors.state)}
+                  >
+                    <option value="">Select State / UT</option>
+                    {availableStates.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={shippingAddress.state}
+                    onChange={(event) => updateAddressField("state", event.target.value)}
+                    aria-invalid={Boolean(errors.state)}
+                  />
+                )}
                 {errors.state && <small>{errors.state}</small>}
+              </label>
+
+              <label className="checkout-field">
+                <span>City</span>
+                {shippingAddress.country === "India" && availableCities.length > 0 ? (
+                  <select
+                    className="leafly-auth-select"
+                    value={shippingAddress.city}
+                    onChange={(event) => updateAddressField("city", event.target.value)}
+                    aria-invalid={Boolean(errors.city)}
+                  >
+                    <option value="">Select City</option>
+                    {availableCities.map((ct) => (
+                      <option key={ct} value={ct}>{ct}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={shippingAddress.city}
+                    onChange={(event) => updateAddressField("city", event.target.value)}
+                    aria-invalid={Boolean(errors.city)}
+                  />
+                )}
+                {errors.city && <small>{errors.city}</small>}
               </label>
 
               <label className="checkout-field">
                 <span>Postal Code</span>
                 <input
                   type="text"
+                  placeholder="e.g. 400001"
                   value={shippingAddress.postalCode}
                   onChange={(event) => updateAddressField("postalCode", event.target.value)}
                   aria-invalid={Boolean(errors.postalCode)}
@@ -492,15 +736,25 @@ export default function Checkout() {
                 {errors.postalCode && <small>{errors.postalCode}</small>}
               </label>
 
-              <label className="checkout-field">
-                <span>Country</span>
-                <input
-                  type="text"
-                  value={shippingAddress.country}
-                  onChange={(event) => updateAddressField("country", event.target.value)}
-                  aria-invalid={Boolean(errors.country)}
+              <label className="checkout-field" style={{ gridColumn: "1 / -1" }}>
+                <span>Delivery Instructions (Optional)</span>
+                <textarea
+                  rows={2}
+                  placeholder="Apartment number, gate instructions, preferred delivery location, etc."
+                  value={deliveryInstructions}
+                  onChange={(event) => setDeliveryInstructions(event.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "var(--leafly-radius-md)",
+                    border: "1px solid var(--leafly-border)",
+                    background: "rgba(255, 255, 255, 0.6)",
+                    color: "var(--leafly-text)",
+                    fontSize: "var(--leafly-text-sm)",
+                    fontFamily: "inherit",
+                    resize: "vertical"
+                  }}
                 />
-                {errors.country && <small>{errors.country}</small>}
               </label>
             </div>
 
@@ -558,11 +812,11 @@ export default function Checkout() {
                 <input
                   type="radio"
                   name="paymentMethod"
-                  checked={paymentMethod === "card"}
-                  onChange={() => setPaymentMethod("card")}
+                  checked={paymentMethod === "cod"}
+                  onChange={() => setPaymentMethod("cod")}
                 />
                 <span>
-                  <strong>CARD</strong>
+                  <strong>PAY ON DELIVERY</strong>
                 </span>
               </label>
 
@@ -582,11 +836,11 @@ export default function Checkout() {
                 <input
                   type="radio"
                   name="paymentMethod"
-                  checked={paymentMethod === "cod"}
-                  onChange={() => setPaymentMethod("cod")}
+                  checked={paymentMethod === "card"}
+                  onChange={() => setPaymentMethod("card")}
                 />
                 <span>
-                  <strong>CASH ON DELIVERY</strong>
+                  <strong>CARD / ONLINE</strong>
                 </span>
               </label>
             </div>
@@ -640,21 +894,27 @@ export default function Checkout() {
             )}
 
             {paymentMethod === "upi" && (
-              <label className="checkout-field full-width">
-                <span>UPI ID</span>
-                <input
-                  type="text"
-                  value={upiId}
-                  onChange={(event) => setUpiId(event.target.value)}
-                  aria-invalid={Boolean(errors.upiId)}
-                />
-                {errors.upiId && <small>{errors.upiId}</small>}
-              </label>
+              <div style={{ marginTop: "16px", padding: "16px", background: "#ffffff", borderRadius: "12px", border: "1px solid rgba(201, 162, 75, 0.35)" }}>
+                <label className="checkout-field full-width">
+                  <span>Enter Your UPI ID (VPA)</span>
+                  <input
+                    type="text"
+                    placeholder="e.g. yourname@okhdfcbank or 9820012345@upi"
+                    value={upiId}
+                    onChange={(event) => setUpiId(event.target.value)}
+                    aria-invalid={Boolean(errors.upiId)}
+                  />
+                  {errors.upiId && <small>{errors.upiId}</small>}
+                </label>
+                <p style={{ margin: "8px 0 0", fontSize: "11.5px", color: "rgba(11, 43, 30, 0.68)", lineHeight: 1.4 }}>
+                  ✦ A ceremonial payment request will be sent to your UPI app upon order confirmation.
+                </p>
+              </div>
             )}
 
             {paymentMethod === "cod" && (
-              <div className="checkout-cod-message">
-                Pay in cash when your tea arrives. No payment is processed now.
+              <div className="checkout-cod-message" style={{ marginTop: "14px", padding: "12px 16px", background: "rgba(201, 162, 75, 0.12)", border: "1px solid rgba(201, 162, 75, 0.3)", borderRadius: "10px", color: "#0b2b1e", fontSize: "13px" }}>
+                🌿 Pay securely with cash or UPI at your doorstep upon ceremonial delivery. No advance payment required.
               </div>
             )}
           </div>
@@ -770,6 +1030,8 @@ export default function Checkout() {
           </div>
 
           {errors.cart && <p className="checkout-inline-error">{errors.cart}</p>}
+          {errors.submit && <p className="checkout-inline-error">{errors.submit}</p>}
+          {errors.payment && <p className="checkout-inline-error">{errors.payment}</p>}
 
           <div className="checkout-button-container">
             <button

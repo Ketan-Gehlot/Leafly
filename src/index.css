@@ -4,13 +4,101 @@
    ========================================================= */
 
 :root {
+  /* Core Brand Colors */
   --leafly-forest: #0b2b1e;
   --leafly-black: #011111;
   --leafly-gold: #c9a24b;
   --leafly-ivory: #f7f3ec;
 
+  /* Semantic Colour System (Part 6) */
+  --leafly-green: #073b2b;
+  --leafly-green-soft: #315c4d;
+  --leafly-cream: #f7f3eb;
+  --leafly-surface: #fbf9f4;
+  --leafly-text: #12382d;
+  --leafly-muted: #60746d;
+  --leafly-border: #dddcd3;
+  --leafly-white: #ffffff;
+
+  /* Typography Scale */
+  --leafly-text-xs: 12px;
+  --leafly-text-sm: 14px;
+  --leafly-text-md: 16px;
+  --leafly-text-lg: 18px;
+  --leafly-text-xl: 22px;
+  --leafly-text-2xl: 28px;
+  --leafly-text-3xl: 36px;
+  --leafly-text-display: 48px;
+
   --font-display: Georgia, "Times New Roman", serif;
   --font-body: Inter, Arial, sans-serif;
+
+  /* Corner Radii */
+  --leafly-radius-sm: 8px;
+  --leafly-radius-md: 12px;
+  --leafly-radius-lg: 16px;
+  --leafly-radius-xl: 20px;
+  --leafly-radius-pill: 999px;
+
+  /* Content Gutter */
+  --leafly-page-gutter: 70px;
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  :root {
+    --leafly-page-gutter: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --leafly-page-gutter: 20px;
+  }
+}
+
+/* Shared Action Button Hierarchy */
+.leafly-btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 20px;
+  border-radius: var(--leafly-radius-md);
+  font-size: var(--leafly-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.leafly-btn-primary {
+  background: var(--leafly-green);
+  color: var(--leafly-white);
+  border: 1px solid transparent;
+}
+.leafly-btn-primary:hover {
+  background: var(--leafly-green-soft);
+}
+
+.leafly-btn-secondary {
+  background: var(--leafly-cream);
+  color: var(--leafly-green);
+  border: 1px solid var(--leafly-border);
+}
+.leafly-btn-secondary:hover {
+  background: var(--leafly-surface);
+  border-color: var(--leafly-green);
+}
+
+.leafly-btn-gold {
+  background: var(--leafly-gold);
+  color: var(--leafly-green);
+  border: 1px solid transparent;
+}
+.leafly-btn-gold:hover {
+  background: #b88b30;
 }
 
 *,
@@ -135,6 +223,15 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a24b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 40px !important;
 }
 
 button {

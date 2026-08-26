@@ -6,27 +6,50 @@ import "./WhyLeafly.css";
 export default function WhyLeafly() {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      if (typeof window === "undefined") return false;
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      return !prefersReducedMotion;
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
+    if (!loading) return;
+
+    // Snappy, elegant page transition (300ms on mobile, 450ms on desktop)
+    const isMobile = window.innerWidth <= 768;
+    const duration = isMobile ? 300 : 450;
+
     const timer = window.setTimeout(() => {
       setLoading(false);
-    }, 2800);
+    }, duration);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [loading]);
+
+  const handleDismissLoader = () => {
+    setLoading(false);
+  };
 
   return (
     <main className="why-leafly-page">
 
       {/* =====================================================
-          TEA POURING INTRO
+          TEA POURING INTRO (Fast & Session-aware)
       ===================================================== */}
 
       {loading && (
-        <div className="why-loader" aria-label="Preparing your tea">
+        <div
+          className="why-loader"
+          aria-label="Preparing your tea"
+          onClick={handleDismissLoader}
+          role="status"
+        >
 
           <div className="why-loader-inner">
 

@@ -1,0 +1,355 @@
+/* =========================================================
+   LEAFLY — SEARCH OVERLAY & MODAL
+   ========================================================= */
+
+.leafly-search-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(6, 25, 18, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 80px 20px 40px;
+  box-sizing: border-box;
+  animation: leafly-search-fade 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+@keyframes leafly-search-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.leafly-search-dialog {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(14, 46, 33, 0.97);
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  border-radius: 18px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 1px rgba(201, 162, 75, 0.25);
+  color: #f7f3ec;
+  overflow: hidden;
+  animation: leafly-search-slide 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes leafly-search-slide {
+  from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Search bar */
+.leafly-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(201, 162, 75, 0.2);
+  background: rgba(6, 25, 18, 0.5);
+  position: relative;
+}
+
+.leafly-search-icon {
+  color: #c9a24b;
+  flex-shrink: 0;
+}
+
+.leafly-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #f7f3ec;
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  outline: none;
+  padding: 0;
+}
+
+.leafly-search-input::placeholder {
+  color: rgba(247, 243, 236, 0.38);
+}
+
+.leafly-search-clear-btn {
+  background: none;
+  border: none;
+  color: rgba(247, 243, 236, 0.5);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 200ms ease;
+}
+
+.leafly-search-clear-btn:hover {
+  color: #f7f3ec;
+}
+
+.leafly-search-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(247, 243, 236, 0.08);
+  border: 1px solid rgba(247, 243, 236, 0.15);
+  border-radius: 8px;
+  color: rgba(247, 243, 236, 0.8);
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.leafly-search-close-btn:hover {
+  background: rgba(201, 162, 75, 0.2);
+  border-color: #c9a24b;
+  color: #f1d27c;
+}
+
+.leafly-search-close-btn span {
+  font-size: 10px;
+  color: rgba(247, 243, 236, 0.5);
+}
+
+/* Body */
+.leafly-search-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 20px 24px 24px;
+}
+
+/* Suggestion Tags */
+.leafly-search-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.leafly-search-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leafly-search-section-eyebrow {
+  font-size: 10.5px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c9a24b;
+  font-weight: 700;
+}
+
+.leafly-search-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.leafly-search-tags-center {
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.leafly-search-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(247, 243, 236, 0.05);
+  border: 1px solid rgba(247, 243, 236, 0.15);
+  color: #f7f3ec;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.leafly-search-tag:hover {
+  background: rgba(201, 162, 75, 0.18);
+  border-color: #c9a24b;
+  color: #f1d27c;
+  transform: translateY(-1px);
+}
+
+.leafly-search-tag-arrow {
+  color: #c9a24b;
+  font-size: 11px;
+}
+
+/* Results */
+.leafly-search-results-count {
+  font-size: 11.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(247, 243, 236, 0.5);
+  margin-bottom: 14px;
+}
+
+.leafly-search-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leafly-search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(247, 243, 236, 0.03);
+  border: 1px solid rgba(247, 243, 236, 0.08);
+  cursor: pointer;
+  transition: all 250ms ease;
+  user-select: none;
+}
+
+.leafly-search-result-item:hover,
+.leafly-search-result-item:focus {
+  background: rgba(201, 162, 75, 0.12);
+  border-color: rgba(201, 162, 75, 0.4);
+  transform: translateX(4px);
+  outline: none;
+}
+
+.leafly-search-result-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(6, 25, 18, 0.8);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leafly-search-result-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.leafly-search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.leafly-search-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #c9a24b;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.leafly-search-result-category {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.leafly-search-result-origin {
+  color: rgba(247, 243, 236, 0.6);
+}
+
+.leafly-search-result-name {
+  margin: 0;
+  font-family: var(--font-display, "Georgia", serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: #f7f3ec;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leafly-search-result-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.leafly-search-result-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1d27c;
+}
+
+.leafly-search-result-arrow {
+  color: rgba(247, 243, 236, 0.4);
+  font-size: 14px;
+  transition: transform 200ms ease, color 200ms ease;
+}
+
+.leafly-search-result-item:hover .leafly-search-result-arrow {
+  transform: translateX(3px);
+  color: #c9a24b;
+}
+
+/* Empty State */
+.leafly-search-empty {
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.leafly-search-empty-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.leafly-search-empty h3 {
+  font-family: var(--font-display, "Georgia", serif);
+  font-size: 18px;
+  margin: 0 0 6px;
+  color: #f7f3ec;
+}
+
+.leafly-search-empty p {
+  font-size: 13px;
+  color: rgba(247, 243, 236, 0.65);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .leafly-search-backdrop {
+    padding: 20px 12px;
+  }
+
+  .leafly-search-bar {
+    padding: 14px 16px;
+  }
+
+  .leafly-search-input {
+    font-size: 14.5px;
+  }
+
+  .leafly-search-close-btn span {
+    display: none;
+  }
+
+  .leafly-search-body {
+    padding: 16px;
+    max-height: 75vh;
+  }
+
+  .leafly-search-result-thumb {
+    width: 42px;
+    height: 42px;
+  }
+
+  .leafly-search-result-name {
+    font-size: 14px;
+  }
+}

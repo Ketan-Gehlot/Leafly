@@ -688,3 +688,73 @@
     flex-direction: column;
   }
 }
+
+/* =========================================================
+   CHECKOUT AUTH BANNER
+   ========================================================= */
+
+.checkout-auth-banner {
+  background: #ffffff;
+  border: 1px solid rgba(201, 162, 75, 0.45);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(201, 162, 75, 0.1);
+  box-sizing: border-box;
+}
+
+.checkout-auth-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.checkout-auth-banner-content strong {
+  display: block;
+  font-size: 14px;
+  color: #0b2b1e;
+  margin-bottom: 2px;
+}
+
+.checkout-auth-banner-content p {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(11, 43, 30, 0.7);
+}
+
+.checkout-auth-banner-btn {
+  background: linear-gradient(135deg, #0b2b1e 0%, #174834 100%);
+  color: #f7f3ec;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 200ms ease;
+}
+
+.checkout-auth-banner-btn:hover {
+  background: linear-gradient(135deg, #174834 0%, #0b2b1e 100%);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 650px) {
+  .checkout-auth-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .checkout-auth-banner-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+

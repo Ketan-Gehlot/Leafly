@@ -37,7 +37,7 @@ export default function Footer() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubscribe = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubscribe = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const cleanEmail = email.trim();
 
@@ -58,7 +58,7 @@ export default function Footer() {
       setIsSubmitting(false);
       setIsSubmitted(true);
       setEmail("");
-    }, 500);
+    }, 400);
   };
 
   return (
@@ -138,14 +138,7 @@ export default function Footer() {
                 </div>
 
                 <button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    "SUBSCRIBING..."
-                  ) : (
-                    <>
-                      SUBSCRIBE
-                      <span>→</span>
-                    </>
-                  )}
+                  {isSubmitting ? "SUBSCRIBING..." : "SUBSCRIBE"}
                 </button>
               </form>
             )}
@@ -228,7 +221,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="mailto:hello@leaflytea.in"
+              href="mailto:leaflydatabase@gmail.com"
               className="leafly-footer-social-link"
               aria-label="Email Leafly"
             >
@@ -236,7 +229,7 @@ export default function Footer() {
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="m4 7 8 6 8-6" />
               </svg>
-              <span>hello@leaflytea.in</span>
+              <span>leaflydatabase@gmail.com</span>
             </a>
 
             <p className="leafly-footer-origin">
@@ -254,7 +247,7 @@ export default function Footer() {
           ===================================================== */}
       <div className="leafly-footer-bottom">
         <div className="leafly-footer-bottom-inner">
-          <p>© {new Date().getFullYear()} Leafly. All rights reserved.</p>
+          <p className="leafly-footer-copyright">© {new Date().getFullYear()} Leafly. All rights reserved.</p>
 
           <p className="leafly-footer-motto">REAL TEA. BETTER MOMENTS.</p>
 

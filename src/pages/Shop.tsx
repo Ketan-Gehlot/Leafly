@@ -3,12 +3,14 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import {
   type Product,
   type ProductVariantKey,
+  getProductSlug,
 } from "../data/products";
 import { useProducts } from "../context/ProductContext";
 import Footer from "../components/Footer";
@@ -24,6 +26,7 @@ const categories = [
 ];
 
 export default function Shop() {
+  const navigate = useNavigate();
   const { products } = useProducts();
 
   const {
@@ -507,6 +510,8 @@ export default function Shop() {
                     src={product.image}
                     alt={`Leafly ${product.name}`}
                     className="product-image"
+                    onClick={() => navigate(`/shop/${getProductSlug(product)}`)}
+                    style={{ cursor: "pointer" }}
                     loading={index < 4 ? "eager" : "lazy"}
                     decoding="async"
                     {...(index < 2 ? { fetchPriority: "high" as const } : {})}
@@ -556,7 +561,10 @@ export default function Shop() {
                       {product.category} Tea
                     </p>
 
-                    <h3>
+                    <h3
+                      onClick={() => navigate(`/shop/${getProductSlug(product)}`)}
+                      style={{ cursor: "pointer" }}
+                    >
                       {product.name}
                     </h3>
 
@@ -640,12 +648,7 @@ export default function Shop() {
                       <button
                         type="button"
                         className="details-button"
-                        onClick={() => {
-                          setSelectedProduct(
-                            product
-                          );
-                          setModalVariant(cardVariants[product.id] ?? "100g");
-                        }}
+                        onClick={() => navigate(`/shop/${getProductSlug(product)}`)}
                       >
                         DETAILS
                         <span>+</span>

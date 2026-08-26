@@ -22,19 +22,19 @@ const contactDetails = [
   {
     label: "CUSTOMER CARE",
     detail: "For questions about orders, products and delivery.",
-    value: "hello@leafly.com",
+    value: "leaflydatabase@gmail.com",
     type: "email",
   },
   {
     label: "EMAIL",
-    detail: "hello@leafly.com",
-    value: "hello@leafly.com",
+    detail: "leaflydatabase@gmail.com",
+    value: "leaflydatabase@gmail.com",
     type: "email",
   },
   {
     label: "TEA GUIDANCE",
     detail: "Need help choosing a tea? Tell us what you enjoy and we'll help.",
-    value: "hello@leafly.com",
+    value: "leaflydatabase@gmail.com",
     type: "guidance",
   },
 ];
@@ -123,7 +123,7 @@ export default function Contact() {
     return nextErrors;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const nextErrors = validateForm();
@@ -137,11 +137,11 @@ export default function Contact() {
     setIsSubmitting(true);
     setErrors({});
 
-    window.setTimeout(() => {
+    setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
       setFormData(initialForm);
-    }, 450);
+    }, 400);
   };
 
   const handleBackToTop = () => {

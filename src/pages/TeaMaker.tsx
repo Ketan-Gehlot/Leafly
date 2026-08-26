@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useProducts } from "../context/ProductContext";
@@ -390,7 +390,7 @@ export default function TeaMaker() {
   };
 
   // Transition from Steeping to Pouring Phase
-  const triggerPouringStage = () => {
+  const triggerPouringStage = useCallback(() => {
     clearAllTimeouts();
     setBrewingSubStage("pouring");
 
@@ -399,7 +399,7 @@ export default function TeaMaker() {
       setCurrentStep(8);
     }, 2200);
     sequenceTimeoutRef.current.push(tPour);
-  };
+  }, []);
 
   // Countdown Timer in Step 7 (Steeping Stage)
   useEffect(() => {
@@ -427,7 +427,7 @@ export default function TeaMaker() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentStep, brewingSubStage, isTimerPaused, steepingTimeSec]);
+  }, [currentStep, brewingSubStage, isTimerPaused, steepingTimeSec, triggerPouringStage]);
 
   const handlePauseResumeTimer = () => {
     setIsTimerPaused((prev) => !prev);

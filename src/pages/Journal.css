@@ -207,7 +207,7 @@
   bottom: 10px;
 
   padding:
-    5px
+    4px
     8px;
 
   border-radius: 3px;
@@ -216,7 +216,7 @@
 
   color: #f7f3ec;
 
-  font-size: 5px;
+  font-size: 11px;
 
   font-weight: 800;
 
@@ -240,7 +240,7 @@
 
   color: #9b7738;
 
-  font-size: 6px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -274,7 +274,7 @@
 }
 
 .journal-featured-description {
-  max-width: 330px;
+  max-width: 440px;
 
   margin:
     18px
@@ -286,10 +286,10 @@
       11,
       43,
       30,
-      0.58
+      0.65
     );
 
-  font-size: 8px;
+  font-size: 14px;
 
   line-height: 1.65;
 }
@@ -325,12 +325,12 @@
       11,
       43,
       30,
-      0.48
+      0.55
     );
 
-  font-size: 5.5px;
+  font-size: 12px;
 
-  font-weight: 800;
+  font-weight: 700;
 
   letter-spacing: 1.2px;
 }
@@ -344,7 +344,7 @@
 
   color: #0b2b1e;
 
-  font-size: 6px;
+  font-size: 13px;
 
   font-weight: 800;
 
@@ -435,10 +435,10 @@
       11,
       43,
       30,
-      0.45
+      0.55
     );
 
-  font-size: 7px;
+  font-size: 13px;
 
   line-height: 1.5;
 
@@ -584,10 +584,10 @@
       11,
       43,
       30,
-      0.5
+      0.65
     );
 
-  font-size: 7px;
+  font-size: 13px;
 
   line-height: 1.55;
 }
@@ -812,10 +812,10 @@
       11,
       43,
       30,
-      0.58
+      0.65
     );
 
-  font-size: 10px;
+  font-size: 14px;
 
   line-height: 1.65;
 }
@@ -847,7 +847,7 @@
       11,
       43,
       30,
-      0.72
+      0.78
     );
 
   font-family:
@@ -855,7 +855,7 @@
     "Times New Roman",
     serif;
 
-  font-size: 12px;
+  font-size: 15px;
 
   line-height: 1.75;
 }
@@ -885,10 +885,10 @@
       11,
       43,
       30,
-      0.45
+      0.55
     );
 
-  font-size: 6px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -1160,13 +1160,13 @@
 
 .journal-inner-ornament {
   color: #c9a24b;
-  font-size: 10px;
+  font-size: 12px;
   margin-bottom: 2px;
 }
 
 .journal-page-right strong {
   color: #b98428;
-  font-size: 7.5px;
+  font-size: 12px;
   letter-spacing: 2px;
 }
 
@@ -1180,14 +1180,14 @@
 
 .journal-page-right small {
   color: rgba(11, 43, 30, 0.65);
-  font-size: 6.5px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 2px;
 }
 
 .journal-inner-tagline {
-  color: rgba(11, 43, 30, 0.45);
-  font-size: 5px;
+  color: rgba(11, 43, 30, 0.55);
+  font-size: 11px;
   letter-spacing: 0.8px;
   margin-top: 4px;
   font-style: italic;
@@ -1210,7 +1210,7 @@
 .journal-loader-label {
   margin: 24px 0 10px;
   color: #d5ae59;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 2.5px;
   text-align: center;
@@ -1357,7 +1357,7 @@
 .journal-back-top small {
   color: #0b2b1e;
 
-  font-size: 5px;
+  font-size: 10px;
 
   font-weight: 800;
 
@@ -1529,7 +1529,7 @@
   }
 
   .journal-story-body p {
-    font-size: 11px;
+    font-size: 14px;
   }
 
   .journal-page-left,
@@ -1543,7 +1543,7 @@
   }
 
   .journal-loader-label {
-    font-size: 6px;
+    font-size: 11px;
   }
 
   .journal-back-top {

@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-refresh/only-export-components, react-hooks/set-state-in-effect */
 import {
   createContext,
   useContext,
@@ -7,89 +7,96 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { ProductVariantKey } from "../data/products";
+import type { Order, OrderItem, OrderStatus, ShippingAddress } from "../types/contracts";
+import { useAuth } from "./AuthContext";
 
-export type OrderItem = {
-  id: string;
-  productId?: number;
-  name: string;
-  variant?: ProductVariantKey | string;
-  weight?: string;
-  image: string;
-  price: number;
-  quantity: number;
-  category?: string;
-};
-
-export type ShippingAddress = {
-  fullName: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-};
-
-export type Order = {
-  id: string;
-  createdAt: string;
-  status: "Processing" | "Shipped" | "Delivered" | "Cancelled";
-  items: OrderItem[];
-  subtotal: number;
-  discount?: number;
-  couponCode?: string;
-  deliveryFee: number;
-  total: number;
-  deliveryMethod: string;
-  paymentMethod: string;
-  shippingAddress: ShippingAddress;
-};
+export type { Order, OrderItem, OrderStatus, ShippingAddress };
 
 type OrderContextType = {
   orders: Order[];
   latestOrder: Order | null;
   addOrder: (order: Order) => void;
   clearOrders: () => void;
+  cancelOrder: (orderId: string, couponCode?: string | null) => Promise<void>;
 };
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
-const STORAGE_KEY = "leafly_orders_v2";
+
+const ORDERS_STORAGE_PREFIX = "leafly_orders_";
 
 export function OrderProvider({ children }: { children: ReactNode }) {
+  const { currentUser } = useAuth();
   const [orders, setOrders] = useState<Order[]>(() => {
+    if (!currentUser?.uid) return [];
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-
-      if (!saved) {
-        return [];
-      }
-
-      const parsed = JSON.parse(saved);
-      return Array.isArray(parsed) ? parsed : [];
+      const saved = localStorage.getItem(`${ORDERS_STORAGE_PREFIX}${currentUser.uid}`);
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-    } catch {
-      // Ignore storage errors.
+    if (currentUser?.uid) {
+      try {
+        const saved = localStorage.getItem(`${ORDERS_STORAGE_PREFIX}${currentUser.uid}`);
+        setOrders(saved ? JSON.parse(saved) : []);
+      } catch {
+        setOrders([]);
+      }
+    } else {
+      setOrders([]);
     }
-  }, [orders]);
+  }, [currentUser?.uid]);
 
   const addOrder = (order: Order) => {
-    setOrders((current) => [...current, order]);
+    setOrders((current) => {
+      const exists = current.some((o) => o.id === order.id);
+      const nextOrders = exists
+        ? current.map((o) => (o.id === order.id ? order : o))
+        : [order, ...current];
+      
+      if (currentUser?.uid) {
+        localStorage.setItem(
+          `${ORDERS_STORAGE_PREFIX}${currentUser.uid}`,
+          JSON.stringify(nextOrders)
+        );
+      }
+      return nextOrders;
+    });
   };
 
   const clearOrders = () => {
     setOrders([]);
+    if (currentUser?.uid) {
+      localStorage.removeItem(`${ORDERS_STORAGE_PREFIX}${currentUser.uid}`);
+    }
+  };
+
+  const cancelOrder = async (orderId: string) => {
+    setOrders((current) => {
+      const nextOrders = current.map((o) =>
+        o.id === orderId
+          ? {
+              ...o,
+              orderStatus: "Cancelled" as OrderStatus,
+              status: "Cancelled",
+              updatedAt: new Date().toISOString(),
+            }
+          : o
+      );
+      if (currentUser?.uid) {
+        localStorage.setItem(
+          `${ORDERS_STORAGE_PREFIX}${currentUser.uid}`,
+          JSON.stringify(nextOrders)
+        );
+      }
+      return nextOrders;
+    });
   };
 
   const latestOrder = useMemo(
-    () => (orders.length > 0 ? orders[orders.length - 1] : null),
+    () => (orders.length > 0 ? orders[0] : null),
     [orders]
   );
 
@@ -100,6 +107,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         latestOrder,
         addOrder,
         clearOrders,
+        cancelOrder,
       }}
     >
       {children}
@@ -116,3 +124,5 @@ export function useOrderContext() {
 
   return context;
 }
+
+

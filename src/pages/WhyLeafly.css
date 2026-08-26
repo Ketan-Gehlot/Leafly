@@ -27,7 +27,7 @@
 
 
 /* =========================================================
-   TEA LOADER
+   TEA LOADER (Fast, Subtle & Non-Blocking)
    ========================================================= */
 
 .why-loader {
@@ -42,6 +42,8 @@
   align-items: center;
   justify-content: center;
 
+  cursor: pointer;
+
   background:
     linear-gradient(
       135deg,
@@ -52,9 +54,9 @@
 
   animation:
     loader-exit
-    650ms
+    180ms
     ease
-    2.15s
+    300ms
     forwards;
 }
 
@@ -68,10 +70,11 @@
   align-items: center;
 
   text-align: center;
+  pointer-events: none;
 }
 
 .why-loader-brand {
-  margin-bottom: 42px;
+  margin-bottom: 32px;
 
   color: #f7f3ec;
 
@@ -80,17 +83,17 @@
     "Times New Roman",
     serif;
 
-  font-size: 25px;
+  font-size: 24px;
 
-  letter-spacing: 5px;
+  letter-spacing: 4px;
 
   opacity: 0;
 
   animation:
     loader-brand-in
-    700ms
+    250ms
     ease
-    150ms
+    50ms
     forwards;
 }
 
@@ -102,9 +105,9 @@
 .why-loader-scene {
   position: relative;
 
-  width: min(360px, 92vw);
+  width: min(340px, 90vw);
   max-width: 100%;
-  height: 270px;
+  height: 240px;
 }
 
 
@@ -115,11 +118,11 @@
 .tea-pouch {
   position: absolute;
 
-  top: 15px;
-  left: 62px;
+  top: 12px;
+  left: 58px;
 
-  width: 96px;
-  height: 130px;
+  width: 90px;
+  height: 120px;
 
   z-index: 5;
 
@@ -162,14 +165,14 @@
 
   animation:
     pouch-pour
-    1.25s
+    300ms
     cubic-bezier(
       0.22,
       1,
       0.36,
       1
     )
-    750ms
+    80ms
     forwards;
 }
 
@@ -180,7 +183,7 @@
   left: 0;
 
   width: 100%;
-  height: 17px;
+  height: 15px;
 
   border-bottom:
     1px solid
@@ -204,9 +207,9 @@
   position: absolute;
 
   inset:
-    37px
-    9px
-    15px;
+    32px
+    8px
+    12px;
 
   display: flex;
 
@@ -233,13 +236,13 @@
     "Times New Roman",
     serif;
 
-  font-size: 15px;
+  font-size: 14px;
 
   letter-spacing: 2px;
 }
 
 .tea-pouch-label small {
-  margin-top: 7px;
+  margin-top: 5px;
 
   font-size: 5px;
 
@@ -254,10 +257,10 @@
 .tea-stream {
   position: absolute;
 
-  top: 116px;
-  left: 148px;
+  top: 108px;
+  left: 142px;
 
-  width: 5px;
+  width: 4px;
   height: 0;
 
   z-index: 4;
@@ -275,9 +278,9 @@
 
   animation:
     tea-pour
-    850ms
+    250ms
     ease
-    1.35s
+    150ms
     forwards;
 }
 
@@ -289,11 +292,11 @@
 .tea-cup {
   position: absolute;
 
-  left: 115px;
-  bottom: 18px;
+  left: 110px;
+  bottom: 16px;
 
-  width: 150px;
-  height: 92px;
+  width: 140px;
+  height: 86px;
 
   z-index: 3;
 }
@@ -304,8 +307,8 @@
   top: 0;
   left: 0;
 
-  width: 150px;
-  height: 35px;
+  width: 140px;
+  height: 32px;
 
   z-index: 3;
 
@@ -331,11 +334,11 @@
 .tea-surface {
   position: absolute;
 
-  top: 6px;
-  left: 7px;
+  top: 5px;
+  left: 6px;
 
-  width: 132px;
-  height: 22px;
+  width: 124px;
+  height: 20px;
 
   border-radius: 50%;
 
@@ -353,26 +356,26 @@
 
   animation:
     tea-fill
-    900ms
+    250ms
     ease
-    1.45s
+    180ms
     forwards;
 }
 
 .tea-cup-body {
   position: absolute;
 
-  left: 9px;
-  top: 14px;
+  left: 8px;
+  top: 12px;
 
-  width: 132px;
-  height: 72px;
+  width: 124px;
+  height: 68px;
 
   border-radius:
     8px
     8px
-    45px
-    45px;
+    42px
+    42px;
 
   background:
     linear-gradient(
@@ -395,14 +398,14 @@
 .tea-cup-handle {
   position: absolute;
 
-  top: 25px;
-  right: -19px;
+  top: 22px;
+  right: -18px;
 
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
 
   border:
-    8px solid
+    7px solid
     #e1d5c3;
 
   border-left: none;
@@ -422,10 +425,10 @@
 .tea-steam {
   position: absolute;
 
-  bottom: 92px;
+  bottom: 86px;
 
   width: 3px;
-  height: 50px;
+  height: 44px;
 
   border-radius: 999px;
 
@@ -443,30 +446,30 @@
 
   animation:
     steam-rise
-    1.7s
+    300ms
     ease-in-out
-    1.9s
-    infinite;
+    200ms
+    1;
 }
 
 .tea-steam-one {
-  left: 167px;
+  left: 156px;
 }
 
 .tea-steam-two {
-  left: 193px;
+  left: 180px;
 
-  height: 40px;
+  height: 36px;
 
-  animation-delay: 2.1s;
+  animation-delay: 230ms;
 }
 
 .tea-steam-three {
-  left: 218px;
+  left: 204px;
 
-  height: 46px;
+  height: 40px;
 
-  animation-delay: 2.3s;
+  animation-delay: 260ms;
 }
 
 
@@ -475,29 +478,29 @@
    ========================================================= */
 
 .why-loader-text {
-  margin: 34px 0 0;
+  margin: 24px 0 0;
 
   color:
     rgba(
       247,
       243,
       236,
-      0.52
+      0.75
     );
 
-  font-size: 7px;
+  font-size: 12px;
 
   font-weight: 700;
 
-  letter-spacing: 2.4px;
+  letter-spacing: 2px;
 
   opacity: 0;
 
   animation:
     loader-text-in
-    700ms
+    250ms
     ease
-    1.2s
+    100ms
     forwards;
 }
 
@@ -512,7 +515,7 @@
     opacity: 0;
 
     transform:
-      translateY(10px);
+      translateY(8px);
   }
 
   to {
@@ -531,16 +534,16 @@
       rotate(0deg);
   }
 
-  45% {
+  50% {
     transform:
-      translateX(35px)
+      translateX(28px)
       rotate(0deg);
   }
 
   100% {
     transform:
-      translateX(55px)
-      rotate(31deg);
+      translateX(44px)
+      rotate(28deg);
   }
 }
 
@@ -551,13 +554,13 @@
     opacity: 0;
   }
 
-  20% {
-    height: 30px;
+  25% {
+    height: 25px;
     opacity: 1;
   }
 
   100% {
-    height: 92px;
+    height: 80px;
     opacity: 1;
   }
 }
@@ -581,20 +584,20 @@
     opacity: 0;
 
     transform:
-      translateY(12px)
+      translateY(8px)
       scaleX(1);
   }
 
-  30% {
-    opacity: 0.55;
+  40% {
+    opacity: 0.5;
   }
 
   100% {
     opacity: 0;
 
     transform:
-      translateY(-38px)
-      scaleX(2);
+      translateY(-28px)
+      scaleX(1.8);
   }
 }
 
@@ -616,7 +619,7 @@
     visibility: visible;
   }
 
-  70% {
+  60% {
     opacity: 1;
   }
 
@@ -624,6 +627,37 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+  }
+}
+
+/* Mobile Loader Optimization */
+@media (max-width: 768px) {
+  .why-loader {
+    animation-duration: 180ms;
+    animation-delay: 150ms;
+  }
+
+  .why-loader-scene {
+    height: 190px;
+    transform: scale(0.85);
+  }
+
+  .why-loader-brand {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .why-loader-text {
+    margin-top: 14px;
+    font-size: 11px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .why-loader {
+    display: none !important;
+    animation: none !important;
   }
 }
 
@@ -686,7 +720,7 @@
 
   color: #c9a24b;
 
-  font-size: 11px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -764,7 +798,7 @@
 
   color: #a77c28;
 
-  font-size: 11px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -833,10 +867,10 @@
       11,
       43,
       30,
-      0.62
+      0.68
     );
 
-  font-size: 12px;
+  font-size: 15px;
 
   line-height: 1.8;
 }
@@ -891,7 +925,7 @@
 
   color: #9a793f;
 
-  font-size: 6px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -953,7 +987,7 @@
 .why-value-number {
   color: #b98528;
 
-  font-size: 7px;
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -984,10 +1018,10 @@
       11,
       43,
       30,
-      0.55
+      0.65
     );
 
-  font-size: 9px;
+  font-size: 14px;
 
   line-height: 1.7;
 }
@@ -1048,7 +1082,7 @@
 
   padding:
     0
-    20px;
+    24px;
 
   border: none;
 
@@ -1058,7 +1092,7 @@
 
   color: #f7f3ec;
 
-  font-size: 7px;
+  font-size: 13px;
 
   font-weight: 800;
 
@@ -1153,7 +1187,7 @@
 .why-back-top small {
   margin-top: 2px;
 
-  font-size: 5px;
+  font-size: 10px;
 
   font-weight: 800;
 
@@ -1216,7 +1250,7 @@
   .why-loader-text {
     margin-top: 12px;
 
-    font-size: 5.5px;
+    font-size: 11px;
 
     letter-spacing: 1.7px;
   }
@@ -1241,7 +1275,7 @@
   }
 
   .why-hero-description {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .why-philosophy {

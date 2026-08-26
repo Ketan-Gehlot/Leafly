@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { type Product, type ProductVariantKey } from "../data/products";
+import { type Product, type ProductVariantKey, getProductSlug } from "../data/products";
 import { teawareProducts } from "../data/teaware";
 import { useProducts } from "../context/ProductContext";
 import Footer from "../components/Footer";
 import "./ProductDetail.css";
 
 export default function ProductDetail() {
-  const { id } = useParams<{ id: string }>();
+  const { slug, id } = useParams<{ slug?: string; id?: string }>();
   const navigate = useNavigate();
   const { products } = useProducts();
 
@@ -17,28 +17,45 @@ export default function ProductDetail() {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariantKey>("100g");
+  const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const teawareItem = teawareProducts.find((t) => t.id === Number(id));
-  const product: Product | undefined = products.find((p) => p.id === Number(id)) || (teawareItem ? {
-    id: teawareItem.id,
-    name: teawareItem.name,
-    category: "Green",
-    origin: teawareItem.material,
-    caffeine: "Low",
-    weight: teawareItem.capacity || "1 Unit",
-    price: teawareItem.price,
-    oldPrice: teawareItem.oldPrice,
-    badge: teawareItem.badge,
-    image: teawareItem.image,
-    variants: {
-      "100g": { weight: "100g", price: teawareItem.price, oldPrice: teawareItem.oldPrice },
-      "250g": { weight: "250g", price: teawareItem.price },
-    },
-    rating: teawareItem.rating,
-    reviewCount: teawareItem.reviewCount,
-  } : undefined);
+  const identifier = (slug || id || "").toLowerCase().trim();
+
+  const teawareItem = teawareProducts.find(
+    (t) => getProductSlug(t) === identifier || String(t.id) === identifier
+  );
+
+  const product: Product | undefined =
+    products.find(
+      (p) => getProductSlug(p) === identifier || String(p.id) === identifier
+    ) ||
+    (teawareItem
+      ? {
+          id: teawareItem.id,
+          name: teawareItem.name,
+          category: "Green",
+          origin: teawareItem.material,
+          caffeine: "Low",
+          weight: teawareItem.capacity || "1 Unit",
+          price: teawareItem.price,
+          oldPrice: teawareItem.oldPrice,
+          badge: teawareItem.badge,
+          image: teawareItem.image,
+          variants: {
+            "100g": {
+              weight: "100g",
+              price: teawareItem.price,
+              oldPrice: teawareItem.oldPrice,
+            },
+            "250g": { weight: "250g", price: teawareItem.price },
+          },
+          rating: teawareItem.rating,
+          reviewCount: teawareItem.reviewCount,
+          description: teawareItem.description,
+        }
+      : undefined);
 
   /* --- product not found ----------------------------------- */
 
@@ -46,7 +63,9 @@ export default function ProductDetail() {
     return (
       <main className="product-detail-page">
         <div className="pdp-not-found">
-          <div className="pdp-not-found-mark" aria-hidden="true">❧</div>
+          <div className="pdp-not-found-mark" aria-hidden="true">
+            ❧
+          </div>
           <h1>Tea Not Found</h1>
           <p>We couldn&apos;t find this tea in our collection.</p>
           <button
@@ -57,17 +76,26 @@ export default function ProductDetail() {
             BROWSE ALL TEAS
           </button>
         </div>
+        <Footer />
       </main>
     );
   }
 
   /* --- variant pricing & details ---------------------------- */
 
-  const currentVariantData = product.variants ? product.variants[selectedVariant] : {
-    weight: selectedVariant,
-    price: selectedVariant === "250g" ? Math.round(product.price * 2.2) : product.price,
-    oldPrice: selectedVariant === "250g" && product.oldPrice ? Math.round(product.oldPrice * 2.2) : product.oldPrice,
-  };
+  const currentVariantData = product.variants
+    ? product.variants[selectedVariant]
+    : {
+        weight: selectedVariant,
+        price:
+          selectedVariant === "250g"
+            ? Math.round(product.price * 2.2)
+            : product.price,
+        oldPrice:
+          selectedVariant === "250g" && product.oldPrice
+            ? Math.round(product.oldPrice * 2.2)
+            : product.oldPrice,
+      };
 
   const currentPrice = currentVariantData.price;
   const currentOldPrice = currentVariantData.oldPrice;
@@ -81,7 +109,7 @@ export default function ProductDetail() {
 
     addToCart(
       product,
-      1,
+      quantity,
       selectedVariant,
       currentPrice,
       currentOldPrice
@@ -92,6 +120,17 @@ export default function ProductDetail() {
     window.setTimeout(() => setAddedToCart(false), 1500);
   };
 
+  const handleBuyNow = () => {
+    addToCart(
+      product,
+      quantity,
+      selectedVariant,
+      currentPrice,
+      currentOldPrice
+    );
+    navigate("/checkout");
+  };
+
   const handleWishlistToggle = () => {
     if (wishlisted) {
       removeFromWishlist(product.id);
@@ -100,10 +139,9 @@ export default function ProductDetail() {
     }
   };
 
-  const savings =
-    currentOldPrice
-      ? Math.round(((currentOldPrice - currentPrice) / currentOldPrice) * 100)
-      : null;
+  const savings = currentOldPrice
+    ? Math.round(((currentOldPrice - currentPrice) / currentOldPrice) * 100)
+    : null;
 
   /* --- render ---------------------------------------------- */
 
@@ -111,17 +149,16 @@ export default function ProductDetail() {
 
   return (
     <main className="product-detail-page">
-
       {/* HEADER / BREADCRUMB */}
 
       <div className="pdp-header">
         <button
           type="button"
           className="pdp-back"
-          onClick={() => navigate(-1)}
-          aria-label="Go back"
+          onClick={() => navigate(isTeaware ? "/teaware" : "/shop")}
+          aria-label="Back to collection"
         >
-          ← BACK
+          ← BACK TO {isTeaware ? "TEAWARE" : "SHOP"}
         </button>
 
         <div className="pdp-breadcrumb" aria-label="Breadcrumb">
@@ -135,11 +172,9 @@ export default function ProductDetail() {
         </div>
       </div>
 
-
       {/* MAIN CONTENT GRID */}
 
       <div className="pdp-layout">
-
         {/* IMAGE */}
 
         <div className="pdp-image-wrap">
@@ -151,28 +186,53 @@ export default function ProductDetail() {
             fetchPriority="high"
             decoding="async"
           />
-          <span className={`pdp-badge ${isTeaware ? "coming-soon" : product.badge.toLowerCase()}`}>
+          <span
+            className={`pdp-badge ${isTeaware ? "coming-soon" : product.badge.toLowerCase()}`}
+          >
             {isTeaware ? "Coming Soon" : product.badge}
           </span>
         </div>
 
-
         {/* PRODUCT INFO */}
 
         <div className="pdp-info">
-
           <p className="pdp-eyebrow">
             <span aria-hidden="true">✦</span>
-            {isTeaware ? `${teawareItem?.material} · ${teawareItem?.category}` : `${product.origin} · ${product.category} Tea`}
+            {isTeaware
+              ? `${teawareItem?.material} · ${teawareItem?.category}`
+              : `${product.origin} · ${product.category} Tea`}
           </p>
 
           <h1 className="pdp-name">{product.name}</h1>
 
+          {/* RATING ROW */}
+          <div
+            className="pdp-rating-row"
+            aria-label={`${(product.rating ?? 4.9).toFixed(1)} out of 5 stars based on ${product.reviewCount ?? 128} reviews`}
+          >
+            <div className="pdp-stars" aria-hidden="true">
+              ★★★★★
+            </div>
+            <span className="pdp-rating-score">
+              {(product.rating ?? 4.9).toFixed(1)}
+            </span>
+            <span className="pdp-rating-sep">·</span>
+            <span className="pdp-review-count">
+              {product.reviewCount ?? 128} Reviews
+            </span>
+          </div>
+
           <p className="pdp-description">
-            {isTeaware ? teawareItem?.description : (
-              `A carefully selected ${product.category.toLowerCase()} tea from ${product.origin}, chosen for character, freshness and a memorable tea-drinking ritual.`
-            )}
+            {product.description ||
+              (isTeaware
+                ? teawareItem?.description
+                : `A carefully selected ${product.category.toLowerCase()} tea from ${product.origin}, chosen for character, freshness and a memorable tea-drinking ritual.`)}
           </p>
+
+          <div className="pdp-stock-status">
+            <span className="pdp-stock-dot">●</span>
+            <span>In Stock · Handcrafted & Freshly Packed</span>
+          </div>
 
           <div className="pdp-divider" aria-hidden="true">
             <span />
@@ -183,8 +243,12 @@ export default function ProductDetail() {
           {/* QUANTITY / WEIGHT VARIANT SELECTOR (TEA ONLY) */}
           {!isTeaware && (
             <div className="pdp-variant-section">
-              <span className="pdp-variant-title">SELECT QUANTITY / WEIGHT</span>
-              <div className="pdp-variant-buttons" role="radiogroup" aria-label="Quantity options">
+              <span className="pdp-variant-title">SELECT WEIGHT / VARIANT</span>
+              <div
+                className="pdp-variant-buttons"
+                role="radiogroup"
+                aria-label="Quantity options"
+              >
                 <button
                   type="button"
                   className={`pdp-variant-btn ${selectedVariant === "100g" ? "active" : ""}`}
@@ -261,9 +325,35 @@ export default function ProductDetail() {
                   ₹{currentOldPrice.toLocaleString("en-IN")}
                 </del>
               )}
-              {savings && (
-                <span className="pdp-savings">{savings}% OFF</span>
-              )}
+              {savings && <span className="pdp-savings">{savings}% OFF</span>}
+            </div>
+          )}
+
+          {/* QUANTITY COUNTER & ACTIONS */}
+          {!isTeaware && (
+            <div className="pdp-qty-row">
+              <span className="pdp-qty-label">QUANTITY</span>
+              <div className="pdp-qty-selector">
+                <button
+                  type="button"
+                  className="pdp-qty-btn"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className="pdp-qty-val">{quantity}</span>
+                <button
+                  type="button"
+                  className="pdp-qty-btn"
+                  onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                  disabled={quantity >= 10}
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
             </div>
           )}
 
@@ -275,37 +365,55 @@ export default function ProductDetail() {
                 COMING SOON · LAUNCHING SHORTLY
               </div>
             ) : (
-              <button
-                type="button"
-                className={`pdp-cart-button ${addedToCart ? "added" : ""}`}
-                disabled={addingToCart}
-                onClick={handleAddToCart}
-                aria-label={addedToCart ? "Added to cart" : `Add ${product.name} (${selectedVariant}) to cart`}
-              >
-                {addingToCart ? (
-                  <>
-                    <span className="pdp-cart-spinner" aria-hidden="true" />
-                    ADDING...
-                  </>
-                ) : addedToCart ? (
-                  <>ADDED ✓</>
-                ) : (
-                  <>ADD TO CART 🛒</>
-                )}
-              </button>
+              <>
+                <button
+                  type="button"
+                  className={`pdp-cart-button ${addedToCart ? "added" : ""}`}
+                  disabled={addingToCart}
+                  onClick={handleAddToCart}
+                  aria-label={
+                    addedToCart
+                      ? "Added to cart"
+                      : `Add ${quantity} of ${product.name} (${selectedVariant}) to cart`
+                  }
+                >
+                  {addingToCart ? (
+                    <>
+                      <span className="pdp-cart-spinner" aria-hidden="true" />
+                      ADDING...
+                    </>
+                  ) : addedToCart ? (
+                    <>ADDED ✓</>
+                  ) : (
+                    <>ADD TO CART 🛒</>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  className="pdp-buy-now-button"
+                  onClick={handleBuyNow}
+                  aria-label={`Buy ${product.name} now`}
+                >
+                  BUY NOW ❧
+                </button>
+              </>
             )}
 
             <button
               type="button"
               className={`pdp-wishlist-button ${wishlisted ? "wishlisted" : ""}`}
               onClick={handleWishlistToggle}
-              aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+              aria-label={
+                wishlisted
+                  ? `Remove ${product.name} from wishlist`
+                  : `Add ${product.name} to wishlist`
+              }
               aria-pressed={wishlisted}
             >
               {wishlisted ? "♥" : "♡"}
             </button>
           </div>
-
         </div>
       </div>
       <Footer />

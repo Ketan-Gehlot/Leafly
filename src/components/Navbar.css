@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
 
-  padding: 0 clamp(20px, 4vw, 40px);
+  padding: 0 var(--leafly-page-gutter);
 
   box-sizing: border-box;
 
@@ -1098,13 +1098,14 @@
     display: none;
   }
 
-  .leafly-mobile-menu-button {
+  .leafly-mobile-top-actions {
     display: flex;
     margin-left: auto;
   }
 
-  .leafly-mobile-top-actions {
+  .leafly-mobile-menu-button {
     display: flex;
+    margin-left: 6px;
   }
 
   .leafly-mobile-menu {

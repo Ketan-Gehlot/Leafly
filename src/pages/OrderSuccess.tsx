@@ -44,19 +44,27 @@ export default function OrderSuccess() {
         <div className="order-success-grid">
           <div className="order-success-block">
             <span>Order ID</span>
-            <strong>{order.id}</strong>
+            <strong style={{ color: "#c9a24b" }}>{order.id}</strong>
+          </div>
+          <div className="order-success-block">
+            <span>Order Status</span>
+            <strong style={{ color: "#166534" }}>{order.orderStatus || order.status || "Confirmed"}</strong>
+          </div>
+          <div className="order-success-block">
+            <span>Total Amount</span>
+            <strong>{currencyFormatter.format(order.total)}</strong>
+          </div>
+          <div className="order-success-block">
+            <span>Payment Method</span>
+            <strong>{order.paymentMethod === "cod" ? "Pay on Delivery" : order.paymentMethod}</strong>
+          </div>
+          <div className="order-success-block">
+            <span>Delivery Method</span>
+            <strong>{order.deliveryMethod}</strong>
           </div>
           <div className="order-success-block">
             <span>Order Date</span>
             <strong>{new Date(order.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</strong>
-          </div>
-          <div className="order-success-block">
-            <span>Total</span>
-            <strong>{currencyFormatter.format(order.total)}</strong>
-          </div>
-          <div className="order-success-block">
-            <span>Delivery</span>
-            <strong>{order.deliveryMethod}</strong>
           </div>
         </div>
 

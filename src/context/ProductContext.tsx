@@ -1,23 +1,24 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { products as initialProducts, type Product } from "../data/products";
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useContext, useState } from 'react';
+import { products as initialProducts, type Product } from '../data/products';
 
 type ProductContextType = {
   products: Product[];
-  addProduct: (product: Product) => void;
-  updateProduct: (updatedProduct: Product) => void;
-  deleteProduct: (id: number) => void;
+  loading: boolean;
+  addProduct: (product: Product) => Promise<void>;
+  updateProduct: (updatedProduct: Product) => Promise<void>;
+  deleteProduct: (id: number | string) => Promise<void>;
 };
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem("leafly-products");
+    const saved = localStorage.getItem('leafly-products');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge with initialProducts to guarantee rating and reviewCount exist
           return initialProducts.map((initP) => {
             const savedP = parsed.find((p: Product) => p.id === initP.id);
             if (!savedP) return initP;
@@ -29,44 +30,51 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
             };
           });
         }
-        return initialProducts;
       } catch {
-        return initialProducts;
+        // ignore
       }
     }
     return initialProducts;
   });
 
-  useEffect(() => {
-    localStorage.setItem("leafly-products", JSON.stringify(products));
-  }, [products]);
+  const [loading] = useState<boolean>(false);
 
-  const addProduct = (product: Product) => {
-    setProducts((prev) => [...prev, product]);
+  const addProduct = async (product: Product) => {
+    setProducts((prev) => {
+      const next = [...prev, product];
+      localStorage.setItem('leafly-products', JSON.stringify(next));
+      return next;
+    });
   };
 
-  const updateProduct = (updatedProduct: Product) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
-    );
+  const updateProduct = async (updatedProduct: Product) => {
+    setProducts((prev) => {
+      const next = prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p));
+      localStorage.setItem('leafly-products', JSON.stringify(next));
+      return next;
+    });
   };
 
-  const deleteProduct = (id: number) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+  const deleteProduct = async (id: number | string) => {
+    setProducts((prev) => {
+      const next = prev.filter((p) => p.id !== id);
+      localStorage.setItem('leafly-products', JSON.stringify(next));
+      return next;
+    });
   };
 
   return (
-    <ProductContext.Provider value={{ products, addProduct, updateProduct, deleteProduct }}>
+    <ProductContext.Provider value={{ products, loading, addProduct, updateProduct, deleteProduct }}>
       {children}
     </ProductContext.Provider>
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useProducts() {
   const context = useContext(ProductContext);
   if (context === undefined) {
-    throw new Error("useProducts must be used within a ProductProvider");
+    throw new Error('useProducts must be used within a ProductProvider');
   }
   return context;
 }
+

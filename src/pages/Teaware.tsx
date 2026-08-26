@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import { teawareProducts, type TeawareItem, type TeawareCategory } from "../data/teaware";
+import { getProductSlug } from "../data/products";
 import Footer from "../components/Footer";
 import "./Teaware.css";
 
@@ -183,7 +184,7 @@ export default function Teaware() {
                 {/* PRODUCT IMAGE */}
                 <div
                   className="teaware-image-wrap"
-                  onClick={() => navigate(`/product/${item.id}`)}
+                  onClick={() => navigate(`/teaware/${getProductSlug(item)}`)}
                   style={{ cursor: "pointer" }}
                 >
                   <img
@@ -220,7 +221,7 @@ export default function Teaware() {
                   </p>
 
                   <h3
-                    onClick={() => navigate(`/product/${item.id}`)}
+                    onClick={() => navigate(`/teaware/${getProductSlug(item)}`)}
                     style={{ cursor: "pointer" }}
                   >
                     {item.name}
@@ -240,7 +241,7 @@ export default function Teaware() {
                     <button
                       type="button"
                       className="teaware-details-button"
-                      onClick={() => navigate(`/product/${item.id}`)}
+                      onClick={() => navigate(`/teaware/${getProductSlug(item)}`)}
                     >
                       VIEW DETAILS
                     </button>

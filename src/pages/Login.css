@@ -1,0 +1,757 @@
+/* =========================================================
+   LEAFLY — EDITORIAL LIGHT IVORY & WARM GOLD LOGIN STYLES
+   ========================================================= */
+
+.leafly-auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #faf7f2;
+  background-image: 
+    radial-gradient(circle at 18% 22%, rgba(201, 162, 75, 0.16) 0%, transparent 48%),
+    radial-gradient(circle at 82% 78%, rgba(11, 43, 30, 0.07) 0%, transparent 52%),
+    radial-gradient(circle at 50% 50%, rgba(253, 251, 247, 0.85) 0%, #f4ede2 100%);
+  color: #0b2b1e;
+  font-family: var(--font-body, "Inter", sans-serif);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ambient glow accents */
+.leafly-auth-ambient-glow {
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.18) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.leafly-auth-ambient-glow-secondary {
+  position: absolute;
+  bottom: 12%;
+  right: 8%;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.14) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Main Editorial Layout */
+.leafly-auth-main-editorial {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 24px 60px;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.leafly-auth-editorial-container {
+  width: 100%;
+  max-width: 1220px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  gap: 60px;
+  align-items: center;
+}
+
+/* =========================================================
+   LEFT COLUMN: HERO BRANDING & EDITORIAL COPY
+   ========================================================= */
+
+.leafly-auth-hero-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 10px;
+}
+
+.leafly-auth-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.leafly-auth-brand-logo-link {
+  display: inline-block;
+  transition: transform 300ms ease;
+}
+
+.leafly-auth-brand-logo-link:hover {
+  transform: scale(1.04);
+}
+
+.leafly-auth-hero-logo {
+  width: 100px;
+  height: auto;
+}
+
+.leafly-auth-brand-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201, 162, 75, 0.14);
+  border: 1px solid rgba(201, 162, 75, 0.38);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: #8c6518;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.leafly-auth-kicker-dot {
+  color: #c9a24b;
+  font-size: 12px;
+}
+
+.leafly-auth-hero-heading {
+  font-family: var(--font-display, "Georgia", serif);
+  font-size: clamp(34px, 4.2vw, 54px);
+  line-height: 1.12;
+  font-weight: 400;
+  color: #0b2b1e;
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+}
+
+.leafly-auth-hero-heading span {
+  font-style: italic;
+  background: linear-gradient(135deg, #a87d22 0%, #c9a24b 60%, #8c6518 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.leafly-auth-hero-desc {
+  font-size: clamp(14px, 1.2vw, 16.5px);
+  line-height: 1.68;
+  color: rgba(11, 43, 30, 0.76);
+  max-width: 520px;
+  margin: 0 0 32px;
+}
+
+/* Teapot Showcase Visual */
+.leafly-auth-teapot-showcase {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(201, 162, 75, 0.3);
+  border-radius: 20px;
+  padding: 16px 24px;
+  max-width: 480px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 16px 36px rgba(11, 43, 30, 0.06);
+}
+
+.leafly-auth-teapot-halo {
+  position: absolute;
+  left: 20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.22) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.leafly-auth-teapot-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(11, 43, 30, 0.12));
+  position: relative;
+  z-index: 1;
+}
+
+.leafly-auth-teapot-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1;
+}
+
+.leafly-auth-teapot-caption strong {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0b2b1e;
+  letter-spacing: 0.5px;
+}
+
+.leafly-auth-teapot-caption span {
+  font-size: 12px;
+  color: #8c6518;
+  letter-spacing: 0.8px;
+}
+
+/* =========================================================
+   RIGHT COLUMN: LIQUID-GLASS LOGIN CARD
+   ========================================================= */
+
+.leafly-auth-card-col {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.leafly-auth-liquid-card {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(201, 162, 75, 0.38);
+  border-radius: 24px;
+  padding: 40px 36px 34px;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: 
+    0 25px 55px rgba(11, 43, 30, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 0 35px rgba(201, 162, 75, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.leafly-auth-liquid-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c9a24b, #f1d27c, #c9a24b, transparent);
+}
+
+/* Card Header */
+.leafly-auth-card-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.leafly-auth-card-eyebrow {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 2.8px;
+  text-transform: uppercase;
+  color: #9b7422;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.leafly-auth-card-title {
+  font-family: var(--font-display, "Georgia", serif);
+  font-size: 29px;
+  font-weight: 400;
+  color: #0b2b1e;
+  margin: 0 0 8px;
+  letter-spacing: 0.5px;
+}
+
+.leafly-auth-card-subtitle {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(11, 43, 30, 0.72);
+  margin: 0;
+}
+
+/* Alerts */
+.leafly-auth-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  animation: leafly-fade-in 250ms ease;
+}
+
+.leafly-auth-alert-error {
+  background: #fef2f2;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #991b1b;
+}
+
+.leafly-auth-alert-success {
+  background: #f0fdf4;
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #166534;
+}
+
+@keyframes leafly-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Google Sign-in Button */
+.leafly-auth-google-button {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(11, 43, 30, 0.16);
+  border-radius: 12px;
+  color: #0b2b1e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(11, 43, 30, 0.04);
+  transition: all 250ms ease;
+}
+
+.leafly-auth-google-button:hover:not(:disabled) {
+  background: #fafaf8;
+  border-color: #c9a24b;
+  box-shadow: 0 4px 14px rgba(201, 162, 75, 0.18);
+  transform: translateY(-1px);
+}
+
+.leafly-auth-google-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.leafly-auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 22px 0;
+  color: rgba(11, 43, 30, 0.45);
+}
+
+.leafly-auth-divider::before,
+.leafly-auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(11, 43, 30, 0.12);
+}
+
+.leafly-auth-divider span {
+  padding: 0 14px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Form & Fields */
+.leafly-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.leafly-auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.leafly-auth-field label {
+  font-size: 11.5px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(11, 43, 30, 0.85);
+  font-weight: 700;
+}
+
+.leafly-auth-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leafly-auth-forgot-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #9b7422;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 200ms ease;
+}
+
+.leafly-auth-forgot-link:hover {
+  color: #6b4e10;
+}
+
+.leafly-auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.leafly-auth-input-wrapper input {
+  width: 100%;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid rgba(11, 43, 30, 0.18);
+  border-radius: 12px;
+  padding: 0 16px;
+  color: #0b2b1e;
+  font-size: 14.5px;
+  font-family: inherit;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(11, 43, 30, 0.02);
+  transition: all 250ms ease;
+}
+
+.leafly-auth-input-wrapper input:focus {
+  outline: none;
+  border-color: #c9a24b;
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.18);
+  background: #ffffff;
+}
+
+.leafly-auth-input-wrapper input::placeholder {
+  color: rgba(11, 43, 30, 0.36);
+}
+
+.leafly-auth-eye-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: rgba(11, 43, 30, 0.55);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 200ms ease;
+}
+
+.leafly-auth-eye-btn:hover {
+  color: #0b2b1e;
+}
+
+/* Premium Select Dropdown */
+.leafly-auth-select {
+  width: 100%;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid rgba(11, 43, 30, 0.18);
+  border-radius: 12px;
+  padding: 0 16px;
+  color: #0b2b1e;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 250ms ease;
+}
+
+.leafly-auth-select:focus {
+  outline: none;
+  border-color: #c9a24b;
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, 0.18);
+}
+
+.leafly-auth-select option {
+  background-color: #faf7f2;
+  color: #0b2b1e;
+  padding: 10px;
+}
+
+/* Checkbox Row */
+.leafly-auth-checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.leafly-auth-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  color: rgba(11, 43, 30, 0.82);
+  cursor: pointer;
+  user-select: none;
+}
+
+.leafly-auth-checkbox-label input[type="checkbox"] {
+  accent-color: #0b2b1e;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Submit Button */
+.leafly-auth-submit-btn {
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(135deg, #0b2b1e 0%, #174834 100%);
+  color: #f7f3ec;
+  border: 1px solid rgba(201, 162, 75, 0.35);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(11, 43, 30, 0.22);
+  transition: all 300ms ease;
+  margin-top: 4px;
+}
+
+.leafly-auth-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #174834 0%, #0b2b1e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(11, 43, 30, 0.32);
+}
+
+.leafly-auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.leafly-auth-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(247, 243, 236, 0.3);
+  border-top-color: #f7f3ec;
+  border-radius: 50%;
+  animation: leafly-spin 700ms linear infinite;
+}
+
+@keyframes leafly-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer Switch */
+.leafly-auth-switch {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: rgba(11, 43, 30, 0.75);
+}
+
+.leafly-auth-switch-link {
+  color: #9b7422;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 6px;
+  border-bottom: 1px solid transparent;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+
+.leafly-auth-switch-link:hover {
+  color: #6b4e10;
+  border-bottom-color: #6b4e10;
+}
+
+/* Security Shield Badge */
+.leafly-auth-security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(201, 162, 75, 0.22);
+  border-radius: 10px;
+  color: rgba(11, 43, 30, 0.75);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
+.leafly-auth-security-badge svg {
+  color: #a87d22;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   MODALS: SECURITY QUESTION & FORGOT PASSWORD
+   ========================================================= */
+
+.leafly-auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 43, 30, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  animation: leafly-fade-in 200ms ease;
+}
+
+.leafly-auth-modal-card {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  border-radius: 20px;
+  padding: 34px 30px;
+  box-shadow: 0 30px 70px rgba(11, 43, 30, 0.28);
+  position: relative;
+}
+
+.leafly-auth-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.leafly-auth-modal-kicker {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #9b7422;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.leafly-auth-modal-header h3 {
+  font-family: var(--font-display, "Georgia", serif);
+  font-size: 23px;
+  color: #0b2b1e;
+  margin: 0;
+  letter-spacing: 0.4px;
+}
+
+.leafly-auth-modal-close {
+  background: rgba(11, 43, 30, 0.06);
+  border: 1px solid rgba(11, 43, 30, 0.12);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: rgba(11, 43, 30, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 200ms ease;
+}
+
+.leafly-auth-modal-close:hover {
+  background: rgba(201, 162, 75, 0.2);
+  color: #0b2b1e;
+  border-color: #c9a24b;
+}
+
+.leafly-auth-modal-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(11, 43, 30, 0.75);
+  margin: 0 0 20px;
+}
+
+.leafly-auth-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.leafly-auth-modal-cancel {
+  flex: 1;
+  height: 48px;
+  background: rgba(11, 43, 30, 0.06);
+  border: 1px solid rgba(11, 43, 30, 0.15);
+  border-radius: 12px;
+  color: #0b2b1e;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 200ms ease;
+}
+
+.leafly-auth-modal-cancel:hover {
+  background: rgba(11, 43, 30, 0.12);
+}
+
+/* =========================================================
+   RESPONSIVE LAYOUT ADJUSTMENTS
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .leafly-auth-editorial-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 820px) {
+  .leafly-auth-main-editorial {
+    padding: 85px 18px 45px;
+  }
+
+  .leafly-auth-editorial-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .leafly-auth-hero-col {
+    text-align: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .leafly-auth-hero-desc {
+    margin: 0 auto 24px;
+  }
+
+  .leafly-auth-teapot-showcase {
+    margin: 0 auto;
+  }
+
+  .leafly-auth-liquid-card {
+    padding: 32px 24px 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .leafly-auth-main-editorial {
+    padding: 75px 14px 35px;
+  }
+
+  .leafly-auth-hero-heading {
+    font-size: 30px;
+  }
+
+  .leafly-auth-teapot-showcase {
+    display: none;
+  }
+
+  .leafly-auth-liquid-card {
+    padding: 26px 18px 22px;
+    border-radius: 18px;
+  }
+
+  .leafly-auth-card-title {
+    font-size: 24px;
+  }
+}
