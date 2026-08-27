@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext, type Order } from "../context/OrderContext";
 import { useCoupons } from "../context/CouponContext";
+import { useAuth } from "../context/AuthContext";
 import Footer from "../components/Footer";
 import "./Orders.css";
 
@@ -38,16 +39,37 @@ function getStatusBadgeStyle(status?: string): { background: string; color: stri
   return { background: "rgba(201, 162, 75, 0.15)", color: "#855a12", border: "1px solid rgba(201, 162, 75, 0.4)" };
 }
 
-function isOrderCancellable(status?: string): boolean {
-  if (!status) return true;
-  const norm = status.toLowerCase().trim();
-  return norm === "pending" || norm === "confirmed" || norm === "processing";
+const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+
+function getOrderCancellationState(order: Order): {
+  isCancelledOrDelivered: boolean;
+  isWithin2Hours: boolean;
+} {
+  const currentStatus = (order.orderStatus || order.status || "").toLowerCase().trim();
+  const isCancelledOrDelivered =
+    currentStatus === "cancelled" ||
+    currentStatus === "delivered" ||
+    currentStatus.includes("cancel") ||
+    currentStatus.includes("deliv");
+
+  const createdTime = new Date(order.createdAt).getTime();
+  const diff = Date.now() - createdTime;
+  const isWithin2Hours = !isNaN(createdTime) && diff <= TWO_HOURS_MS;
+
+  return { isCancelledOrDelivered, isWithin2Hours };
 }
 
 export default function Orders() {
   const navigate = useNavigate();
+  const { loading: authLoading, isAuthenticated } = useAuth();
   const { orders, cancelOrder } = useOrderContext();
   const { restoreCoupon } = useCoupons();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate("/login", { replace: true, state: { from: { pathname: "/orders" } } });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<Order | null>(null);
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
@@ -57,7 +79,16 @@ export default function Orders() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
+
   const handleCancel = async (order: Order) => {
+    const { isWithin2Hours } = getOrderCancellationState(order);
+    if (!isWithin2Hours) {
+      alert(
+        "Your tea is being packed now, so you can no longer cancel this order. The cancellation window was 2 hours."
+      );
+      return;
+    }
+
     const confirmCancel = window.confirm(
       `Are you sure you want to cancel Order #${order.id}? Any applied coupon will be restored to your account.`
     );
@@ -71,9 +102,13 @@ export default function Orders() {
       }
       setCancelFeedback(`Order #${order.id} has been cancelled successfully.`);
       setTimeout(() => setCancelFeedback(null), 5000);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Cancel order error:", err);
-      alert("Failed to cancel order. Please check your connection or contact support.");
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to cancel order. Please check your connection or contact support.";
+      alert(msg);
     } finally {
       setCancellingOrderId(null);
     }
@@ -107,7 +142,7 @@ export default function Orders() {
         <div className="orders-list">
           {sortedOrders.map((order) => {
             const currentStatus = order.orderStatus || order.status || "Processing";
-            const cancellable = isOrderCancellable(currentStatus);
+            const { isCancelledOrDelivered, isWithin2Hours } = getOrderCancellationState(order);
             const statusStyle = getStatusBadgeStyle(currentStatus);
 
             return (
@@ -236,15 +271,31 @@ export default function Orders() {
                     📄 View / Download Invoice
                   </button>
 
-                  {cancellable && (
-                    <button
-                      type="button"
-                      disabled={cancellingOrderId === order.id}
-                      className="orders-action-btn orders-cancel-btn"
-                      onClick={() => handleCancel(order)}
-                    >
-                      {cancellingOrderId === order.id ? "Cancelling..." : "✖ Cancel Order"}
-                    </button>
+                  {!isCancelledOrDelivered && (
+                    isWithin2Hours ? (
+                      <button
+                        type="button"
+                        disabled={cancellingOrderId === order.id}
+                        className="orders-action-btn orders-cancel-btn"
+                        onClick={() => handleCancel(order)}
+                      >
+                        {cancellingOrderId === order.id ? "Cancelling..." : "✖ Cancel Order"}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={true}
+                        className="orders-action-btn orders-cancel-btn orders-cancel-btn-disabled"
+                        title="Your tea is being packed now, so you can no longer cancel this order. The cancellation window was 2 hours."
+                        onClick={() =>
+                          alert(
+                            "Your tea is being packed now, so you can no longer cancel this order. The cancellation window was 2 hours."
+                          )
+                        }
+                      >
+                        ✖ Cancel Window Expired
+                      </button>
+                    )
                   )}
                 </div>
               </article>

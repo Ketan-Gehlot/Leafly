@@ -1,15 +1,15 @@
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--leafly-ivory);
-  color: var(--leafly-forest);
-  font-family: var(--font-body);
+  background-color: var(--leafly-ivory, #f7f3ec);
+  color: var(--leafly-forest, #0b2b1e);
+  font-family: var(--font-body, Inter, sans-serif);
 }
 
 .admin-sidebar {
   width: 260px;
-  background-color: var(--leafly-forest);
-  color: var(--leafly-ivory);
+  background-color: var(--leafly-forest, #0b2b1e);
+  color: var(--leafly-ivory, #f7f3ec);
   display: flex;
   flex-direction: column;
 }
@@ -20,7 +20,7 @@
 }
 
 .admin-brand h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-display, Georgia, serif);
   font-size: 1.5rem;
   font-weight: 400;
   letter-spacing: 0.05em;
@@ -45,13 +45,13 @@
 }
 
 .admin-nav button:hover:not(:disabled) {
-  color: var(--leafly-gold);
+  color: var(--leafly-gold, #c9a24b);
   background-color: rgba(247, 243, 236, 0.05);
 }
 
 .admin-nav button.active {
-  color: var(--leafly-gold);
-  border-left: 3px solid var(--leafly-gold);
+  color: var(--leafly-gold, #c9a24b);
+  border-left: 3px solid var(--leafly-gold, #c9a24b);
   background-color: rgba(247, 243, 236, 0.05);
 }
 
@@ -69,11 +69,12 @@
 .admin-back-link {
   color: rgba(247, 243, 236, 0.7);
   font-size: 0.95rem;
+  text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .admin-back-link:hover {
-  color: var(--leafly-gold);
+  color: var(--leafly-gold, #c9a24b);
 }
 
 .admin-main {
@@ -83,12 +84,12 @@
 }
 
 .admin-main h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-display, Georgia, serif);
   font-size: 2.5rem;
   font-weight: 400;
   margin-top: 0;
   margin-bottom: 2rem;
-  color: var(--leafly-forest);
+  color: var(--leafly-forest, #0b2b1e);
 }
 
 /* Dashboard Stats */
@@ -116,10 +117,10 @@
 }
 
 .admin-stat-card p {
-  font-family: var(--font-display);
+  font-family: var(--font-display, Georgia, serif);
   font-size: 2.5rem;
   margin: 0 0 0.5rem 0;
-  color: var(--leafly-forest);
+  color: var(--leafly-forest, #0b2b1e);
 }
 
 .admin-stat-badge {
@@ -133,6 +134,11 @@
 .admin-stat-badge.positive {
   background-color: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
+}
+
+.admin-stat-badge.negative {
+  background-color: rgba(229, 62, 62, 0.1);
+  color: #e53e3e;
 }
 
 /* Dashboard Row */
@@ -153,11 +159,11 @@
 }
 
 .admin-analytics-section h2, .admin-recent-orders-section h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-display, Georgia, serif);
   font-size: 1.5rem;
   margin-top: 0;
   margin-bottom: 1.5rem;
-  color: var(--leafly-forest);
+  color: var(--leafly-forest, #0b2b1e);
 }
 
 .admin-chart {
@@ -181,14 +187,14 @@
 
 .admin-chart-bar {
   width: 40px;
-  background-color: var(--leafly-gold);
+  background-color: var(--leafly-gold, #c9a24b);
   border-radius: 4px 4px 0 0;
   transition: height 0.5s ease, background-color 0.2s;
   cursor: pointer;
 }
 
 .admin-chart-bar:hover {
-  background-color: var(--leafly-forest);
+  background-color: var(--leafly-forest, #0b2b1e);
 }
 
 .admin-chart-label {
@@ -201,7 +207,7 @@
 .admin-chart-tooltip {
   position: absolute;
   top: -30px;
-  background: var(--leafly-forest);
+  background: var(--leafly-forest, #0b2b1e);
   color: white;
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
@@ -256,6 +262,11 @@
   color: #2e7d32;
 }
 
+.admin-status-badge.cancelled {
+  background-color: rgba(229, 62, 62, 0.1);
+  color: #c53030;
+}
+
 /* Products Header */
 .admin-products-header {
   display: flex;
@@ -265,8 +276,8 @@
 }
 
 .admin-btn-primary {
-  background-color: var(--leafly-forest);
-  color: var(--leafly-ivory);
+  background-color: var(--leafly-forest, #0b2b1e);
+  color: var(--leafly-ivory, #f7f3ec);
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
@@ -277,14 +288,14 @@
 }
 
 .admin-btn-primary:hover {
-  background-color: var(--leafly-gold);
+  background-color: var(--leafly-gold, #c9a24b);
 }
 
 .admin-btn-secondary {
   background-color: transparent;
-  color: var(--leafly-forest);
+  color: var(--leafly-forest, #0b2b1e);
   padding: 0.5rem 1rem;
-  border: 1px solid var(--leafly-forest);
+  border: 1px solid var(--leafly-forest, #0b2b1e);
   border-radius: 4px;
   font-size: 0.85rem;
   cursor: pointer;
@@ -329,7 +340,7 @@
   height: 50px;
   object-fit: cover;
   border-radius: 4px;
-  background-color: var(--leafly-ivory);
+  background-color: var(--leafly-ivory, #f7f3ec);
 }
 
 /* Forms */
@@ -368,21 +379,23 @@
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   padding: 0.75rem 1rem;
   border: 1px solid rgba(11, 43, 30, 0.2);
   border-radius: 4px;
-  font-family: var(--font-body);
+  font-family: var(--font-body, Inter, sans-serif);
   font-size: 1rem;
-  color: var(--leafly-forest);
+  color: var(--leafly-forest, #0b2b1e);
   background-color: transparent;
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
-  border-color: var(--leafly-gold);
-  box-shadow: 0 0 0 1px var(--leafly-gold);
+  border-color: var(--leafly-gold, #c9a24b);
+  box-shadow: 0 0 0 1px var(--leafly-gold, #c9a24b);
 }
 
 .form-actions {
@@ -392,6 +405,118 @@
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid rgba(11, 43, 30, 0.1);
+}
+
+.admin-status-select {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  cursor: pointer;
+  color: var(--leafly-forest, #0b2b1e);
+}
+
+.admin-status-select.processing {
+  background-color: #fefcbf;
+  color: #b7791f;
+  border-color: #f6e05e;
+}
+
+.admin-status-select.shipped {
+  background-color: #ebf8ff;
+  color: #2b6cb0;
+  border-color: #90cdf4;
+}
+
+.admin-status-select.delivered {
+  background-color: #f0fff4;
+  color: #2f855a;
+  border-color: #9ae6b4;
+}
+
+.admin-status-select.cancelled {
+  background-color: #fff5f5;
+  color: #c53030;
+  border-color: #feb2b2;
+}
+
+/* Modal */
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 43, 30, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.admin-modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(11, 43, 30, 0.1);
+}
+
+.admin-modal-header h2 {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.5rem;
+  color: var(--leafly-forest, #0b2b1e);
+}
+
+.admin-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: rgba(11, 43, 30, 0.5);
+  transition: color 0.2s;
+}
+
+.admin-modal-close:hover {
+  color: var(--leafly-forest, #0b2b1e);
+}
+
+.admin-modal-body {
+  padding: 2rem;
+}
+
+.admin-order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.admin-order-grid h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(11, 43, 30, 0.6);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.admin-order-grid p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
 }
 
 /* =========================================================
@@ -437,7 +562,7 @@
 
   .admin-nav button.active {
     border-left: none;
-    border-bottom: 2px solid var(--leafly-gold);
+    border-bottom: 2px solid var(--leafly-gold, #c9a24b);
   }
 
   .admin-sidebar-footer {
@@ -516,4 +641,118 @@
     font-size: 0.82rem;
     padding: 0.5rem 0.75rem;
   }
+}
+
+/* =========================================================
+   ADMIN ACCOUNTS SECTION STYLING
+   ========================================================= */
+
+.admin-filter-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.admin-search-box {
+  flex: 1;
+  min-width: 260px;
+  position: relative;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-left: 2.25rem;
+  border: 1px solid rgba(11, 43, 30, 0.2);
+  border-radius: 6px;
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: 0.95rem;
+  color: var(--leafly-forest, #0b2b1e);
+  background-color: white;
+  transition: all 0.2s ease;
+}
+
+.admin-search-input:focus {
+  outline: none;
+  border-color: var(--leafly-gold, #c9a24b);
+  box-shadow: 0 0 0 1px var(--leafly-gold, #c9a24b);
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(11, 43, 30, 0.4);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.admin-filter-select {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid rgba(11, 43, 30, 0.2);
+  border-radius: 6px;
+  background-color: white;
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: 0.9rem;
+  color: var(--leafly-forest, #0b2b1e);
+  cursor: pointer;
+}
+
+.admin-filter-select:focus {
+  outline: none;
+  border-color: var(--leafly-gold, #c9a24b);
+}
+
+.admin-account-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.admin-account-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--leafly-forest, #0b2b1e);
+  color: var(--leafly-gold, #c9a24b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(201, 162, 75, 0.3);
+  flex-shrink: 0;
+}
+
+.admin-auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.admin-auth-badge.google {
+  background-color: rgba(66, 133, 244, 0.1);
+  color: #1a73e8;
+  border: 1px solid rgba(66, 133, 244, 0.25);
+}
+
+.admin-auth-badge.email {
+  background-color: rgba(11, 43, 30, 0.08);
+  color: var(--leafly-forest, #0b2b1e);
+  border: 1px solid rgba(11, 43, 30, 0.15);
+}
+
+.admin-status-badge.active {
+  background-color: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+  border: 1px solid rgba(46, 125, 50, 0.2);
 }

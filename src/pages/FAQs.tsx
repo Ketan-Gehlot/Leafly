@@ -9,7 +9,7 @@ type FaqCategory =
   | "Brewing & Tea Maker"
   | "Orders & Tracking"
   | "Shipping & Delivery"
-  | "Returns & Guarantees";
+  | "Returns & Quality Policy";
 
 interface FaqItem {
   id: string;
@@ -44,7 +44,7 @@ const FAQ_DATA: FaqItem[] = [
     id: "brew-1",
     category: "Brewing & Tea Maker",
     question: "Can I re-steep whole leaf teas multiple times?",
-    answer: "Yes! High-altitude orthodox whole leaves are crafted for multiple infusions. Delicate green and white teas can be steeped 2 to 3 times, while high-mountain oolongs and aged pu-erhs can yield 4 to 6 sublime steepings, evolving with subtle new notes each time."
+    answer: "Yes! High-altitude orthodox whole leaves are crafted for multiple infusions. Delicate green and white teas can be steeped 2 to 3 times, while high-mountain oolongs and select single-estate black teas can yield 4 to 6 sublime steepings, evolving with subtle new notes each time."
   },
   {
     id: "brew-2",
@@ -56,7 +56,7 @@ const FAQ_DATA: FaqItem[] = [
     id: "brew-3",
     category: "Brewing & Tea Maker",
     question: "What water temperature should I use for green and white teas?",
-    answer: "Delicate green and white teas should never be brewed with boiling water, which can scald tender buds and release harsh tannins. We recommend 75°C–80°C for White & Green teas, 85°C–90°C for Oolongs, and 95°C–100°C for robust Black & Pu-erh teas."
+    answer: "Delicate green and white teas should never be brewed with boiling water, which can scald tender buds and release harsh tannins. We recommend 75°C–80°C for White & Green teas, 85°C–90°C for Oolongs, and 95°C–100°C for robust Black teas."
   },
 
   // Orders & Tracking
@@ -70,7 +70,7 @@ const FAQ_DATA: FaqItem[] = [
     id: "order-2",
     category: "Orders & Tracking",
     question: "What payment methods are supported?",
-    answer: "We support UPI (Google Pay, PhonePe, Paytm, BHIM), all major Credit/Debit Cards (Visa, Mastercard, RuPay, American Express), Net Banking across 50+ Indian banks, and Cash on Delivery (COD)."
+    answer: "We support UPI (Google Pay, PhonePe, Paytm, BHIM), all major Credit/Debit Cards (Visa, Mastercard, RuPay, American Express), Net Banking across 50+ Indian banks, and Pay on Delivery."
   },
   {
     id: "order-3",
@@ -93,16 +93,16 @@ const FAQ_DATA: FaqItem[] = [
     answer: "Yes, we ship select collections internationally. For custom orders, phytosanitary requirements, and overseas shipping quotes, please reach out to hello@leaflytea.in."
   },
 
-  // Returns & Guarantees
+  // Returns & Quality Policy
   {
     id: "ret-1",
-    category: "Returns & Guarantees",
-    question: "What is the Leafly Freshness & Taste Guarantee?",
+    category: "Returns & Quality Policy",
+    question: "What is the Leafly Quality & Taste Policy?",
     answer: "If your tea arrives with a compromised aroma seal, damaged box, or does not meet our pristine harvest standards, email us within 7 days of delivery. We will immediately dispatch a fresh replacement or issue 100% store credit — no return shipping friction."
   },
   {
     id: "ret-2",
-    category: "Returns & Guarantees",
+    category: "Returns & Quality Policy",
     question: "How do I report a damaged or defective teaware item?",
     answer: "In the rare event that glassware or ceramics arrive damaged during transit, please take 2–3 photos of the box and product and email hello@leaflytea.in within 48 hours. We will send an expedited replacement right away."
   }
@@ -114,7 +114,7 @@ const categories: FaqCategory[] = [
   "Brewing & Tea Maker",
   "Orders & Tracking",
   "Shipping & Delivery",
-  "Returns & Guarantees",
+  "Returns & Quality Policy",
 ];
 
 export default function FAQs() {

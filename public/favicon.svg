@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="leafly-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#061811" />
+      <stop offset="100%" stop-color="#0b2b1e" />
+    </linearGradient>
+    <linearGradient id="leafly-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8c97e" />
+      <stop offset="50%" stop-color="#c9a24b" />
+      <stop offset="100%" stop-color="#b8860b" />
+    </linearGradient>
+  </defs>
+
+  <!-- Circular Badge -->
+  <circle cx="32" cy="32" r="30" fill="url(#leafly-bg)" stroke="#c9a24b" stroke-width="2" />
+
+  <!-- Inner delicate ring -->
+  <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(201, 162, 75, 0.3)" stroke-width="0.75" stroke-dasharray="2 2" />
+
+  <!-- Official Leafly Butterfly Silhouette Scaled and Centered -->
+  <g transform="translate(14, 18) scale(1.125)">
+    <!-- Top-Left Wing -->
+    <path d="M16 12C11 4 3 3 3 8.5C3 13 10 14 16 13" fill="url(#leafly-gold)" />
+    <!-- Top-Right Wing -->
+    <path d="M16 12C21 4 29 3 29 8.5C29 13 22 14 16 13" fill="url(#leafly-gold)" />
+    <!-- Bottom-Left Wing -->
+    <path d="M16 12C12 15 7 19 9.5 21C12 23 15 17 16 13" fill="url(#leafly-gold)" />
+    <!-- Bottom-Right Wing -->
+    <path d="M16 12C20 15 25 19 22.5 21C20 23 17 17 16 13" fill="url(#leafly-gold)" />
+    <!-- Butterfly Center Core -->
+    <ellipse cx="16" cy="13" rx="1.4" ry="5.2" fill="#f7f3ec" />
+  </g>
+</svg>

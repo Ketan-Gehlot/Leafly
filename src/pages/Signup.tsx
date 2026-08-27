@@ -11,7 +11,6 @@ const TEA_OPTIONS = [
   "White Tea",
   "Black Tea",
   "Oolong Tea",
-  "Pu-erh Tea",
   "Herbal / Botanical",
 ];
 
@@ -227,7 +226,7 @@ export default function Signup() {
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Aarav Kapoor"
+                      placeholder="Your full name"
                       autoComplete="name"
                       required
                       disabled={isLoading}

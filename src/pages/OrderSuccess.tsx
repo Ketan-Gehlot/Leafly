@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
 import Footer from "../components/Footer";
@@ -13,7 +14,25 @@ export default function OrderSuccess() {
   const navigate = useNavigate();
   const { latestOrder } = useOrderContext();
 
+  const [showRatingModal, setShowRatingModal] = useState(true);
+  const [rating, setRating] = useState<number>(5);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const order = latestOrder;
+
+  const handleSubmitRating = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    setTimeout(() => {
+      setShowRatingModal(false);
+    }, 1800);
+  };
+
+  const handleSkipRating = () => {
+    setShowRatingModal(false);
+  };
 
   if (!order) {
     return (
@@ -104,6 +123,72 @@ export default function OrderSuccess() {
           </button>
         </div>
       </div>
+
+      {/* =====================================================
+          RATE YOUR EXPERIENCE MODAL
+          ===================================================== */}
+      {showRatingModal && (
+        <div className="order-rating-overlay" role="dialog" aria-modal="true" aria-labelledby="rating-modal-title">
+          <div className="order-rating-modal">
+            <button
+              type="button"
+              className="order-rating-close"
+              onClick={handleSkipRating}
+              aria-label="Close rating modal"
+            >
+              ×
+            </button>
+
+            {isSubmitted ? (
+              <div className="order-rating-success">
+                <div className="order-rating-success-icon">✓</div>
+                <h3>Thank You!</h3>
+                <p>Your rating helps us perfect the Leafly tea ritual for everyone.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitRating} className="order-rating-form">
+                <p className="order-rating-kicker">✦ FEEDBACK</p>
+                <h3 id="rating-modal-title">Rate Your Experience</h3>
+                <p className="order-rating-sub">How was your checkout and ordering experience today?</p>
+
+                <div className="order-rating-stars" role="radiogroup" aria-label="Rating from 1 to 5 stars">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className={`order-star-btn ${(hoverRating ?? rating) >= star ? "active" : ""}`}
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(null)}
+                      aria-label={`${star} star${star > 1 ? "s" : ""}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  className="order-rating-textarea"
+                  placeholder="Optional: What did you enjoy or how can we improve?"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  rows={3}
+                />
+
+                <div className="order-rating-actions">
+                  <button type="button" className="order-rating-skip-btn" onClick={handleSkipRating}>
+                    Maybe Later
+                  </button>
+                  <button type="submit" className="order-rating-submit-btn">
+                    Submit Rating
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
       <Footer />
     </main>
   );

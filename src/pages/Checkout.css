@@ -142,22 +142,83 @@
   color: rgba(11, 43, 30, 0.75);
 }
 
-.checkout-field input {
+.checkout-field input,
+.checkout-field select,
+.checkout-field textarea,
+select.checkout-select,
+select.leafly-auth-select {
   width: 100%;
-  min-height: 44px;
-  padding: 11px 12px;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px 14px;
   border: 1px solid rgba(11, 43, 30, 0.16);
-  border-radius: 8px;
-  background: #fffdf9;
+  border-radius: var(--leafly-radius-md, 12px);
+  background-color: #fffdf9;
   color: #0b2b1e;
   font: inherit;
-  transition: border-color 180ms ease, box-shadow 180ms ease;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 1px 2px rgba(11, 43, 30, 0.03);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
 }
 
-.checkout-field input:focus {
+.checkout-field select,
+select.checkout-select,
+select.leafly-auth-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230b2b1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 16px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.checkout-field select option,
+select.checkout-select option,
+select.leafly-auth-select option {
+  background-color: #ffffff;
+  color: #0b2b1e;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.checkout-field textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.checkout-field input:hover,
+.checkout-field select:hover,
+.checkout-field textarea:hover,
+select.checkout-select:hover,
+select.leafly-auth-select:hover {
+  border-color: rgba(201, 162, 75, 0.7);
+}
+
+.checkout-field input:focus,
+.checkout-field select:focus,
+.checkout-field textarea:focus,
+select.checkout-select:focus,
+select.leafly-auth-select:focus {
   outline: none;
-  border-color: rgba(201, 162, 75, 0.8);
-  box-shadow: 0 0 0 4px rgba(201, 162, 75, 0.18);
+  border-color: rgba(201, 162, 75, 0.9);
+  box-shadow: 0 0 0 3.5px rgba(201, 162, 75, 0.22);
+  background-color: #ffffff;
+}
+
+.checkout-field input[aria-invalid="true"],
+.checkout-field select[aria-invalid="true"],
+.checkout-field textarea[aria-invalid="true"],
+select.checkout-select[aria-invalid="true"],
+select.leafly-auth-select[aria-invalid="true"] {
+  border-color: #b62d2d;
+  box-shadow: 0 0 0 3px rgba(182, 45, 45, 0.15);
+  background-color: #fffafa;
 }
 
 .checkout-field small,

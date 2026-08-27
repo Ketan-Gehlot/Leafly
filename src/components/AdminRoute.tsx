@@ -17,10 +17,11 @@ export default function AdminRoute({ children }: AdminRouteProps) {
     );
   }
 
-  const isAuthorizedAdmin = isAuthenticated && (user?.isAdmin === true || user?.email === 'leaflydatabase@gmail.com');
+  const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'leaflydatabase@gmail.com';
+  const isAuthorizedAdmin = isAuthenticated && (user?.isAdmin === true || user?.email?.toLowerCase() === adminEmail.toLowerCase());
 
   if (!isAuthorizedAdmin) {
-    return <Navigate to='/login' state={{ from: location }} replace />;
+    return <Navigate to='/admin/login' state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

@@ -1019,6 +1019,50 @@
   cursor: wait;
 }
 
+.product-qty-stepper {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  background: #0b2b1e;
+  color: #f7f3ec;
+  padding: 0 4px;
+  box-shadow: 0 4px 12px rgba(11, 43, 30, 0.12);
+}
+
+.product-qty-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #c9a24b;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 180ms ease;
+  padding: 0;
+}
+
+.product-qty-btn:hover {
+  background: rgba(201, 162, 75, 0.22);
+  color: #ffffff;
+}
+
+.product-qty-value {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #f7f3ec;
+  min-width: 20px;
+  text-align: center;
+}
+
 
 /* =========================================================
    CART SPINNER

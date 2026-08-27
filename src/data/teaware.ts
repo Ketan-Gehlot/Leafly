@@ -168,7 +168,7 @@ export const teawareProducts: TeawareItem[] = [
     reviewCount: 32,
     badge: "Premium",
     image: marbleTeapotImg,
-    description: "Handcrafted stoneware teapot finished in a serene natural marble-veined glaze. Superior heat retention makes it the perfect vessel for full-bodied black teas, oolongs, and pu-erhs.",
+    description: "Handcrafted stoneware teapot finished in a serene natural marble-veined glaze. Superior heat retention makes it the perfect vessel for full-bodied black teas and artisanal oolongs.",
     features: [
       "Dense stoneware walls retain steady brewing temperature",
       "Built-in multi-hole ceramic filter inside the spout base",

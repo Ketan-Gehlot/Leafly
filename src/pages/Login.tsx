@@ -9,7 +9,7 @@ import "./Login.css";
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, loginWithGoogle, isAuthenticated, user } = useAuth();
+  const { login, loginWithGoogle, sendPasswordReset, isAuthenticated, user } = useAuth();
 
   // Email / Password Form State
   const [email, setEmail] = useState("");
@@ -67,7 +67,7 @@ export default function Login() {
 
     try {
       await login(cleanEmail, password);
-      setSuccessMessage("Welcome back to Leafly Sanctuary!");
+      setSuccessMessage("Welcome back to Leafly!");
       const from = (location.state as { from?: { pathname?: string } })?.from?.pathname;
       setTimeout(() => {
         if (cleanEmail.toLowerCase() === "leaflydatabase@gmail.com") {
@@ -103,7 +103,7 @@ export default function Login() {
     }
   };
 
-  // Forgot Password Step 1: Request Verification Code
+  // Forgot Password Step 1: Request Verification / Reset Link
   const handleSendResetCode = async (e: FormEvent) => {
     e.preventDefault();
     setForgotMessage(null);
@@ -121,14 +121,20 @@ export default function Login() {
     }
 
     setForgotLoading(true);
-    setTimeout(() => {
-      setForgotStep("verify");
+    try {
+      await sendPasswordReset(cleanForgot);
       setForgotMessage({
         type: "success",
-        text: "A 6-digit verification code has been dispatched to your email.",
+        text: "A password reset link has been dispatched to your email. Please check your inbox and spam folder.",
       });
+    } catch (err: unknown) {
+      setForgotMessage({
+        type: "error",
+        text: formatAuthError(err),
+      });
+    } finally {
       setForgotLoading(false);
-    }, 600);
+    }
   };
 
   // Forgot Password Step 2: Verify Code and Set New Password
@@ -226,7 +232,6 @@ export default function Login() {
             <div className="leafly-auth-liquid-card">
               {/* Card Heading */}
               <div className="leafly-auth-card-header">
-                <span className="leafly-auth-card-eyebrow">SANCTUARY ACCESS</span>
                 <h2 className="leafly-auth-card-title">Welcome Back</h2>
                 <p className="leafly-auth-card-subtitle">
                   Login to access your Leafly account, ceremonial tea harvests, and saved brewing rituals.

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import "./WhyLeafly.css";
@@ -6,112 +5,8 @@ import "./WhyLeafly.css";
 export default function WhyLeafly() {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState<boolean>(() => {
-    try {
-      if (typeof window === "undefined") return false;
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      return !prefersReducedMotion;
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    if (!loading) return;
-
-    // Snappy, elegant page transition (300ms on mobile, 450ms on desktop)
-    const isMobile = window.innerWidth <= 768;
-    const duration = isMobile ? 300 : 450;
-
-    const timer = window.setTimeout(() => {
-      setLoading(false);
-    }, duration);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [loading]);
-
-  const handleDismissLoader = () => {
-    setLoading(false);
-  };
-
   return (
     <main className="why-leafly-page">
-
-      {/* =====================================================
-          TEA POURING INTRO (Fast & Session-aware)
-      ===================================================== */}
-
-      {loading && (
-        <div
-          className="why-loader"
-          aria-label="Preparing your tea"
-          onClick={handleDismissLoader}
-          role="status"
-        >
-
-          <div className="why-loader-inner">
-
-            <div className="why-loader-brand">
-              LEAFLY
-            </div>
-
-            <div className="why-loader-scene">
-
-              {/* TEA POUCH */}
-
-              <div className="tea-pouch">
-
-                <div className="tea-pouch-top" />
-
-                <div className="tea-pouch-label">
-                  <span>LEAFLY</span>
-                  <small>WHOLE LEAF TEA</small>
-                </div>
-
-              </div>
-
-
-              {/* POURING STREAM */}
-
-              <div className="tea-stream" />
-
-
-              {/* CUP */}
-
-              <div className="tea-cup">
-
-                <div className="tea-cup-rim">
-
-                  <div className="tea-surface" />
-
-                </div>
-
-                <div className="tea-cup-body" />
-
-                <div className="tea-cup-handle" />
-
-              </div>
-
-
-              {/* STEAM */}
-
-              <div className="tea-steam tea-steam-one" />
-              <div className="tea-steam tea-steam-two" />
-              <div className="tea-steam tea-steam-three" />
-
-            </div>
-
-
-            <p className="why-loader-text">
-              POURING SOMETHING WORTH SLOWING DOWN FOR
-            </p>
-
-          </div>
-
-        </div>
-      )}
 
 
       {/* =====================================================

@@ -137,11 +137,34 @@ export default function Contact() {
     setIsSubmitting(true);
     setErrors({});
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const endpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "https://formspree.io/f/leaflydatabase@gmail.com";
+      await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          recipient: "leaflydatabase@gmail.com",
+          formSource: "Leafly Contact Us Page",
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
       setIsSubmitted(true);
       setFormData(initialForm);
-    }, 400);
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+      setIsSubmitted(true);
+      setFormData(initialForm);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleBackToTop = () => {

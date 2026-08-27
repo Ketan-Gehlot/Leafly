@@ -21,14 +21,12 @@ import cupImg from "../assets/tea-maker/vessels/cup-tea.webp";
 import pouringGreenImg from "../assets/pouring-green.webp";
 import pouringWhiteImg from "../assets/pouring-white.webp";
 import pouringBlackImg from "../assets/pouring-black.webp";
-import pouringPuerhImg from "../assets/pouring-purerh.webp";
 
 // Category-specific finished tea ready images
 import greenTeaMakerImg from "../assets/green-tea-maker.webp";
 import whiteTeaMakerImg from "../assets/white-tea-maker.webp";
 import blackTeaMakerImg from "../assets/black-tea-maker.webp";
 import oolongTeaMakerImg from "../assets/oolong-tea-maker.webp";
-import puerhTeaMakerImg from "../assets/puerh-tea-maker.webp";
 
 import lemonSliceEffect from "../assets/tea-maker/effects/lemon-slice.webp";
 import mintLeafEffect from "../assets/tea-maker/effects/mint-leaf.webp";
@@ -39,7 +37,7 @@ import saltParticlesEffect from "../assets/tea-maker/effects/salt-particles.webp
 import honeyDropEffect from "../assets/tea-maker/effects/honey-drop.webp";
 import teaLeavesFallingEffect from "../assets/tea-maker/effects/tea-leaves-falling.webp";
 
-export type TeaType = "Green" | "White" | "Black" | "Oolong" | "Pu-erh";
+export type TeaType = "Green" | "White" | "Black" | "Oolong";
 export type TeaStrength = "Light" | "Balanced" | "Strong";
 
 export type IngredientId =
@@ -208,22 +206,6 @@ const TEA_CATEGORIES: Record<TeaType, TeaCategoryInfo> = {
     image: "/leafly-oolong-tea.webp",
     pouringImage: pouringBlackImg,
     readyImage: oolongTeaMakerImg,
-  },
-  "Pu-erh": {
-    type: "Pu-erh",
-    title: "Pu-erh Tea",
-    tagline: "Deep & Earthy · Restorative slow-aged vintage complexity.",
-    defaultTemp: 98,
-    defaultTimeSec: 300,
-    lightColor: "#8f442b",
-    balancedColor: "#612312",
-    strongColor: "#3e1207",
-    leafColor: "#22130c",
-    notes: "Petrichor · Dark Cocoa · Earthy Forest Moss",
-    matchedProductId: 5,
-    image: "/leafly-puer-tea.webp",
-    pouringImage: pouringPuerhImg,
-    readyImage: puerhTeaMakerImg,
   },
 };
 
@@ -541,20 +523,11 @@ export default function TeaMaker() {
         opacity: Math.min(1, 0.92 * progressFactor),
       };
     }
-    if (selectedTea === "Oolong") {
-      return {
-        top: "#f5d098",
-        mid: targetMid,
-        bottom: "#85490a",
-        opacity: Math.min(1, 0.88 * progressFactor),
-      };
-    }
-    // Pu-erh
     return {
-      top: "#b85c3f",
+      top: "#f5d098",
       mid: targetMid,
-      bottom: "#350e04",
-      opacity: Math.min(1, 0.95 * progressFactor),
+      bottom: "#85490a",
+      opacity: Math.min(1, 0.88 * progressFactor),
     };
   };
 

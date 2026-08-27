@@ -61,17 +61,6 @@ const collections: TeaCollection[] = [
     origin: "Darjeeling",
     image: "/leafly-oolong-tea.webp",
   },
-  {
-    id: "puerh",
-    name: "Pu-erh",
-    subtitle: "Earthy · Mature · Deep",
-    description:
-      "Rich, earthy teas with a mature character that rewards patience and repeated steeping.",
-    character: "Earthy & smooth",
-    caffeine: "Medium",
-    origin: "Assam",
-    image: "/leafly-puer-tea.webp",
-  },
 ];
 
 const featuredProducts = [
@@ -180,8 +169,8 @@ export default function TeaCollections() {
           </h1>
 
           <p className="collections-hero-description">
-            From bright green teas to deep,
-            earthy pu-erh, explore our
+            From bright green teas to complex,
+            aromatic oolongs, explore our
             collection by character, origin
             and ritual.
           </p>
@@ -203,7 +192,7 @@ export default function TeaCollections() {
           </p>
 
           <h2>
-            Five expressions
+            Four expressions
             <br />
             of the leaf.
           </h2>
@@ -473,14 +462,14 @@ export default function TeaCollections() {
 
             <p>
               Bold black teas and mature
-              pu-erh for slower evenings.
+              oolongs for slower evenings.
             </p>
 
             <div className="ritual-recommendation">
               <span className="ritual-rec-label">Recommended:</span>
               <div className="ritual-rec-tags">
                 <span className="ritual-tag">Black Tea</span>
-                <span className="ritual-tag">Pu-erh</span>
+                <span className="ritual-tag">Oolong</span>
               </div>
             </div>
 

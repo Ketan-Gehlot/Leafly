@@ -1,0 +1,145 @@
+/* =========================================================
+   LEAFLY — PRIVACY POLICY & TERMS STYLING
+   ========================================================= */
+
+.privacy-policy-page,
+.terms-conditions-page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--leafly-cream, #f7f3ec);
+  color: var(--leafly-text, #0b2b1e);
+  box-sizing: border-box;
+}
+
+.policy-hero {
+  padding: clamp(6rem, 10vw, 8.5rem) var(--leafly-page-gutter, 1.5rem) 3.5rem;
+  background: radial-gradient(circle at 50% 20%, rgba(201, 162, 75, 0.12) 0%, transparent 70%),
+    linear-gradient(180deg, #f2ece1 0%, #f7f3ec 100%);
+  text-align: center;
+  border-bottom: 1px solid rgba(11, 43, 30, 0.07);
+}
+
+.policy-hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.policy-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22rem;
+  color: var(--leafly-gold, #c9a24b);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.policy-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.policy-ornament span {
+  width: 40px;
+  height: 1px;
+  background: rgba(201, 162, 75, 0.35);
+}
+
+.policy-ornament b {
+  color: var(--leafly-gold, #c9a24b);
+  font-size: 0.8rem;
+}
+
+.policy-hero h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.08;
+  font-weight: 400;
+  color: var(--leafly-deep-green, #0b2b1e);
+  margin: 0 0 1.25rem;
+}
+
+.policy-hero h1 em {
+  font-style: italic;
+  color: var(--leafly-gold, #c9a24b);
+}
+
+.policy-hero-sub {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: rgba(11, 43, 30, 0.75);
+  margin: 0 auto;
+}
+
+.policy-content-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem var(--leafly-page-gutter, 1.5rem) 6rem;
+}
+
+.policy-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.policy-section {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(11, 43, 30, 0.08);
+  border-radius: 16px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 10px 30px rgba(11, 43, 30, 0.03);
+}
+
+.policy-section-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--leafly-gold, #c9a24b);
+  letter-spacing: 0.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.policy-section h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  color: var(--leafly-deep-green, #0b2b1e);
+  margin: 0 0 1rem;
+  font-weight: 400;
+}
+
+.policy-section p {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: rgba(11, 43, 30, 0.8);
+  margin: 0 0 1rem;
+}
+
+.policy-section p:last-child {
+  margin-bottom: 0;
+}
+
+.policy-section ul {
+  margin: 0.75rem 0 1rem;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.policy-section li {
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: rgba(11, 43, 30, 0.8);
+}
+
+.policy-section a {
+  color: var(--leafly-gold, #c9a24b);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

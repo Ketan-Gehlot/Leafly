@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useMemo, useState, useEffect, useRef, type ReactNode, type ChangeEvent } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
-import { useCoupons } from "../context/CouponContext";
-import { useAuth, type AuthUser } from "../context/AuthContext";
-import defaultAvatarImg from "../assets/leafly-logo.webp";
+import { useAuth } from "../context/AuthContext";
 import mainImage from "../assets/main.webp";
 import image2 from "../assets/image2.webp";
 import image3 from "../assets/image3.webp";
@@ -17,21 +15,14 @@ type SidebarItemId =
   | "overview"
   | "details"
   | "orders"
-  | "preferences"
   | "coupons"
   | "notifications"
   | "security";
 
-type DetailField = "fullName" | "email" | "favoriteTea" | "phone" | "dob" | "gender";
-
-type DetailsState = Record<DetailField, string>;
-
-type PreferencesState = {
-  favoriteTypes: string;
-  flavorNotes: string;
-  caffeinePreference: string;
-  brewingStyle: string;
-  timeOfDay: string;
+type DetailsState = {
+  fullName: string;
+  email: string;
+  phone: string;
 };
 
 type NotificationPreferences = {
@@ -80,16 +71,7 @@ const sidebarItems: SidebarItem[] = [
     label: "Orders",
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6 3h12l2 5v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8l2-5Zm0 5h12M9 12h6" />
-      </svg>
-    ),
-  },
-  {
-    id: "preferences",
-    label: "Preferences",
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-5v-4m0-4h.01" />
+        <path d="M7 4h10l2 4v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8l2-4Zm0 6h10M9 2h6v2H9V2Z" />
       </svg>
     ),
   },
@@ -125,29 +107,8 @@ const sidebarItems: SidebarItem[] = [
 const initialDetails: DetailsState = {
   fullName: "",
   email: "",
-  favoriteTea: "",
   phone: "",
-  dob: "",
-  gender: "",
 };
-
-const initialPreferences: PreferencesState = {
-  favoriteTypes: "Green Tea, Oolong, White Tea",
-  flavorNotes: "Floral, Earthy, Fresh",
-  caffeinePreference: "Medium",
-  brewingStyle: "Loose Leaf",
-  timeOfDay: "Morning, Afternoon",
-};
-
-function normalizePreferences(prefs?: AuthUser["preferences"]): PreferencesState {
-  return {
-    favoriteTypes: prefs?.favoriteTypes ?? initialPreferences.favoriteTypes,
-    flavorNotes: prefs?.flavorNotes ?? initialPreferences.flavorNotes,
-    caffeinePreference: prefs?.caffeinePreference ?? initialPreferences.caffeinePreference,
-    brewingStyle: prefs?.brewingStyle ?? initialPreferences.brewingStyle,
-    timeOfDay: prefs?.timeOfDay ?? initialPreferences.timeOfDay,
-  };
-}
 
 const initialNotifications: NotificationPreferences = {
   orderUpdates: true,
@@ -219,17 +180,12 @@ const promiseItems = [
   },
 ];
 
-const formatLabel = (value: string) => value.trim();
-
-const AVATAR_STORAGE_KEY = "leafly_profile_avatar_v1";
 const NOTIF_STORAGE_KEY = "leafly_profile_notifs_v1";
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, loading, isAuthenticated, logout, updateUserProfile } = useAuth();
   const { orders } = useOrderContext();
-  const { coupons } = useCoupons();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Protected route enforcement
   useEffect(() => {
@@ -302,14 +258,10 @@ export default function Profile() {
 
   const [selectedSidebar, setSelectedSidebar] = useState<SidebarItemId>("overview");
   const [details, setDetails] = useState<DetailsState>(() => ({
-    fullName: user?.displayName || user?.name || initialDetails.fullName,
+    fullName: user?.displayName || user?.name || user?.fullName || initialDetails.fullName,
     email: user?.email || initialDetails.email,
-    favoriteTea: user?.favoriteTea || initialDetails.favoriteTea,
-    phone: user?.phone || initialDetails.phone,
-    dob: user?.dob || initialDetails.dob,
-    gender: user?.gender || initialDetails.gender,
+    phone: user?.phone || user?.phoneNumber || initialDetails.phone,
   }));
-  const [preferences, setPreferences] = useState<PreferencesState>(() => normalizePreferences(user?.preferences));
   const [notifications, setNotifications] = useState<NotificationPreferences>(() => {
     try {
       const saved = localStorage.getItem(NOTIF_STORAGE_KEY);
@@ -319,53 +271,41 @@ export default function Profile() {
     }
   });
 
-  const [avatarUrl, setAvatarUrl] = useState<string>(() => {
-    try {
-      return user?.photoURL || localStorage.getItem(AVATAR_STORAGE_KEY) || "";
-    } catch {
-      return user?.photoURL || "";
-    }
-  });
-
   const [isEditingDetails, setIsEditingDetails] = useState(false);
-  const [isEditingPreferences, setIsEditingPreferences] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [notice, setNotice] = useState("Welcome back. Your account is ready.");
   const [detailsSaved, setDetailsSaved] = useState(false);
-  const [preferencesSaved, setPreferencesSaved] = useState(false);
   const [notifSaved, setNotifSaved] = useState(false);
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-
   // Synchronize live user profile updates from Firestore / AuthContext
   useEffect(() => {
     if (user) {
       setDetails({
-        fullName: user.displayName || user.name || "",
+        fullName: user.displayName || user.name || user.fullName || "",
         email: user.email || "",
-        favoriteTea: user.favoriteTea || "Green Tea",
         phone: user.phone || user.phoneNumber || "",
-        dob: user.dob || user.dateOfBirth || "",
-        gender: user.gender || "",
       });
-      if (user.preferences) {
-        setPreferences(normalizePreferences(user.preferences));
-      }
-      setAvatarUrl(user.photoURL || user.profileImageUrl || "");
     } else {
       setDetails({
         fullName: "",
         email: "",
-        favoriteTea: "Green Tea",
         phone: "",
-        dob: "",
-        gender: "",
       });
-      setPreferences(initialPreferences);
-      setAvatarUrl("");
     }
   }, [user]);
 
   const activeUserName = useMemo(() => details.fullName || user?.displayName || user?.name || "Valued Member", [details.fullName, user]);
+
+  const userInitials = useMemo(() => {
+    const raw = (details.fullName || user?.displayName || user?.name || user?.email || "Valued Customer").trim();
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return (raw.slice(0, 2) || "LU").toUpperCase();
+  }, [details.fullName, user?.displayName, user?.name, user?.email]);
+
+  const isGoogleUser = user?.authProvider === "Google" || Boolean(user?.photoURL && user?.photoURL.includes("googleusercontent"));
+  const googlePhoto = isGoogleUser && user?.photoURL ? user.photoURL : null;
 
   const handleSidebarClick = (item: SidebarItem) => {
     setSelectedSidebar(item.id);
@@ -381,12 +321,7 @@ export default function Profile() {
     }
 
     if (item.id === "coupons") {
-      setNotice("Explore your earned rewards and active vouchers.");
-      return;
-    }
-
-    if (item.id === "preferences") {
-      setNotice("Your personalized tea flavor preferences.");
+      setNotice("Explore member privileges and harvest vouchers.");
       return;
     }
 
@@ -399,39 +334,6 @@ export default function Profile() {
       setNotice("Account authentication & session security overview.");
       return;
     }
-  };
-
-  const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setNotice("Please select a valid image file (PNG, JPG, or WebP).");
-      return;
-    }
-
-    const MAX_IMAGE_SIZE = 100 * 1024 * 1024; // 100 MB = 104,857,600 bytes
-    if (file.size > MAX_IMAGE_SIZE) {
-      setNotice("Profile image must be 100 MB or smaller.");
-      return;
-    }
-
-    // Instant local preview and persist to profile
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result) {
-        setAvatarUrl(result);
-        try {
-          localStorage.setItem(AVATAR_STORAGE_KEY, result);
-        } catch {
-          // ignore
-        }
-        updateUserProfile?.({ photoURL: result, profileImageUrl: result, profileImage: result });
-        setNotice("Profile photo updated successfully.");
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const [detailsError, setDetailsError] = useState<string | null>(null);
@@ -460,31 +362,44 @@ export default function Profile() {
       return;
     }
 
-    if (details.phone && details.phone.trim().length > 3) {
-      const cleanDigits = details.phone.replace(/\D/g, "");
+    const cleanPhone = details.phone ? details.phone.trim() : "";
+    let normalizedPhone: string | null = null;
+    if (cleanPhone) {
+      const cleanDigits = cleanPhone.replace(/\D/g, "");
       if (cleanDigits.length < 8) {
         setDetailsError("Please enter a valid phone number with country code.");
         return;
       }
+      if (cleanPhone.startsWith("+")) {
+        normalizedPhone = cleanPhone;
+      } else if (cleanDigits.length === 10) {
+        normalizedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
+      } else {
+        normalizedPhone = `+${cleanDigits}`;
+      }
     }
 
-    setIsEditingDetails(false);
-    setDetailsSaved(true);
-    setNotice("Your personal details have been updated and saved to your sanctuary profile.");
-    window.setTimeout(() => setDetailsSaved(false), 3000);
-
-    updateUserProfile?.({
-      name: trimmedName,
-      fullName: trimmedName,
-      displayName: trimmedName,
-      email: details.email.trim(),
-      favoriteTea: details.favoriteTea,
-      phone: details.phone,
-      phoneNumber: details.phone,
-      dob: details.dob,
-      dateOfBirth: details.dob,
-      gender: details.gender,
-    });
+    try {
+      if (updateUserProfile) {
+        await updateUserProfile({
+          name: trimmedName,
+          fullName: trimmedName,
+          displayName: trimmedName,
+          email: details.email.trim(),
+          phone: normalizedPhone,
+          phoneNumber: normalizedPhone,
+          mobile: normalizedPhone,
+        });
+      }
+      setIsEditingDetails(false);
+      setDetailsSaved(true);
+      setNotice("Your personal details have been updated and saved to your profile.");
+      window.setTimeout(() => setDetailsSaved(false), 3000);
+    } catch (err: unknown) {
+      console.error("Error saving details:", err);
+      const msg = err instanceof Error ? err.message : "Failed to save personal details. Please try again.";
+      setDetailsError(msg);
+    }
   };
 
   const handleCancelDetails = () => {
@@ -492,29 +407,6 @@ export default function Profile() {
     setDetailsSaved(false);
     setDetailsError(null);
     setNotice("Changes were discarded.");
-  };
-
-  const handleEditPreferences = () => {
-    setIsEditingPreferences(true);
-    setPreferencesSaved(false);
-  };
-
-  const handleSavePreferences = async () => {
-    setIsEditingPreferences(false);
-    setPreferencesSaved(true);
-    setNotice("Your tea preferences have been saved.");
-    window.setTimeout(() => setPreferencesSaved(false), 3000);
-
-    updateUserProfile?.({
-      preferences,
-    });
-  };
-
-  const handleCancelPreferences = () => {
-    setIsEditingPreferences(false);
-    setPreferencesSaved(false);
-    setPreferences(normalizePreferences(user?.preferences));
-    setNotice("Preferences were not changed.");
   };
 
   const handleToggleNotification = (key: keyof NotificationPreferences) => {
@@ -530,17 +422,6 @@ export default function Profile() {
     setNotifSaved(true);
     setNotice("Notification preferences updated.");
     window.setTimeout(() => setNotifSaved(false), 3000);
-  };
-
-  const handleCopyCoupon = (code: string) => {
-    try {
-      navigator.clipboard.writeText(code);
-      setCopiedCode(code);
-      setNotice(`Coupon ${code} copied to clipboard! Apply it at checkout.`);
-      window.setTimeout(() => setCopiedCode(null), 2000);
-    } catch {
-      // ignore
-    }
   };
 
   const handleBackToTop = () => {
@@ -655,54 +536,14 @@ export default function Profile() {
           <header className="profile-hero">
             <div className="profile-avatar-wrap">
               <div className="profile-avatar" aria-label="Profile avatar">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={activeUserName} className="profile-avatar-custom-img" />
-                ) : (details.gender || user?.gender || "").toLowerCase().trim() === "male" ? (
-                  <div className="profile-avatar-default profile-avatar-male" title="Male Tea Connoisseur Avatar">
-                    <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
-                      <circle cx="50" cy="50" r="50" fill="#073b2b" />
-                      <circle cx="50" cy="38" r="18" fill="#f7f3ec" />
-                      <path d="M34 32 C34 20, 66 20, 66 32 C66 25, 59 21, 50 21 C41 21, 34 25, 34 32 Z" fill="#c9a24b" />
-                      <path d="M22 84 C22 62, 36 56, 50 56 C64 56, 78 62, 78 84 Z" fill="#315c4d" />
-                      <path d="M44 56 L50 66 L56 56 Z" fill="#c9a24b" />
-                    </svg>
-                  </div>
-                ) : (details.gender || user?.gender || "").toLowerCase().trim() === "female" ? (
-                  <div className="profile-avatar-default profile-avatar-female" title="Female Tea Connoisseur Avatar">
-                    <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
-                      <circle cx="50" cy="50" r="50" fill="#073b2b" />
-                      <path d="M30 36 C30 20, 70 20, 70 36 C74 48, 72 60, 68 68 C64 60, 66 48, 64 38 C64 26, 36 26, 36 38 C34 48, 36 60, 32 68 C28 60, 26 48, 30 36 Z" fill="#c9a24b" />
-                      <circle cx="50" cy="40" r="16" fill="#f7f3ec" />
-                      <path d="M24 84 C24 64, 36 58, 50 58 C64 58, 76 64, 76 84 Z" fill="#315c4d" />
-                      <circle cx="50" cy="62" r="3" fill="#c9a24b" />
-                    </svg>
-                  </div>
+                {googlePhoto ? (
+                  <img src={googlePhoto} alt={activeUserName} className="profile-avatar-custom-img" />
                 ) : (
-                  <div className="profile-avatar-default">
-                    <img src={defaultAvatarImg} alt="Leafly Logo" className="profile-default-leafly-logo" />
-                    <span>{activeUserName.split(" ").map((part) => part[0]).slice(0, 2).join("")}</span>
+                  <div className="profile-avatar-initials" aria-label={`Avatar initials: ${userInitials}`}>
+                    <span>{userInitials}</span>
                   </div>
                 )}
               </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleAvatarChange}
-                aria-label="Upload avatar image"
-              />
-              <button
-                type="button"
-                className="profile-avatar-edit"
-                aria-label="Edit profile photo"
-                title="Change profile photo"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M19.4 7.5c.4-.4.4-1 0-1.4l-1.1-1.1a1 1 0 0 0-1.4 0L16 6.1l2.5 2.5 1-1Zm-2.9 2.1L8.8 16.2l-2.6.6.6-2.6 7.7-7.7 2.5 2.5Z" />
-                </svg>
-              </button>
             </div>
 
             <div className="profile-hero-copy">
@@ -723,31 +564,16 @@ export default function Profile() {
               <div className="profile-meta-row">
                 <div>
                   <span className="profile-meta-label">Email</span>
-                  <strong>{user?.email || details.email}</strong>
+                  <strong>{user?.email || details.email || "Not provided"}</strong>
                 </div>
-                {user?.isAdmin || user?.email === "leaflydatabase@gmail.com" ? (
-                  <>
-                    <div>
-                      <span className="profile-meta-label">Role</span>
-                      <strong>System Administrator</strong>
-                    </div>
-                    <div>
-                      <span className="profile-meta-label">Access Level</span>
-                      <strong>Full Admin Authorization</strong>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <span className="profile-meta-label">Favorite Tea</span>
-                      <strong>{user?.favoriteTea || details.favoriteTea || "Green Tea"}</strong>
-                    </div>
-                    <div>
-                      <span className="profile-meta-label">Available vouchers</span>
-                      <strong>{coupons.filter((c) => c.status === "available").length} Active</strong>
-                    </div>
-                  </>
-                )}
+                <div>
+                  <span className="profile-meta-label">Mobile Number</span>
+                  <strong>{user?.phone || user?.phoneNumber || details.phone || "Not provided"}</strong>
+                </div>
+                <div>
+                  <span className="profile-meta-label">Status</span>
+                  <strong>Active Account</strong>
+                </div>
               </div>
             </div>
 
@@ -798,28 +624,6 @@ export default function Profile() {
 
                 <article className="profile-summary-card">
                   <div className="profile-summary-header">
-                    <p className="profile-summary-label">Tea taste profile</p>
-                    <span className="profile-summary-total">Active</span>
-                  </div>
-
-                  <div className="profile-summary-body">
-                    <div className="profile-summary-line">
-                      <span>Favorite</span>
-                      <strong>{preferences.favoriteTypes.split(",")[0] || "Green Tea"}</strong>
-                    </div>
-                    <div className="profile-summary-line">
-                      <span>Brewing</span>
-                      <strong>{preferences.brewingStyle}</strong>
-                    </div>
-                  </div>
-
-                  <button type="button" className="profile-summary-button" onClick={() => setSelectedSidebar("preferences")}>
-                    UPDATE PREFERENCES
-                  </button>
-                </article>
-
-                <article className="profile-summary-card">
-                  <div className="profile-summary-header">
                     <p className="profile-summary-label">Personal details</p>
                     <span className="profile-summary-total">Active</span>
                   </div>
@@ -827,11 +631,15 @@ export default function Profile() {
                   <div className="profile-summary-body">
                     <div className="profile-summary-line">
                       <span>Name</span>
-                      <strong>{user?.displayName || user?.name || details.fullName}</strong>
+                      <strong>{user?.displayName || user?.name || user?.fullName || details.fullName}</strong>
                     </div>
                     <div className="profile-summary-line">
                       <span>Email</span>
-                      <strong>{user?.email || details.email}</strong>
+                      <strong>{user?.email || details.email || "Not provided"}</strong>
+                    </div>
+                    <div className="profile-summary-line">
+                      <span>Mobile</span>
+                      <strong>{user?.phone || user?.phoneNumber || details.phone || "Not provided"}</strong>
                     </div>
                   </div>
 
@@ -869,12 +677,9 @@ export default function Profile() {
                 {!isEditingDetails ? (
                   <div className="profile-details-list">
                     {[
-                      { label: "Full Name", value: user?.displayName || user?.name || details.fullName },
-                      { label: "Email Address", value: user?.email || details.email },
-                      { label: "Favorite Tea", value: user?.favoriteTea || details.favoriteTea || "Green Tea" },
-                      { label: "Phone Number", value: details.phone || "Not provided" },
-                      { label: "Date of Birth", value: details.dob || "Not provided" },
-                      { label: "Gender", value: details.gender || "Not specified" },
+                      { label: "Full Name", value: user?.displayName || user?.name || user?.fullName || details.fullName || "Not provided" },
+                      { label: "Email Address", value: user?.email || details.email || "Not provided" },
+                      { label: "Phone Number", value: details.phone || user?.phone || user?.phoneNumber || "Not provided" },
                     ].map((field) => (
                       <div key={field.label} className="profile-detail-row">
                         <span>{field.label}</span>
@@ -910,22 +715,6 @@ export default function Profile() {
                       />
                     </label>
 
-                    <label className="profile-form-field">
-                      <span>Favorite Tea Variety</span>
-                      <select
-                        className="leafly-auth-select"
-                        value={details.favoriteTea}
-                        onChange={(event) => setDetails((current) => ({ ...current, favoriteTea: event.target.value }))}
-                      >
-                        <option value="Green Tea">Green Tea (Sencha, Matcha, Jasmine)</option>
-                        <option value="White Tea">White Tea (Silver Needle, White Peony)</option>
-                        <option value="Black Tea">Black Tea (Darjeeling First Flush, Assam Single Estate)</option>
-                        <option value="Oolong Tea">Oolong Tea (High Mountain, Tieguanyin)</option>
-                        <option value="Pu-erh Tea">Pu-erh Tea (Aged Raw & Ripe Vintage)</option>
-                        <option value="Herbal / Other">Herbal / Botanical Infusions</option>
-                      </select>
-                    </label>
-
                     <PhoneInput
                       id="profile-phone"
                       label="Phone Number"
@@ -935,26 +724,6 @@ export default function Profile() {
                         if (detailsError) setDetailsError(null);
                       }}
                     />
-
-                    <label className="profile-form-field">
-                      <span>Date of Birth</span>
-                      <input
-                        type="text"
-                        value={details.dob}
-                        onChange={(event) => setDetails((current) => ({ ...current, dob: event.target.value }))}
-                        placeholder="e.g. 14 April 1995"
-                      />
-                    </label>
-
-                    <label className="profile-form-field">
-                      <span>Gender</span>
-                      <input
-                        type="text"
-                        value={details.gender}
-                        onChange={(event) => setDetails((current) => ({ ...current, gender: event.target.value }))}
-                        placeholder="e.g. Female, Male, Prefer not to say"
-                      />
-                    </label>
 
                     <div className="profile-edit-actions">
                       <button type="button" className="profile-secondary-button" onClick={handleCancelDetails}>
@@ -980,166 +749,24 @@ export default function Profile() {
               <div className="profile-card-header">
                 <div>
                   <p className="profile-card-kicker">REWARDS & PRIVILEGES</p>
-                  <h2>MY TEA VOUCHERS</h2>
+                  <h2>COUPONS & REWARDS</h2>
                 </div>
-                <span className="profile-coupons-count-badge">
-                  {coupons.filter((c) => c.status === "available").length} Available
-                </span>
               </div>
-              <p className="profile-subtitle">
-                Apply your vouchers at checkout for exclusive single-origin savings.
-              </p>
 
-              <div className="profile-coupons-grid">
-                {coupons.length === 0 ? (
-                  <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "3rem 1rem", background: "rgba(11, 43, 30, 0.02)", borderRadius: "10px", border: "1px dashed rgba(11, 43, 30, 0.15)" }}>
-                    <p style={{ fontFamily: "Georgia, serif", fontSize: "1.1rem", marginBottom: "0.4rem", color: "#0b2b1e" }}>
-                      No Active Vouchers Yet
-                    </p>
-                    <p style={{ fontSize: "0.88rem", color: "rgba(11, 43, 30, 0.65)", margin: 0 }}>
-                      Complete your first ceremonial tea order to earn exclusive harvest vouchers.
-                    </p>
-                  </div>
-                ) : (
-                  coupons.map((coupon) => {
-                    const isAvailable = coupon.status === "available";
-                    return (
-                      <article
-                        key={coupon.id}
-                        className={`profile-coupon-card ${isAvailable ? "available" : "used"}`}
-                      >
-                        <div className="profile-coupon-card-top">
-                          <span className="profile-coupon-tag">{coupon.title}</span>
-                          <span className={`profile-coupon-status ${coupon.status}`}>
-                            {coupon.status.toUpperCase()}
-                          </span>
-                        </div>
-
-                        <div className="profile-coupon-discount">
-                          <strong>
-                            {coupon.discountType === "fixed"
-                              ? `₹${coupon.discountValue} OFF`
-                              : `${coupon.discountValue}% OFF`}
-                          </strong>
-                        </div>
-
-                        <p className="profile-coupon-condition">{coupon.applicableCondition}</p>
-
-                        <div className="profile-coupon-bottom">
-                          <div className="profile-coupon-code-box">
-                            <span>CODE</span>
-                            <strong>{coupon.code}</strong>
-                          </div>
-                          {isAvailable && (
-                            <button
-                              type="button"
-                              className="profile-coupon-copy-btn"
-                              onClick={() => handleCopyCoupon(coupon.code)}
-                            >
-                              {copiedCode === coupon.code ? "COPIED ✓" : "COPY"}
-                            </button>
-                          )}
-                        </div>
-
-                        {coupon.expiryDate && (
-                          <p className="profile-coupon-expiry">Expires: {coupon.expiryDate}</p>
-                        )}
-                      </article>
-                    );
-                  })
-                )}
+              <div className="profile-coming-soon-card">
+                <span className="profile-coming-soon-icon" aria-hidden="true">✦</span>
+                <span className="profile-coming-soon-badge">COMING SOON</span>
+                <h3>Exclusive Member Privileges</h3>
+                <p>
+                  Our bespoke tea reward and harvest voucher experience is currently being crafted.
+                  Soon, you’ll unlock ceremonial benefits, birthday gifts, and tiered single-estate privileges with every order.
+                </p>
+                <div className="profile-coming-soon-perks">
+                  <span>✦ First Harvest Access</span>
+                  <span>✦ Seasonal Vouchers</span>
+                  <span>✦ Sommelier Tastings</span>
+                </div>
               </div>
-            </section>
-          )}
-
-          {/* VIEW: PREFERENCES */}
-          {selectedSidebar === "preferences" && (
-            <section className="profile-card profile-preferences-view">
-              <div className="profile-card-header">
-                <div>
-                  <p className="profile-card-kicker">TASTES & CRAFT</p>
-                  <h2>TEA PREFERENCES</h2>
-                </div>
-                {!isEditingPreferences && (
-                  <button type="button" className="profile-edit-button" onClick={handleEditPreferences}>
-                    EDIT
-                  </button>
-                )}
-              </div>
-              <p className="profile-subtitle">
-                Your profile shapes how we recommend harvest batches and seasonal single-origin releases.
-              </p>
-
-              {!isEditingPreferences ? (
-                <div className="profile-preference-list">
-                  {Object.entries(preferences).map(([key, value]) => (
-                    <div key={key} className="profile-preference-row">
-                      <span className="profile-preference-label">{formatLabel(key.replace(/([A-Z])/g, " $1"))}</span>
-                      <strong>{value}</strong>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="profile-edit-form">
-                  <label className="profile-form-field">
-                    <span>Favourite Types</span>
-                    <input
-                      type="text"
-                      value={preferences.favoriteTypes}
-                      onChange={(event) => setPreferences((current) => ({ ...current, favoriteTypes: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Flavour Notes</span>
-                    <input
-                      type="text"
-                      value={preferences.flavorNotes}
-                      onChange={(event) => setPreferences((current) => ({ ...current, flavorNotes: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Caffeine Preference</span>
-                    <input
-                      type="text"
-                      value={preferences.caffeinePreference}
-                      onChange={(event) => setPreferences((current) => ({ ...current, caffeinePreference: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Brewing Style</span>
-                    <input
-                      type="text"
-                      value={preferences.brewingStyle}
-                      onChange={(event) => setPreferences((current) => ({ ...current, brewingStyle: event.target.value }))}
-                    />
-                  </label>
-
-                  <label className="profile-form-field">
-                    <span>Time of Day</span>
-                    <input
-                      type="text"
-                      value={preferences.timeOfDay}
-                      onChange={(event) => setPreferences((current) => ({ ...current, timeOfDay: event.target.value }))}
-                    />
-                  </label>
-
-                  <div className="profile-edit-actions">
-                    <button type="button" className="profile-secondary-button" onClick={handleCancelPreferences}>
-                      CANCEL
-                    </button>
-                    <button type="button" className="profile-primary-button" onClick={handleSavePreferences}>
-                      SAVE PREFERENCES
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {preferencesSaved && !isEditingPreferences && (
-                <p className="profile-success-text">Your preferences have been saved.</p>
-              )}
             </section>
           )}
 
@@ -1207,42 +834,42 @@ export default function Profile() {
                   <p className="profile-card-kicker">AUTHENTICATION & PRIVACY</p>
                   <h2>ACCOUNT SECURITY</h2>
                 </div>
-                <span className="profile-security-badge">DEMO SESSION</span>
+                <span className="profile-security-badge">FIREBASE AUTH</span>
               </div>
               <p className="profile-subtitle">
-                Overview of your current session integrity and account privacy protections.
+                Your account is protected by Firebase Authentication. All data is securely stored in Firestore.
               </p>
 
               <div className="profile-security-grid">
                 <div className="profile-security-item">
                   <div className="profile-security-icon">🔒</div>
                   <div>
-                    <h3>Session Protection</h3>
-                    <p>This prototype runs on client-side state with zero third-party tracking or stored credentials.</p>
+                    <h3>Authentication Provider</h3>
+                    <p>{user?.authProvider === "Google" ? "Google OAuth 2.0 — Your Google account secures this session." : "Email & Password — Secured by Firebase Authentication."}</p>
                   </div>
                 </div>
 
                 <div className="profile-security-item">
                   <div className="profile-security-icon">🛡️</div>
                   <div>
-                    <h3>Future Backend Authentication</h3>
-                    <p>Production releases will integrate OAuth2 & passwordless magic links. No passwords are collected here.</p>
+                    <h3>Account Isolation</h3>
+                    <p>Your profile, orders, and mobile number are private to your UID. Other users cannot access your data.</p>
                   </div>
                 </div>
 
                 <div className="profile-security-item">
                   <div className="profile-security-icon">📱</div>
                   <div>
-                    <h3>Active Device</h3>
-                    <p>Current Browser Session · Verified Local Workspace</p>
+                    <h3>Authenticated Account</h3>
+                    <p>{user?.email || "Authenticated user"} · Firebase UID verified</p>
                   </div>
                 </div>
 
                 <div className="profile-security-item">
                   <div className="profile-security-icon">✦</div>
                   <div>
-                    <h3>Privacy Standard</h3>
-                    <p>Leafly respects your privacy. All preferences and local orders remain private to your browser.</p>
+                    <h3>Data Privacy</h3>
+                    <p>Passwords are never stored in Firestore. Only your profile details, phone number, and orders are persisted.</p>
                   </div>
                 </div>
               </div>

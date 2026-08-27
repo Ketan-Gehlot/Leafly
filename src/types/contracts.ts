@@ -33,6 +33,8 @@ export interface AuthUser {
   photoURL?: string | null;
   profileImage?: string | null;
   profileImageUrl?: string | null;
+  authProvider?: string | null;
+  status?: string | null;
   isAdmin: boolean;
 }
 
@@ -53,7 +55,6 @@ export type TeaCategory =
   | "White"
   | "Black"
   | "Oolong"
-  | "Pu-erh"
   | "Herbal"
   | "Teaware";
 
@@ -153,8 +154,9 @@ export type OrderStatus =
   | "Pending"
   | "Confirmed"
   | "Processing"
-  | "Packed"
+  | "Shipping"
   | "Shipped"
+  | "Transit"
   | "Out for Delivery"
   | "Delivered"
   | "Cancelled";
@@ -174,6 +176,7 @@ export interface OrderItem {
 export interface Order {
   id: string;
   userId?: string;
+  customerId?: string;
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;

@@ -22,7 +22,6 @@ const categories = [
   "White",
   "Black",
   "Oolong",
-  "Pu-erh",
 ];
 
 export default function Shop() {
@@ -30,7 +29,10 @@ export default function Shop() {
   const { products } = useProducts();
 
   const {
+    items,
     addToCart: addProductToCart,
+    increaseQuantity,
+    decreaseQuantity,
     cartCount,
     openCart,
   } = useCart();
@@ -654,40 +656,79 @@ export default function Shop() {
                         <span>+</span>
                       </button>
 
+                      {(() => {
+                        const currentVariant = cardVariants[product.id] ?? "100g";
+                        const cartItem = items.find(
+                          (item) =>
+                            item.id === `${product.id}-${currentVariant}` ||
+                            (item.product.id === product.id && item.variant === currentVariant)
+                        );
+                        const currentQty = cartItem?.quantity || 0;
 
-                      <button
-                        type="button"
-                        className={
-                          isAdded
-                            ? "add-cart-button added"
-                            : "add-cart-button"
+                        if (currentQty > 0) {
+                          return (
+                            <div className="product-qty-stepper" aria-label={`Quantity in cart: ${currentQty}`}>
+                              <button
+                                type="button"
+                                className="product-qty-btn product-qty-dec"
+                                aria-label="Decrease quantity"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (cartItem) decreaseQuantity(cartItem.id);
+                                }}
+                              >
+                                −
+                              </button>
+                              <span className="product-qty-value">{currentQty}</span>
+                              <button
+                                type="button"
+                                className="product-qty-btn product-qty-inc"
+                                aria-label="Increase quantity"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (cartItem) increaseQuantity(cartItem.id);
+                                }}
+                              >
+                                +
+                              </button>
+                            </div>
+                          );
                         }
-                        disabled={isAdding}
-                        onClick={() =>
-                          addToCart(
-                            product.id
-                          )
-                        }
-                      >
 
-                        {isAdding ? (
-                          <>
-                            <span className="cart-spinner" />
-                            ADDING...
-                          </>
-                        ) : isAdded ? (
-                          <>
-                            ADDED
-                            <span>✓</span>
-                          </>
-                        ) : (
-                          <>
-                            ADD TO CART
-                            <span>🛒</span>
-                          </>
-                        )}
-
-                      </button>
+                        return (
+                          <button
+                            type="button"
+                            className={
+                              isAdded
+                                ? "add-cart-button added"
+                                : "add-cart-button"
+                            }
+                            disabled={isAdding}
+                            onClick={() =>
+                              addToCart(
+                                product.id
+                              )
+                            }
+                          >
+                            {isAdding ? (
+                              <>
+                                <span className="cart-spinner" />
+                                ADDING...
+                              </>
+                            ) : isAdded ? (
+                              <>
+                                ADDED
+                                <span>✓</span>
+                              </>
+                            ) : (
+                              <>
+                                ADD TO CART
+                                <span>🛒</span>
+                              </>
+                            )}
+                          </button>
+                        );
+                      })()}
 
                     </div>
 

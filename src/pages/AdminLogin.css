@@ -1,0 +1,105 @@
+.admin-login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-background, #faf7f2);
+  padding: 2rem;
+}
+
+.admin-login-box {
+  background-color: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
+}
+
+.admin-login-box h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: var(--font-heading, "Playfair Display", serif);
+  color: var(--color-text, #2c3e2e);
+}
+
+.admin-error {
+  background-color: #fde8e8;
+  color: #c53030;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.admin-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.admin-login-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.admin-login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-light, #4a5d4c);
+}
+
+.admin-login-form input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.admin-login-form input:focus {
+  outline: none;
+  border-color: var(--color-primary, #4a5d4c);
+}
+
+.admin-login-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--color-primary, #4a5d4c);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.admin-login-btn:hover:not(:disabled) {
+  background-color: #38473a;
+}
+
+.admin-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-login-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.toggle-register-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary, #4a5d4c);
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}

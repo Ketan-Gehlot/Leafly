@@ -1,131 +1,115 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
-import { type Product, type TeaCategory } from "../data/products";
-import { type Order, type OrderStatus } from "../types/contracts";
+import { type Product, type TeaCategory, type ProductVariant } from "../data/products";
+import { useAuth } from "../context/AuthContext";
+import { db } from "../lib/firebase";
+import { collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "firebase/firestore";
+import type { Order } from "../context/OrderContext";
 import "./AdminDashboard.css";
 
-const ALL_ORDER_STATUSES: OrderStatus[] = [
-  "Processing",
-  "Confirmed",
-  "Shipped",
-  "Out for Delivery",
-  "Delivered",
-  "Cancelled",
-];
-
-const INITIAL_ADMIN_ORDERS: Order[] = [
-  {
-    id: "LF-20260824-8923",
-    customerName: "Aarav Sharma",
-    customerEmail: "aarav.sharma@example.com",
-    customerPhone: "+91 9820011223",
-    items: [
-      {
-        name: "Himalayan Green Tea",
-        quantity: 2,
-        price: 699,
-        image: "/leafly-green-tea.webp",
-        variant: "100g",
-      },
-    ],
-    subtotal: 1398,
-    deliveryFee: 0,
-    total: 1398,
-    createdAt: "2026-08-24T10:30:00Z",
-    orderStatus: "Processing",
-    status: "Processing",
-    deliveryMethod: "Standard Delivery",
-    paymentMethod: "UPI",
-    paymentStatus: "Paid",
-    shippingAddress: {
-      fullName: "Aarav Sharma",
-      addressLine1: "42 Tea Garden Lane",
-      city: "Mumbai",
-      state: "Maharashtra",
-      postalCode: "400001",
-      country: "India",
-    },
-  },
-  {
-    id: "LF-20260823-8922",
-    customerName: "Priya Patel",
-    customerEmail: "priya.patel@example.com",
-    customerPhone: "+91 9811223344",
-    items: [
-      {
-        name: "Silver Tips White Tea",
-        quantity: 1,
-        price: 899,
-        image: "/leafly-white-tea.webp",
-        variant: "100g",
-      },
-    ],
-    subtotal: 899,
-    deliveryFee: 0,
-    total: 899,
-    createdAt: "2026-08-23T14:15:00Z",
-    orderStatus: "Shipped",
-    status: "Shipped",
-    deliveryMethod: "Express Delivery",
-    paymentMethod: "Card",
-    paymentStatus: "Paid",
-    shippingAddress: {
-      fullName: "Priya Patel",
-      addressLine1: "15 Marine Drive",
-      city: "Mumbai",
-      state: "Maharashtra",
-      postalCode: "400020",
-      country: "India",
-    },
-  },
-  {
-    id: "LF-20260822-8921",
-    customerName: "Rohan Gupta",
-    customerEmail: "rohan.g@example.com",
-    customerPhone: "+91 9833445566",
-    items: [
-      {
-        name: "Mountain Pu-erh",
-        quantity: 3,
-        price: 1099,
-        image: "/leafly-puerh-tea.webp",
-        variant: "250g",
-      },
-    ],
-    subtotal: 3297,
-    deliveryFee: 0,
-    total: 3297,
-    createdAt: "2026-08-22T09:00:00Z",
-    orderStatus: "Delivered",
-    status: "Delivered",
-    deliveryMethod: "Standard Delivery",
-    paymentMethod: "Pay on Delivery",
-    paymentStatus: "Delivered",
-    shippingAddress: {
-      fullName: "Rohan Gupta",
-      addressLine1: "78 Bandra West",
-      city: "Mumbai",
-      state: "Maharashtra",
-      postalCode: "400050",
-      country: "India",
-    },
-  },
-];
+export type AccountUser = {
+  id: string;
+  uid: string;
+  name: string;
+  email: string;
+  phone?: string;
+  createdAt?: string | null;
+  status: string;
+  authProvider: string;
+  favoriteTea?: string | null;
+  preferences?: Record<string, unknown> | null;
+};
 
 export default function AdminDashboard() {
-  const { products, updateProduct, addProduct, deleteProduct } = useProducts();
-  const [activeTab, setActiveTab] = useState<"dashboard" | "products" | "orders">("dashboard");
-  const [orders, setOrders] = useState<Order[]>(INITIAL_ADMIN_ORDERS);
-  const [ordersLoading] = useState<boolean>(false);
-
+  const { products, updateProduct, addProduct, loading: productsLoading } = useProducts();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+  
+  const [activeTab, setActiveTab] = useState<"dashboard" | "products" | "orders" | "accounts">("dashboard");
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
-  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const totalSales = orders.reduce((sum, o) => sum + (o.total || 0), 0);
-  const deliveredOrdersCount = orders.filter((o) => (o.orderStatus || o.status) === "Delivered").length;
-  const processingOrdersCount = orders.filter((o) => (o.orderStatus || o.status) === "Processing" || (o.orderStatus || o.status) === "Confirmed").length;
+  // Accounts state
+  const [accounts, setAccounts] = useState<AccountUser[]>([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [accountSearchQuery, setAccountSearchQuery] = useState("");
+  const [accountFilterProvider, setAccountFilterProvider] = useState("all");
+  const [selectedAccount, setSelectedAccount] = useState<AccountUser | null>(null);
+
+  // Real-time Firestore orders synchronization
+  useEffect(() => {
+    const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const fetchedOrders = snapshot.docs.map((docSnap) => ({
+          ...docSnap.data(),
+          id: docSnap.id,
+        }) as Order);
+        setOrders(fetchedOrders);
+        setOrdersLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching orders:", error);
+        setOrdersLoading(false);
+      }
+    );
+    
+    return () => unsubscribe();
+  }, []);
+
+  // Real-time Firestore customer accounts synchronization
+  useEffect(() => {
+    const usersCol = collection(db, "users");
+    const unsubscribe = onSnapshot(
+      usersCol,
+      (snapshot) => {
+        const fetchedAccounts: AccountUser[] = snapshot.docs.map((docSnap) => {
+          const d = docSnap.data();
+          const resolvedName = d.fullName || d.displayName || d.name || "Customer";
+          const resolvedEmail = d.email || "No Email Provided";
+          const resolvedPhone = d.phone || d.phoneNumber || d.mobile || d.mobileNumber || "—";
+          const resolvedCreatedAt = d.createdAt || d.joinedAt || d.registeredAt || null;
+          const resolvedProvider = d.authProvider || d.provider || (d.email ? "Email/Password" : "Direct");
+          const resolvedStatus = d.status || "Active";
+
+          return {
+            id: docSnap.id,
+            uid: d.uid || docSnap.id,
+            name: resolvedName,
+            email: resolvedEmail,
+            phone: resolvedPhone,
+            createdAt: resolvedCreatedAt,
+            status: resolvedStatus,
+            authProvider: resolvedProvider,
+            favoriteTea: d.favoriteTea || null,
+            preferences: d.preferences || null,
+          };
+        });
+
+        // Sort descending by registration date if available
+        fetchedAccounts.sort((a, b) => {
+          if (!a.createdAt) return 1;
+          if (!b.createdAt) return -1;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
+        setAccounts(fetchedAccounts);
+        setAccountsLoading(false);
+      },
+      (error) => {
+        console.error("Error listening to accounts in Firestore:", error);
+        setAccountsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
 
   const handleEditClick = (product: Product) => {
     setCurrentProduct(product);
@@ -140,56 +124,153 @@ export default function AdminDashboard() {
       caffeine: "Medium",
       weight: "100g",
       price: 0,
-      oldPrice: undefined,
-      stock: 100,
-      inStock: true,
       badge: "Popular",
       image: "/leafly-green-tea.webp",
-      description: "",
+      stock: 10,
+      customTag: { text: "", color: "#38a169" },
       variants: {
         "100g": { weight: "100g", price: 0 },
-        "250g": { weight: "250g", price: 0 },
-      },
+        "250g": { weight: "250g", price: 0 }
+      }
     });
     setIsEditing(true);
   };
 
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clean up undefined values for Firestore
+    const cleanProduct = { ...currentProduct } as Product;
+    if (cleanProduct.oldPrice === undefined) cleanProduct.oldPrice = null as unknown as number;
+    if (cleanProduct.badge === undefined) cleanProduct.badge = null as unknown as "Popular";
+
+    // Generate selected variants
+    const newVariants: Record<string, { weight: string; price: number; oldPrice?: number }> = {};
+    if (cleanProduct.variants?.["100g"]) {
+      newVariants["100g"] = { weight: "100g", price: cleanProduct.price, oldPrice: cleanProduct.oldPrice || undefined };
+    }
+    if (cleanProduct.variants?.["250g"]) {
+      newVariants["250g"] = { weight: "250g", price: Math.round(cleanProduct.price * 2.2), oldPrice: cleanProduct.oldPrice ? Math.round(cleanProduct.oldPrice * 2.2) : undefined };
+    }
+    if (cleanProduct.variants?.["500g"]) {
+      newVariants["500g"] = { weight: "500g", price: Math.round(cleanProduct.price * 4.2), oldPrice: cleanProduct.oldPrice ? Math.round(cleanProduct.oldPrice * 4.2) : undefined };
+    }
+    if (cleanProduct.variants?.["1kg"]) {
+      newVariants["1kg"] = { weight: "1kg", price: Math.round(cleanProduct.price * 8.0), oldPrice: cleanProduct.oldPrice ? Math.round(cleanProduct.oldPrice * 8.0) : undefined };
+    }
+    // Ensure at least 100g is selected if none
+    if (Object.keys(newVariants).length === 0) {
+      newVariants["100g"] = { weight: "100g", price: cleanProduct.price, oldPrice: cleanProduct.oldPrice || undefined };
+    }
+
     if (currentProduct.id) {
-      const updated = { ...currentProduct } as Product;
-      updated.variants = {
-        "100g": { weight: "100g", price: updated.price, oldPrice: updated.oldPrice },
-        "250g": { weight: "250g", price: Math.round(updated.price * 2.2), oldPrice: updated.oldPrice ? Math.round(updated.oldPrice * 2.2) : undefined },
-      };
+      // Update
+      const updated = { ...cleanProduct, variants: newVariants as Product["variants"] };
       await updateProduct(updated);
     } else {
-      const newProduct = { ...currentProduct } as Product;
+      // Add new
+      const newProduct = { ...cleanProduct, variants: newVariants as Product["variants"] };
       newProduct.id = Date.now();
-      newProduct.variants = {
-        "100g": { weight: "100g", price: newProduct.price, oldPrice: newProduct.oldPrice },
-        "250g": { weight: "250g", price: Math.round(newProduct.price * 2.2), oldPrice: newProduct.oldPrice ? Math.round(newProduct.oldPrice * 2.2) : undefined },
-      };
       await addProduct(newProduct);
     }
     setIsEditing(false);
   };
 
-  const handleDeleteProduct = async (id: number) => {
-    if (window.confirm("Are you sure you want to deactivate/delete this product?")) {
-      await deleteProduct(id);
+  const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
+    try {
+      await updateDoc(doc(db, "orders", orderId), { 
+        status: newStatus,
+        orderStatus: newStatus,
+      });
+    } catch (error) {
+      console.error("Error updating order status:", error);
     }
   };
 
-  const handleUpdateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
-    setUpdatingOrderId(orderId);
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.id === orderId ? { ...o, orderStatus: newStatus, status: newStatus } : o
-      )
-    );
-    setUpdatingOrderId(null);
+  const handleDeleteOrder = async (orderId: string) => {
+    if (window.confirm("Are you really sure you want to delete this order?")) {
+      try {
+        await deleteDoc(doc(db, "orders", orderId));
+        if (selectedOrder?.id === orderId) {
+          setSelectedOrder(null);
+        }
+      } catch (error) {
+        console.error("Error deleting order:", error);
+      }
+    }
   };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/admin/login");
+  };
+
+  // Analytics Computation
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  const currentMonthOrders = useMemo(() => orders.filter(o => {
+    const d = new Date(o.createdAt);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  }), [orders, currentMonth, currentYear]);
+
+  const currentMonthTotal = useMemo(() => currentMonthOrders.reduce((acc, o) => acc + (o.total || 0), 0), [currentMonthOrders]);
+  
+  const previousMonthOrders = useMemo(() => orders.filter(o => {
+    const d = new Date(o.createdAt);
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
+  }), [orders, currentMonth, currentYear]);
+  
+  const previousMonthTotal = useMemo(() => previousMonthOrders.reduce((acc, o) => acc + (o.total || 0), 0), [previousMonthOrders]);
+  
+  const percentageIncrease = previousMonthTotal === 0 
+    ? 100 
+    : Math.round(((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100);
+
+  // Generate last 6 months sales data dynamically
+  const lastSixMonthsData = useMemo(() => {
+    const data = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthLabel = d.toLocaleString('default', { month: 'short' });
+      
+      const sales = orders.filter(o => {
+        const od = new Date(o.createdAt);
+        return od.getMonth() === d.getMonth() && od.getFullYear() === d.getFullYear();
+      }).reduce((acc, o) => acc + (o.total || 0), 0);
+      
+      data.push({ month: monthLabel, sales });
+    }
+    return data;
+  }, [orders]);
+
+  const maxSales = Math.max(1, ...lastSixMonthsData.map(d => d.sales));
+
+  // Filtered Accounts
+  const filteredAccounts = useMemo(() => {
+    return accounts.filter((acc) => {
+      const queryLower = accountSearchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !queryLower ||
+        acc.name.toLowerCase().includes(queryLower) ||
+        acc.email.toLowerCase().includes(queryLower) ||
+        (acc.phone && acc.phone.toLowerCase().includes(queryLower)) ||
+        acc.uid.toLowerCase().includes(queryLower);
+
+      const matchesProvider =
+        accountFilterProvider === "all" ||
+        acc.authProvider.toLowerCase().includes(accountFilterProvider.toLowerCase());
+
+      return matchesSearch && matchesProvider;
+    });
+  }, [accounts, accountSearchQuery, accountFilterProvider]);
+
+  if (productsLoading || ordersLoading) {
+    return <div className="admin-layout"><main className="admin-main"><h2>Loading Admin Dashboard...</h2></main></div>;
+  }
 
   return (
     <div className="admin-layout">
@@ -197,35 +278,45 @@ export default function AdminDashboard() {
       <aside className="admin-sidebar">
         <div className="admin-brand">
           <h2>Leafly Admin</h2>
-          <small style={{ color: "rgba(247, 243, 236, 0.6)", fontSize: "11px", letterSpacing: "1px" }}>
-            MANAGEMENT SANCTUARY
-          </small>
         </div>
         <nav className="admin-nav">
           <button 
+            type="button"
             className={activeTab === "dashboard" ? "active" : ""} 
             onClick={() => setActiveTab("dashboard")}
           >
-            Dashboard Overview
+            Dashboard
           </button>
           <button 
+            type="button"
             className={activeTab === "products" ? "active" : ""} 
             onClick={() => setActiveTab("products")}
           >
-            Products ({products.length})
+            Products
           </button>
           <button 
+            type="button"
             className={activeTab === "orders" ? "active" : ""} 
             onClick={() => setActiveTab("orders")}
           >
-            Orders ({orders.length})
+            Orders
+          </button>
+          <button 
+            type="button"
+            className={activeTab === "accounts" ? "active" : ""} 
+            onClick={() => setActiveTab("accounts")}
+          >
+            Accounts
           </button>
         </nav>
         
         <div className="admin-sidebar-footer">
-          <Link to="/" className="admin-back-link">
+          <Link to="/" className="admin-back-link" style={{ marginBottom: "1rem", display: "block" }}>
             ← Back to Store
           </Link>
+          <button type="button" onClick={handleLogout} className="admin-btn-secondary" style={{ width: "100%", padding: "0.5rem" }}>
+            Logout
+          </button>
         </div>
       </aside>
 
@@ -239,69 +330,91 @@ export default function AdminDashboard() {
               <div className="admin-stat-card">
                 <h3>Total Products</h3>
                 <p>{products.length}</p>
-                <span className="admin-stat-badge positive">Shop + Teaware Live</span>
               </div>
               <div className="admin-stat-card">
-                <h3>Total Revenue</h3>
-                <p>₹{totalSales.toLocaleString("en-IN")}</p>
-                <span className="admin-stat-badge positive">{orders.length} Total Orders</span>
+                <h3>Total Sales (This Month)</h3>
+                <p>₹{currentMonthTotal.toLocaleString()}</p>
+                <span className={`admin-stat-badge ${percentageIncrease >= 0 ? 'positive' : 'negative'}`}>
+                  {percentageIncrease >= 0 ? '+' : ''}{percentageIncrease}% from last month
+                </span>
               </div>
               <div className="admin-stat-card">
-                <h3>Active Processing</h3>
-                <p>{processingOrdersCount}</p>
-                <span className="admin-stat-badge">{deliveredOrdersCount} Delivered</span>
+                <h3>New Orders (This Month)</h3>
+                <p>{currentMonthOrders.length}</p>
+              </div>
+              <div className="admin-stat-card">
+                <h3>Registered Accounts</h3>
+                <p>{accounts.length}</p>
+                <span className="admin-stat-badge positive">Live Customers</span>
               </div>
             </div>
 
             <div className="admin-dashboard-row">
-              <div className="admin-recent-orders-section" style={{ flex: 1 }}>
-                <h2>Recent Customer Orders</h2>
-                {ordersLoading ? (
-                  <p style={{ color: "rgba(11, 43, 30, 0.6)" }}>Loading live orders from Firestore...</p>
-                ) : orders.length === 0 ? (
-                  <p style={{ color: "rgba(11, 43, 30, 0.6)" }}>No orders placed yet.</p>
-                ) : (
-                  <div className="admin-table-container">
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          <th>Order ID</th>
-                          <th>Customer</th>
-                          <th>Items</th>
-                          <th>Total</th>
-                          <th>Payment</th>
-                          <th>Status</th>
+              <div className="admin-analytics-section">
+                <h2>Sales Analytics (Last 6 Months)</h2>
+                <div className="admin-chart">
+                  {lastSixMonthsData.map((data) => {
+                    const heightPercent = (data.sales / maxSales) * 100;
+                    return (
+                      <div className="admin-chart-bar-wrap" key={data.month}>
+                        <div className="admin-chart-tooltip">₹{data.sales.toLocaleString()}</div>
+                        <div className="admin-chart-bar" style={{ height: `${heightPercent}%` }}></div>
+                        <span className="admin-chart-label">{data.month}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="admin-recent-orders-section">
+                <h2>Recent Orders</h2>
+                <div className="admin-table-container">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.slice(0, 5).map(order => (
+                        <tr key={order.id}>
+                          <td>
+                            <strong>{order.id}</strong><br/>
+                            <span className="admin-order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                          </td>
+                          <td>{order.shippingAddress?.fullName || order.customerName || "Valued Customer"}</td>
+                          <td>₹{order.total?.toLocaleString() || 0}</td>
+                          <td>
+                            {order.paymentMethod === "Pay on Delivery" || order.paymentMethod === "Cash on Delivery" ? (
+                              <span style={{ color: "#e53e3e", fontWeight: "600", fontSize: "0.85rem", border: "1px solid #e53e3e", padding: "2px 6px", borderRadius: "4px" }}>COD</span>
+                            ) : (
+                              <span style={{ color: "#38a169", fontWeight: "600", fontSize: "0.85rem", border: "1px solid #38a169", padding: "2px 6px", borderRadius: "4px" }}>PREPAID</span>
+                            )}
+                          </td>
+                          <td>
+                            <span className={`admin-status-badge ${(order.orderStatus || order.status || "processing").toLowerCase()}`}>
+                              {order.orderStatus || order.status || "Processing"}
+                            </span>
+                          </td>
+                          <td>
+                            <button type="button" className="admin-btn-secondary" onClick={() => setSelectedOrder(order)} style={{ marginRight: "8px" }}>View</button>
+                            <button type="button" className="admin-btn-secondary" style={{ color: "#e53e3e", borderColor: "#e53e3e" }} onClick={() => handleDeleteOrder(order.id)}>Delete</button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {orders.slice(0, 8).map((order) => (
-                          <tr key={order.id}>
-                            <td>
-                              <strong>{order.id}</strong><br/>
-                              <span className="admin-order-date">
-                                {new Date(order.createdAt).toLocaleDateString("en-IN", { dateStyle: "short" })}
-                              </span>
-                            </td>
-                            <td>
-                              <strong>{order.customerName || order.shippingAddress?.fullName || "Customer"}</strong><br />
-                              <span style={{ fontSize: "11px", color: "rgba(11,43,30,0.6)" }}>{order.userId?.slice(0, 8)}</span>
-                            </td>
-                            <td>
-                              {order.items?.map((it) => `${it.name} (${it.quantity})`).join(", ")}
-                            </td>
-                            <td>₹{order.total?.toLocaleString("en-IN")}</td>
-                            <td>{order.paymentMethod || "Pay on Delivery"}</td>
-                            <td>
-                              <span className={`admin-status-badge ${(order.orderStatus || order.status || "processing").toLowerCase().replace(/\s+/g, "-")}`}>
-                                {order.orderStatus || order.status || "Processing"}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                      ))}
+                      {orders.length === 0 && (
+                        <tr>
+                          <td colSpan={6} style={{ textAlign: "center", padding: "1rem" }}>No recent orders.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -310,13 +423,8 @@ export default function AdminDashboard() {
         {activeTab === "products" && !isEditing && (
           <div className="admin-products">
             <div className="admin-products-header">
-              <div>
-                <h1>Manage Products</h1>
-                <p style={{ margin: "4px 0 0", color: "rgba(11,43,30,0.6)", fontSize: "14px" }}>
-                  Add, edit, change pricing, stock, badges, and catalog availability.
-                </p>
-              </div>
-              <button className="admin-btn-primary" onClick={handleAddNewClick}>+ Add New Product</button>
+              <h1>Manage Products</h1>
+              <button type="button" className="admin-btn-primary" onClick={handleAddNewClick}>+ Add New Product</button>
             </div>
             <div className="admin-table-container">
               <table className="admin-table">
@@ -326,47 +434,39 @@ export default function AdminDashboard() {
                     <th>Name</th>
                     <th>Category</th>
                     <th>Price</th>
-                    <th>Stock</th>
-                    <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
+                  {products.map(product => (
                     <tr key={product.id}>
                       <td>
                         <img src={product.image} alt={product.name} className="admin-table-img" />
                       </td>
                       <td>
-                        <strong>{product.name}</strong><br />
-                        <span style={{ fontSize: "11px", color: "rgba(11,43,30,0.5)" }}>{product.origin}</span>
-                      </td>
-                      <td>{product.category}</td>
-                      <td>
-                        <strong>₹{product.price.toLocaleString("en-IN")}</strong>
+                        {product.name}
+                        {(product.stock ?? 10) <= 0 ? (
+                          <span style={{ marginLeft: "8px", fontSize: "0.8rem", color: "#e53e3e", background: "#fed7d7", padding: "2px 6px", borderRadius: "4px" }}>
+                            Out of Stock
+                          </span>
+                        ) : (
+                          <span style={{ marginLeft: "8px", fontSize: "0.8rem", color: "#38a169", background: "#c6f6d5", padding: "2px 6px", borderRadius: "4px" }}>
+                            Stock: {product.stock ?? 10}
+                          </span>
+                        )}
                         {product.oldPrice ? (
-                          <span style={{ textDecoration: "line-through", color: "#999", marginLeft: "6px", fontSize: "12px" }}>
-                            ₹{product.oldPrice}
+                          <span style={{ marginLeft: "8px", fontSize: "0.8rem", color: "#e53e3e", background: "#fed7d7", padding: "2px 6px", borderRadius: "4px" }}>
+                            Discounted
                           </span>
                         ) : null}
                       </td>
-                      <td>{product.stock ?? 100} units</td>
+                      <td>{product.category}</td>
                       <td>
-                        <span className={`admin-stat-badge ${product.inStock !== false ? "positive" : ""}`}>
-                          {product.inStock !== false ? "In Stock" : "Out of Stock"}
-                        </span>
+                        ₹{product.price.toLocaleString()}
+                        {product.oldPrice ? <span style={{ textDecoration: "line-through", color: "#a0aec0", marginLeft: "8px" }}>₹{product.oldPrice}</span> : null}
                       </td>
                       <td>
-                        <div style={{ display: "flex", gap: "8px" }}>
-                          <button className="admin-btn-secondary" onClick={() => handleEditClick(product)}>Edit</button>
-                          <button 
-                            className="admin-btn-secondary" 
-                            style={{ borderColor: "#dc2626", color: "#dc2626" }}
-                            onClick={() => handleDeleteProduct(product.id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
+                        <button type="button" className="admin-btn-secondary" onClick={() => handleEditClick(product)}>Edit</button>
                       </td>
                     </tr>
                   ))}
@@ -381,12 +481,12 @@ export default function AdminDashboard() {
             <h1>{currentProduct.id ? "Edit Product" : "Add New Product"}</h1>
             <form className="admin-form" onSubmit={handleSaveProduct}>
               <div className="form-group">
-                <label>Product Name</label>
+                <label>Name</label>
                 <input 
                   type="text" 
                   required 
                   value={currentProduct.name || ""} 
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, name: e.target.value })} 
+                  onChange={e => setCurrentProduct({ ...currentProduct, name: e.target.value })} 
                 />
               </div>
               <div className="form-row">
@@ -394,24 +494,22 @@ export default function AdminDashboard() {
                   <label>Category</label>
                   <select 
                     value={currentProduct.category || "Green"} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, category: e.target.value as TeaCategory })}
+                    onChange={e => setCurrentProduct({ ...currentProduct, category: e.target.value as TeaCategory })}
                   >
-                    <option value="Green">Green Tea</option>
-                    <option value="White">White Tea</option>
-                    <option value="Black">Black Tea</option>
-                    <option value="Oolong">Oolong Tea</option>
-                    <option value="Pu-erh">Pu-erh Tea</option>
+                    <option value="Green">Green</option>
+                    <option value="White">White</option>
+                    <option value="Black">Black</option>
+                    <option value="Oolong">Oolong</option>
                     <option value="Teaware">Teaware</option>
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>Origin / Region</label>
+                  <label>Origin</label>
                   <input 
                     type="text" 
                     required 
-                    placeholder="e.g. Darjeeling, Assam, Nilgiri"
                     value={currentProduct.origin || ""} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, origin: e.target.value })} 
+                    onChange={e => setCurrentProduct({ ...currentProduct, origin: e.target.value })} 
                   />
                 </div>
               </div>
@@ -421,52 +519,30 @@ export default function AdminDashboard() {
                   <input 
                     type="number" 
                     required 
-                    min="1"
                     value={currentProduct.price || ""} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, price: Number(e.target.value) })} 
+                    onChange={e => setCurrentProduct({ ...currentProduct, price: Number(e.target.value) })} 
                   />
                 </div>
                 <div className="form-group">
                   <label>Old Price (₹) - For Discounts</label>
                   <input 
                     type="number" 
-                    min="0"
-                    placeholder="Optional original price"
                     value={currentProduct.oldPrice || ""} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, oldPrice: Number(e.target.value) || undefined })} 
+                    onChange={e => setCurrentProduct({ ...currentProduct, oldPrice: Number(e.target.value) || undefined })} 
                   />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Stock Quantity</label>
-                  <input 
-                    type="number" 
-                    min="0"
-                    value={currentProduct.stock ?? 100} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, stock: Number(e.target.value) })} 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Availability</label>
-                  <select 
-                    value={currentProduct.inStock !== false ? "true" : "false"}
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, inStock: e.target.value === "true" })}
-                  >
-                    <option value="true">In Stock & Active</option>
-                    <option value="false">Out of Stock</option>
-                  </select>
+                  <small style={{ display: "block", marginTop: "4px", color: "#666" }}>Set higher than Price to show discount across the store.</small>
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label>Badge</label>
                   <select 
-                    value={currentProduct.badge || "Popular"} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, badge: e.target.value as "Premium" | "Popular" | "Bestseller" })}
+                    value={currentProduct.badge || "None"} 
+                    onChange={e => setCurrentProduct({ ...currentProduct, badge: e.target.value === "None" ? undefined : e.target.value as "Premium" | "Popular" | "Bestseller" })}
                   >
-                    <option value="Popular">Popular</option>
+                    <option value="None">None</option>
                     <option value="Premium">Premium</option>
+                    <option value="Popular">Popular</option>
                     <option value="Bestseller">Bestseller</option>
                   </select>
                 </div>
@@ -474,7 +550,7 @@ export default function AdminDashboard() {
                   <label>Caffeine Level</label>
                   <select 
                     value={currentProduct.caffeine || "Medium"} 
-                    onChange={(e) => setCurrentProduct({ ...currentProduct, caffeine: e.target.value as "Low" | "Medium" | "High" })}
+                    onChange={e => setCurrentProduct({ ...currentProduct, caffeine: e.target.value as "Low" | "Medium" | "High" })}
                   >
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
@@ -482,23 +558,65 @@ export default function AdminDashboard() {
                   </select>
                 </div>
               </div>
-              <div className="form-group">
-                <label>Image URL</label>
-                <input 
-                  type="text" 
-                  value={currentProduct.image || ""} 
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, image: e.target.value })} 
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Stock Quantity</label>
+                  <input 
+                    type="number" 
+                    required 
+                    min="0"
+                    value={currentProduct.stock ?? 10} 
+                    onChange={e => setCurrentProduct({ ...currentProduct, stock: parseInt(e.target.value, 10) || 0 })} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Custom Tag (Optional)</label>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Limited Edition" 
+                      value={currentProduct.customTag?.text || ""} 
+                      onChange={e => setCurrentProduct({ ...currentProduct, customTag: { text: e.target.value, color: currentProduct.customTag?.color || "#38a169" } })} 
+                      style={{ flex: 1 }}
+                    />
+                    <input 
+                      type="color" 
+                      title="Tag Color"
+                      value={currentProduct.customTag?.color || "#38a169"} 
+                      onChange={e => setCurrentProduct({ ...currentProduct, customTag: { text: currentProduct.customTag?.text || "", color: e.target.value } })} 
+                      style={{ padding: "0", width: "40px", height: "40px", cursor: "pointer", border: "1px solid #ccc", borderRadius: "4px" }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea 
-                  rows={4}
-                  style={{ padding: "0.75rem", borderRadius: "4px", border: "1px solid rgba(11,43,30,0.2)" }}
-                  value={currentProduct.description || ""} 
-                  onChange={(e) => setCurrentProduct({ ...currentProduct, description: e.target.value })} 
-                />
+              
+              <div className="form-row">
+                <div className="form-group" style={{ width: "100%" }}>
+                  <label>Available Variants</label>
+                  <p style={{ fontSize: "0.85rem", color: "#666", marginBottom: "0.5rem" }}>Select the weights available for this product. Prices are automatically calculated from the base 100g price.</p>
+                  <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                    {(["100g", "250g", "500g", "1kg"] as const).map(vKey => (
+                      <label key={vKey} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={!!currentProduct.variants?.[vKey]}
+                          onChange={(e) => {
+                            const newVars: Record<string, ProductVariant | undefined> = { ...currentProduct.variants };
+                            if (e.target.checked) {
+                              newVars[vKey] = { weight: vKey, price: 0 };
+                            } else {
+                              delete newVars[vKey];
+                            }
+                            setCurrentProduct({ ...currentProduct, variants: newVars as unknown as Product["variants"] });
+                          }}
+                        />
+                        {vKey}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
+
               <div className="form-actions">
                 <button type="button" className="admin-btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
                 <button type="submit" className="admin-btn-primary">Save Product</button>
@@ -508,102 +626,317 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "orders" && (
-          <div className="admin-orders">
-            <h1>Customer Order Management</h1>
-            <p style={{ marginTop: "-1rem", marginBottom: "1.5rem", color: "rgba(11,43,30,0.7)" }}>
-              Real-time Firestore customer orders feed with live status synchronization.
-            </p>
+          <div className="admin-products">
+            <div className="admin-products-header">
+              <h1>All Orders</h1>
+            </div>
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr key={order.id}>
+                      <td><strong>{order.id}</strong></td>
+                      <td>{new Date(order.createdAt).toLocaleString()}</td>
+                      <td>
+                        {order.shippingAddress?.fullName || order.customerName || "Customer"}<br/>
+                        <span style={{ fontSize: "0.85rem", color: "#666" }}>
+                          {order.shippingAddress?.city ? `${order.shippingAddress.city}, ${order.shippingAddress.state}` : "Direct Order"}
+                        </span>
+                      </td>
+                      <td>₹{order.total?.toLocaleString() || 0}</td>
+                      <td>
+                        {order.paymentMethod === "Pay on Delivery" || order.paymentMethod === "Cash on Delivery" ? (
+                          <span style={{ color: "#e53e3e", fontWeight: "600", fontSize: "0.85rem", border: "1px solid #e53e3e", padding: "2px 6px", borderRadius: "4px" }}>COD</span>
+                        ) : (
+                          <span style={{ color: "#38a169", fontWeight: "600", fontSize: "0.85rem", border: "1px solid #38a169", padding: "2px 6px", borderRadius: "4px" }}>PREPAID</span>
+                        )}
+                      </td>
+                      <td>
+                        <select 
+                          className={`admin-status-select ${(order.orderStatus || order.status || "processing").toLowerCase()}`}
+                          value={order.orderStatus || order.status || "Processing"}
+                          onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                        >
+                          <option value="Processing">Processing</option>
+                          <option value="Shipped">Shipped</option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </select>
+                      </td>
+                      <td>
+                        <button type="button" className="admin-btn-secondary" onClick={() => setSelectedOrder(order)} style={{ marginRight: "8px" }}>View Details</button>
+                        <button type="button" className="admin-btn-secondary" style={{ color: "#e53e3e", borderColor: "#e53e3e" }} onClick={() => handleDeleteOrder(order.id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {orders.length === 0 && (
+                    <tr>
+                      <td colSpan={7} style={{ textAlign: "center", padding: "2rem" }}>No orders found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
-            {ordersLoading ? (
-              <p>Loading real-time orders...</p>
-            ) : orders.length === 0 ? (
-              <p>No customer orders recorded in Firestore.</p>
+        {/* ACCOUNTS SECTION */}
+        {activeTab === "accounts" && (
+          <div className="admin-products">
+            <div className="admin-products-header">
+              <div>
+                <h1>Customer Accounts</h1>
+                <p style={{ margin: "4px 0 0", color: "rgba(11,43,30,0.6)", fontSize: "14px" }}>
+                  Live Firestore customer accounts registry with real-time updates.
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                <span className="admin-stat-badge positive" style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}>
+                  {accounts.length} Registered {accounts.length === 1 ? "Customer" : "Customers"}
+                </span>
+              </div>
+            </div>
+
+            {/* FILTER & SEARCH BAR */}
+            <div className="admin-filter-bar">
+              <div className="admin-search-box">
+                <span className="admin-search-icon">🔍</span>
+                <input 
+                  type="text" 
+                  placeholder="Search by customer name, email, mobile, or UID..." 
+                  value={accountSearchQuery}
+                  onChange={(e) => setAccountSearchQuery(e.target.value)}
+                  className="admin-search-input"
+                />
+              </div>
+
+              <select 
+                value={accountFilterProvider} 
+                onChange={(e) => setAccountFilterProvider(e.target.value)}
+                className="admin-filter-select"
+              >
+                <option value="all">All Authentication Methods</option>
+                <option value="google">Google OAuth</option>
+                <option value="email">Email / Password</option>
+              </select>
+            </div>
+
+            {accountsLoading ? (
+              <p style={{ padding: "2rem 0", color: "rgba(11,43,30,0.7)" }}>Loading live customer accounts from Firestore...</p>
+            ) : filteredAccounts.length === 0 ? (
+              <div className="admin-table-container" style={{ padding: "3rem 2rem", textAlign: "center" }}>
+                <p style={{ fontSize: "1.1rem", color: "rgba(11,43,30,0.7)", margin: 0 }}>
+                  {accountSearchQuery ? "No customer accounts match your search query." : "No customer accounts registered in Firestore yet."}
+                </p>
+              </div>
             ) : (
               <div className="admin-table-container">
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Order ID & Date</th>
-                      <th>Customer Info</th>
-                      <th>Items & Qty</th>
-                      <th>Amount & Payment</th>
-                      <th>Shipping Destination</th>
-                      <th>Live Status</th>
+                      <th>Customer</th>
+                      <th>Email Address</th>
+                      <th>Mobile Number</th>
+                      <th>Registered On</th>
+                      <th>Auth Method</th>
+                      <th>Status</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map((order) => (
-                      <tr key={order.id}>
-                        <td>
-                          <strong style={{ color: "#0b2b1e" }}>{order.id}</strong><br />
-                          <span className="admin-order-date">
-                            {new Date(order.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
-                          </span>
-                        </td>
-                        <td>
-                          <strong>{order.customerName || order.shippingAddress?.fullName || "Valued Customer"}</strong><br />
-                          <span style={{ fontSize: "12px", color: "rgba(11,43,30,0.8)" }}>📧 {order.customerEmail || "No email"}</span><br />
-                          {order.customerPhone ? (
-                            <span style={{ fontSize: "12px", color: "#166534" }}>📱 {order.customerPhone}</span>
-                          ) : null}
-                        </td>
-                        <td>
-                          <div style={{ fontSize: "12.5px" }}>
-                            {order.items?.map((it, idx) => (
-                              <div key={idx}>
-                                • {it.name} ({it.variant || it.weight || "100g"}) × {it.quantity}
+                    {filteredAccounts.map((acc) => {
+                      const initial = acc.name?.charAt(0)?.toUpperCase() || "U";
+                      const isGoogle = acc.authProvider.toLowerCase().includes("google");
+                      return (
+                        <tr key={acc.id}>
+                          <td>
+                            <div className="admin-account-cell">
+                              <div className="admin-account-avatar">{initial}</div>
+                              <div>
+                                <strong>{acc.name}</strong><br />
+                                <span style={{ fontSize: "11px", color: "rgba(11,43,30,0.5)", fontFamily: "monospace" }}>
+                                  UID: {acc.uid.slice(0, 10)}...
+                                </span>
                               </div>
-                            ))}
-                          </div>
-                        </td>
-                        <td>
-                          <strong>₹{order.total?.toLocaleString("en-IN")}</strong><br />
-                          <span style={{ fontSize: "11px", color: "rgba(11,43,30,0.6)" }}>
-                            Method: {order.paymentMethod || "Pay on Delivery"}
-                          </span>
-                        </td>
-                        <td>
-                          <div style={{ fontSize: "12px", lineHeight: "1.4" }}>
-                            {order.shippingAddress?.addressLine1}
-                            {order.shippingAddress?.addressLine2 ? `, ${order.shippingAddress.addressLine2}` : ""}<br />
-                            {order.shippingAddress?.city}, {order.shippingAddress?.state} - {order.shippingAddress?.postalCode}<br />
-                            <strong>{order.shippingAddress?.country}</strong>
-                          </div>
-                          {order.deliveryInstructions ? (
-                            <div style={{ marginTop: "6px", padding: "4px 8px", background: "#fef3c7", border: "1px solid #fde68a", borderRadius: "4px", fontSize: "11px", color: "#92400e", lineHeight: "1.3" }}>
-                              <strong>📝 Delivery Instructions:</strong> {order.deliveryInstructions}
                             </div>
-                          ) : null}
-                        </td>
-                        <td>
-                          <select
-                            disabled={updatingOrderId === order.id}
-                            value={order.orderStatus || order.status || "Processing"}
-                            onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value as OrderStatus)}
-                            style={{
-                              padding: "6px 10px",
-                              borderRadius: "6px",
-                              border: "1px solid rgba(11,43,30,0.2)",
-                              background: "#ffffff",
-                              fontSize: "12.5px",
-                              fontWeight: 600,
-                              color: "#0b2b1e",
-                              cursor: "pointer",
-                            }}
-                          >
-                            {ALL_ORDER_STATUSES.map((st) => (
-                              <option key={st} value={st}>
-                                {st}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
+                          </td>
+                          <td>
+                            <span style={{ color: "var(--leafly-forest)" }}>{acc.email}</span>
+                          </td>
+                          <td>
+                            {acc.phone && acc.phone !== "—" && acc.phone !== "Not Provided" ? (
+                              <strong style={{ color: "#166534" }}>{acc.phone}</strong>
+                            ) : (
+                              <span style={{ color: "rgba(11,43,30,0.4)" }}>Not Provided</span>
+                            )}
+                          </td>
+                          <td>
+                            {acc.createdAt ? (
+                              <span>
+                                {new Date(acc.createdAt).toLocaleDateString("en-IN", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                              </span>
+                            ) : (
+                              <span style={{ color: "rgba(11,43,30,0.4)" }}>Recent</span>
+                            )}
+                          </td>
+                          <td>
+                            <span className={`admin-auth-badge ${isGoogle ? "google" : "email"}`}>
+                              {isGoogle ? "Google" : "Email/Password"}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-status-badge active">
+                              {acc.status || "Active"}
+                            </span>
+                          </td>
+                          <td>
+                            <button 
+                              type="button" 
+                              className="admin-btn-secondary"
+                              onClick={() => setSelectedAccount(acc)}
+                            >
+                              View Details
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ACCOUNT DETAILS MODAL */}
+        {selectedAccount && (
+          <div className="admin-modal-overlay" onClick={() => setSelectedAccount(null)}>
+            <div className="admin-modal-content" onClick={e => e.stopPropagation()}>
+              <div className="admin-modal-header">
+                <h2>Customer Account Profile</h2>
+                <button type="button" className="admin-modal-close" onClick={() => setSelectedAccount(null)}>×</button>
+              </div>
+              <div className="admin-modal-body">
+                <div className="admin-order-grid">
+                  <div>
+                    <h3>Profile Information</h3>
+                    <p><strong>Full Name:</strong> {selectedAccount.name}</p>
+                    <p><strong>Email Address:</strong> {selectedAccount.email}</p>
+                    <p><strong>Mobile Number:</strong> {selectedAccount.phone || "Not Provided"}</p>
+                    <p><strong>Account Status:</strong> <span className="admin-status-badge active">{selectedAccount.status || "Active"}</span></p>
+                  </div>
+                  <div>
+                    <h3>Authentication Metadata</h3>
+                    <p><strong>Provider:</strong> <span className={`admin-auth-badge ${selectedAccount.authProvider.toLowerCase().includes("google") ? "google" : "email"}`}>{selectedAccount.authProvider}</span></p>
+                    <p><strong>Registered Date:</strong> {selectedAccount.createdAt ? new Date(selectedAccount.createdAt).toLocaleString("en-IN") : "Recent"}</p>
+                    <p><strong>User ID (UID):</strong> <code style={{ fontSize: "11px", background: "#f0ede6", padding: "2px 4px", borderRadius: "4px" }}>{selectedAccount.uid}</code></p>
+                  </div>
+                </div>
+
+                {selectedAccount.favoriteTea || selectedAccount.preferences ? (
+                  <div style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(11,43,30,0.1)" }}>
+                    <h3>Curated Palate & Preferences</h3>
+                    {selectedAccount.favoriteTea && (
+                      <p><strong>Favorite Tea:</strong> {selectedAccount.favoriteTea}</p>
+                    )}
+                    {selectedAccount.preferences && typeof selectedAccount.preferences === "object" && (
+                      <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginTop: "1rem" }}>
+                        {Object.entries(selectedAccount.preferences).map(([key, val]) => (
+                          <div key={key} style={{ background: "#fbf9f5", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid rgba(11,43,30,0.08)" }}>
+                            <small style={{ textTransform: "uppercase", letterSpacing: "0.5px", color: "rgba(11,43,30,0.6)", display: "block" }}>{key}</small>
+                            <strong style={{ color: "var(--leafly-forest)" }}>{Array.isArray(val) ? val.join(", ") : String(val)}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ORDER DETAILS MODAL */}
+        {selectedOrder && (
+          <div className="admin-modal-overlay" onClick={() => setSelectedOrder(null)}>
+            <div className="admin-modal-content" onClick={e => e.stopPropagation()}>
+              <div className="admin-modal-header">
+                <h2>Order Details: {selectedOrder.id}</h2>
+                <button type="button" className="admin-modal-close" onClick={() => setSelectedOrder(null)}>×</button>
+              </div>
+              <div className="admin-modal-body">
+                <div className="admin-order-grid">
+                  <div>
+                    <h3>Customer Information</h3>
+                    <p><strong>Name:</strong> {selectedOrder.shippingAddress?.fullName || selectedOrder.customerName || "Customer"}</p>
+                    <p><strong>Email:</strong> {selectedOrder.customerEmail || "N/A"}</p>
+                  </div>
+                  <div>
+                    <h3>Shipping Address</h3>
+                    <p>{selectedOrder.shippingAddress?.addressLine1 || "N/A"}</p>
+                    {selectedOrder.shippingAddress?.addressLine2 && <p>{selectedOrder.shippingAddress.addressLine2}</p>}
+                    <p>{selectedOrder.shippingAddress?.city ? `${selectedOrder.shippingAddress.city}, ${selectedOrder.shippingAddress.state} ${selectedOrder.shippingAddress.postalCode}` : ""}</p>
+                    <p>{selectedOrder.shippingAddress?.country || ""}</p>
+                  </div>
+                  <div>
+                    <h3>Payment Details</h3>
+                    <p><strong>Method:</strong> {selectedOrder.paymentMethod || "N/A"}</p>
+                    <p><strong>Subtotal:</strong> ₹{selectedOrder.subtotal || 0}</p>
+                    <p><strong>Discount:</strong> -₹{selectedOrder.discount || 0}</p>
+                    <p><strong>Delivery Fee:</strong> ₹{selectedOrder.deliveryFee || 0}</p>
+                    <p><strong>Total:</strong> ₹{selectedOrder.total || 0}</p>
+                  </div>
+                  <div>
+                    <h3>Order Status</h3>
+                    <p>
+                      <span className={`admin-status-badge ${(selectedOrder.orderStatus || selectedOrder.status || "processing").toLowerCase()}`}>
+                        {selectedOrder.orderStatus || selectedOrder.status || "Processing"}
+                      </span>
+                    </p>
+                    <p><strong>Date:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                  </div>
+                </div>
+                
+                <h3 style={{ marginTop: "2rem", marginBottom: "1rem" }}>Items Ordered</h3>
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Variant</th>
+                      <th>Price</th>
+                      <th>Qty</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(selectedOrder.items || []).map((item, idx) => (
+                      <tr key={idx}>
+                        <td>{item.name}</td>
+                        <td>{item.variant || item.weight || "100g"}</td>
+                        <td>₹{item.price}</td>
+                        <td>{item.quantity}</td>
+                        <td>₹{(item.price || 0) * (item.quantity || 1)}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            )}
+            </div>
           </div>
         )}
       </main>

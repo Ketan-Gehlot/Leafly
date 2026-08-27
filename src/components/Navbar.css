@@ -652,11 +652,13 @@
     width 300ms ease;
 }
 
-.leafly-nav-link:hover {
+.leafly-nav-link:hover,
+.leafly-nav-link.active {
   color: #c9a24b;
 }
 
-.leafly-nav-link:hover::after {
+.leafly-nav-link:hover::after,
+.leafly-nav-link.active::after {
   width: 100%;
 }
 
@@ -957,16 +959,17 @@
     transform 250ms ease;
 }
 
-.leafly-mobile-link:hover {
+.leafly-mobile-link:hover,
+.leafly-mobile-link.active {
   color: #c9a24b;
-
-  padding-left: 5px;
+  padding-left: 6px;
+  background: rgba(201, 162, 75, 0.08);
+  border-radius: 8px;
 }
 
-.leafly-mobile-link:hover
-> span:last-child {
-  transform:
-    translateX(4px);
+.leafly-mobile-link:hover > span:last-child,
+.leafly-mobile-link.active > span:last-child {
+  transform: translateX(4px);
 }
 
 

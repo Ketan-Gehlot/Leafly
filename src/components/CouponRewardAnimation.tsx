@@ -8,7 +8,7 @@ type CouponRewardAnimationProps = {
 
 export default function CouponRewardAnimation({
   onComplete,
-  couponCode = "LEAFLY2026",
+  couponCode = "HARVEST15",
 }: CouponRewardAnimationProps) {
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === "undefined") {

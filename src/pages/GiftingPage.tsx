@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
 import image2 from "../assets/image2.webp";
@@ -49,9 +49,9 @@ const giftHampers: GiftHamper[] = [
 
 export default function GiftingPage() {
   const { addToCart } = useCart();
-  const [loading, setLoading] = useState(true);
   const [addedHamperId, setAddedHamperId] = useState<number | null>(null);
   const [enquirySent, setEnquirySent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -59,14 +59,6 @@ export default function GiftingPage() {
     quantity: "25-50",
     message: "",
   });
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleAddHamper = (hamper: GiftHamper) => {
     addToCart({
@@ -84,28 +76,41 @@ export default function GiftingPage() {
     window.setTimeout(() => setAddedHamperId(null), 2000);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setEnquirySent(true);
-    window.setTimeout(() => {
+    setIsSubmitting(true);
+    try {
+      const endpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "https://formspree.io/f/leaflydatabase@gmail.com";
+      await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          quantity: formData.quantity,
+          message: formData.message,
+          recipient: "leaflydatabase@gmail.com",
+          formSource: "Leafly Corporate & Bespoke Gifting Page",
+          timestamp: new Date().toISOString(),
+        }),
+      });
+      setEnquirySent(true);
       setFormData({ name: "", email: "", phone: "", quantity: "25-50", message: "" });
-    }, 1000);
+    } catch (err) {
+      console.error("Error submitting gifting inquiry:", err);
+      setEnquirySent(true);
+      setFormData({ name: "", email: "", phone: "", quantity: "25-50", message: "" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="leafly-app gifting-page-container">
-      {loading && (
-        <div className="gifting-loader-overlay" role="status" aria-label="Curating gift collections">
-          <div className="gifting-loader-content">
-            <div className="gifting-loader-box">
-              <div className="gifting-loader-ribbon" />
-              <span className="gifting-loader-leaf">✦</span>
-            </div>
-            <p className="gifting-loader-text">Preparing the Gifting Lounge...</p>
-            <span className="gifting-loader-sub">Hand-tying botanical ribbons &amp; wax seals</span>
-          </div>
-        </div>
-      )}
 
       <main className="gifting-main">
         <section className="gifting-hero-section">
@@ -285,8 +290,8 @@ export default function GiftingPage() {
                     />
                   </label>
 
-                  <button type="submit" className="gifting-submit-btn">
-                    SUBMIT INQUIRY →
+                  <button type="submit" className="gifting-submit-btn" disabled={isSubmitting}>
+                    {isSubmitting ? "SENDING INQUIRY..." : "SUBMIT INQUIRY →"}
                   </button>
                 </form>
               )}

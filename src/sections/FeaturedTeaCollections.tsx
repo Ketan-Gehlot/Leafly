@@ -34,14 +34,6 @@ const teas = [
       "A beautifully layered tea between green and black. Complex aromas, rounded texture, and a graceful finish reveal something new in every sip.",
     image: "/leafly-oolong-tea.webp",
   },
-  {
-    name: "Pu-erh Tea",
-    category: "05 · HERITAGE COLLECTION",
-    subtitle: "DEEP & EARTHY",
-    description:
-      "A traditionally crafted tea with depth, warmth, and a beautifully rounded character. Slow-aged leaves reveal richer notes with every infusion.",
-    image: "/leafly-puer-tea.webp",
-  },
 ];
 
 export default function FeaturedTeaCollections() {

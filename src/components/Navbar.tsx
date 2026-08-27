@@ -165,15 +165,23 @@ export default function Navbar() {
         className="leafly-desktop-nav"
         aria-label="Main navigation"
       >
-        {navLinks.map((link) => (
-          <Link
-            key={link.label}
-            to={link.path}
-            className="leafly-nav-link"
-          >
-            {link.label}
-          </Link>
-        ))}
+        {navLinks.map((link) => {
+          const isActive =
+            link.path === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(link.path);
+
+          return (
+            <Link
+              key={link.label}
+              to={link.path}
+              className={`leafly-nav-link ${isActive ? "active" : ""}`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {link.label}
+            </Link>
+          );
+        })}
       </nav>
 
 
@@ -290,7 +298,7 @@ export default function Navbar() {
 
         <Link
           to={isAuthenticated ? "/profile" : "/login"}
-          aria-label={isAuthenticated ? "Account Sanctuary" : "Sign In"}
+          aria-label={isAuthenticated ? "Account Profile" : "Sign In"}
           className="leafly-icon-button"
           onClick={closeMenu}
         >
@@ -400,7 +408,7 @@ export default function Navbar() {
 
         <Link
           to={isAuthenticated ? "/profile" : "/login"}
-          aria-label={isAuthenticated ? "Account Sanctuary" : "Sign In"}
+          aria-label={isAuthenticated ? "Account Profile" : "Sign In"}
           className="leafly-mobile-profile"
           onClick={closeMenu}
         >
@@ -464,18 +472,25 @@ export default function Navbar() {
         }`}
       >
 
-        {navLinks.map((link) => (
-          <Link
-            key={link.label}
-            to={link.path}
-            className="leafly-mobile-link"
-            onClick={closeMenu}
-          >
-            {link.label}
+        {navLinks.map((link) => {
+          const isActive =
+            link.path === "/"
+              ? location.pathname === "/"
+              : location.pathname.startsWith(link.path);
 
-            <span>❧</span>
-          </Link>
-        ))}
+          return (
+            <Link
+              key={link.label}
+              to={link.path}
+              className={`leafly-mobile-link ${isActive ? "active" : ""}`}
+              onClick={closeMenu}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {link.label}
+              <span>❧</span>
+            </Link>
+          );
+        })}
 
 
         {/* MOBILE ACTIONS */}

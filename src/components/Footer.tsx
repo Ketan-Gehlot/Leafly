@@ -11,7 +11,6 @@ const shopLinks = [
   { label: "White Tea", href: "/tea-collections" },
   { label: "Black Tea", href: "/tea-collections" },
   { label: "Oolong Tea", href: "/tea-collections" },
-  { label: "Pu-erh Tea", href: "/tea-collections" },
 ];
 
 const exploreLinks = [
@@ -25,8 +24,8 @@ const exploreLinks = [
 
 const careLinks = [
   { label: "My Account", href: "/profile" },
-  { label: "Shipping Policy", href: "/shipping-policy" },
-  { label: "Freshness Guarantee", href: "/freshness-guarantee" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
   { label: "FAQs", href: "/faqs" },
   { label: "Contact Us", href: "/contact" },
 ];
@@ -193,7 +192,7 @@ export default function Footer() {
             <p className="leafly-footer-column-title">CONNECT WITH US</p>
 
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/leafly.greentea?igsi=MWI2dG5qenQyYjUxZA=="
               target="_blank"
               rel="noopener noreferrer"
               className="leafly-footer-social-link"
@@ -252,9 +251,9 @@ export default function Footer() {
           <p className="leafly-footer-motto">REAL TEA. BETTER MOMENTS.</p>
 
           <div className="leafly-footer-legal">
-            <Link to="/shipping-policy">Shipping Policy</Link>
+            <Link to="/privacy-policy">Privacy Policy</Link>
             <span>•</span>
-            <Link to="/freshness-guarantee">Freshness Guarantee</Link>
+            <Link to="/terms-and-conditions">Terms & Conditions</Link>
             <span>•</span>
             <Link to="/faqs">FAQs</Link>
           </div>

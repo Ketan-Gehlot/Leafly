@@ -328,6 +328,13 @@
   cursor: not-allowed;
 }
 
+.orders-cancel-btn-disabled {
+  background: rgba(148, 163, 184, 0.08) !important;
+  color: #64748b !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+  cursor: not-allowed !important;
+}
+
 .orders-empty {
   margin-top: 24px;
   padding: 36px 20px;

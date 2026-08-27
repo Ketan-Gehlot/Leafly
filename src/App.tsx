@@ -39,11 +39,14 @@ const Shop = lazy(() => import("./pages/Shop"));
 const Teaware = lazy(() => import("./pages/Teaware"));
 const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
 const FreshnessGuarantee = lazy(() => import("./pages/FreshnessGuarantee"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const TeaCollections = lazy(() => import("./pages/TeaCollections"));
 const TeaMaker = lazy(() => import("./pages/TeaMaker"));
 const WhyLeafly = lazy(() => import("./pages/WhyLeafly"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 
 function CartRedirect() {
   const { openCart } = useCart();
@@ -168,6 +171,23 @@ function App() {
                     />
 
                     <Route
+                      path="/privacy-policy"
+                      element={<PrivacyPolicy />}
+                    />
+                    <Route
+                      path="/privacy"
+                      element={<PrivacyPolicy />}
+                    />
+                    <Route
+                      path="/terms-and-conditions"
+                      element={<TermsAndConditions />}
+                    />
+                    <Route
+                      path="/terms"
+                      element={<TermsAndConditions />}
+                    />
+
+                    <Route
                       path="/shipping-policy"
                       element={<ShippingPolicy />}
                     />
@@ -201,6 +221,10 @@ function App() {
                           <AdminDashboard />
                         </AdminRoute>
                       }
+                    />
+                    <Route
+                      path="/admin/login"
+                      element={<AdminLogin />}
                     />
 
                     <Route

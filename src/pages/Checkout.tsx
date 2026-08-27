@@ -14,6 +14,8 @@ import { calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import { useCoupons } from "../context/CouponContext";
 import { useAuth } from "../context/AuthContext";
 import { COUNTRIES_LIST, INDIAN_STATES_AND_CITIES } from "../data/indianLocations";
+import { auth, db } from "../lib/firebase";
+import { doc, setDoc, updateDoc, increment } from "firebase/firestore";
 import Footer from "../components/Footer";
 import "./Checkout.css";
 
@@ -28,6 +30,20 @@ type AddressForm = {
 };
 
 type FormErrors = Partial<Record<string, string>>;
+
+function cleanFirestoreObject<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {
+  const cleaned: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+        cleaned[key] = cleanFirestoreObject(value as Record<string, unknown>);
+      } else {
+        cleaned[key] = value;
+      }
+    }
+  }
+  return cleaned;
+}
 
 function getSavedAddressesKey(uid?: string | null): string | null {
   return uid ? `leafly_saved_addresses_${uid}` : null;
@@ -76,7 +92,13 @@ export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
   const { addOrder } = useOrderContext();
   const { grantPostOrderReward, markCouponUsed, validateUserCoupon } = useCoupons();
-  const { currentUser } = useAuth();
+  const { currentUser, loading: authLoading, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate("/login", { replace: true, state: { from: { pathname: "/checkout" } } });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   const [email, setEmail] = useState(() => currentUser?.email || "");
   const [phone, setPhone] = useState(() => currentUser?.phone || currentUser?.phoneNumber || "");
@@ -97,6 +119,7 @@ export default function Checkout() {
   const [isBursting, setIsBursting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [deliveryPhase, setDeliveryPhase] = useState<"idle" | "delivery" | "coupon">("idle");
+  const [rewardCouponCode, setRewardCouponCode] = useState<string>("HARVEST15");
 
   const [shippingAddress, setShippingAddress] = useState<AddressForm>(() => {
     if (currentUser?.uid) {
@@ -271,12 +294,12 @@ export default function Checkout() {
 
   const validateCheckout = () => {
     const nextErrors: FormErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const gmailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/i;
 
     if (!email.trim()) {
       nextErrors.email = "Email is required.";
-    } else if (!emailRegex.test(email.trim())) {
-      nextErrors.email = "Please enter a valid email address.";
+    } else if (!gmailRegex.test(email.trim())) {
+      nextErrors.email = "Please enter a valid Gmail address ending with @gmail.com.";
     }
 
     const trimmedName = shippingAddress.fullName.trim();
@@ -351,24 +374,36 @@ export default function Checkout() {
     orderTotal: number,
     orderSubtotal: number,
     orderDiscount: number,
-    orderDeliveryFee: number
+    orderDeliveryFee: number,
+    razorpayPaymentId?: string
   ) => {
     const resolvedPaymentMethod =
       paymentMethod === "card"
         ? "Debit / Credit Card / NetBanking"
         : paymentMethod === "upi"
           ? "UPI"
-          : "Cash on Delivery";
+          : "Pay on Delivery";
+
+    const isPaidOnline = Boolean(razorpayPaymentId) || resolvedPaymentMethod !== "Pay on Delivery";
+
+    const currentUid = auth.currentUser?.uid || currentUser?.uid;
+    if (!currentUid) {
+      setIsProcessing(false);
+      setIsBursting(false);
+      setErrors({ submit: "Authentication session expired. Please sign in to complete your order." });
+      return;
+    }
 
     const order: Order = {
       id: orderId,
-      userId: currentUser?.uid || "guest",
+      userId: currentUid,
+      customerId: currentUid,
       customerName: shippingAddress.fullName.trim(),
-      customerEmail: email.trim() || currentUser?.email || undefined,
+      customerEmail: email.trim().toLowerCase(),
       customerPhone: phone.trim() || currentUser?.phone || undefined,
       createdAt: new Date().toISOString(),
-      status: resolvedPaymentMethod === "Cash on Delivery" ? "Confirmed" : "Processing",
-      orderStatus: resolvedPaymentMethod === "Cash on Delivery" ? "Confirmed" : "Processing",
+      status: resolvedPaymentMethod === "Pay on Delivery" ? "Confirmed" : "Processing",
+      orderStatus: resolvedPaymentMethod === "Pay on Delivery" ? "Confirmed" : "Processing",
       items: items.map((item) => ({
         id: item.id || `${item.product.id}-${item.variant}`,
         productId: item.product.id,
@@ -389,7 +424,7 @@ export default function Checkout() {
         deliveryMethod === "express" ? "Express Delivery" : "Standard Delivery",
       deliveryInstructions: deliveryInstructions.trim() || undefined,
       paymentMethod: resolvedPaymentMethod,
-      paymentStatus: resolvedPaymentMethod === "Cash on Delivery" ? "Pay on Delivery" : "Pending",
+      paymentStatus: resolvedPaymentMethod === "Pay on Delivery" ? "Pay on Delivery" : isPaidOnline ? "Paid" : "Pending",
       shippingAddress: {
         fullName: shippingAddress.fullName.trim(),
         addressLine1: shippingAddress.addressLine1.trim(),
@@ -401,10 +436,10 @@ export default function Checkout() {
       },
     };
 
-    if (saveAddress && currentUser?.uid) {
-      const storageKey = getSavedAddressesKey(currentUser.uid);
+    if (saveAddress && currentUid) {
+      const storageKey = getSavedAddressesKey(currentUid);
       if (storageKey) {
-        const savedAddresses = readSavedAddresses(currentUser.uid);
+        const savedAddresses = readSavedAddresses(currentUid);
         const nextSaved = [
           {
             fullName: order.shippingAddress.fullName,
@@ -430,13 +465,36 @@ export default function Checkout() {
       }
     }
 
+    // Persist order to Firestore and decrement stock in real-time
+    try {
+      const cleanOrder = cleanFirestoreObject(order as unknown as Record<string, unknown>);
+      await setDoc(doc(db, "orders", order.id), cleanOrder);
+      for (const item of order.items) {
+        if (item.productId) {
+          try {
+            await updateDoc(doc(db, "products", String(item.productId)), {
+              stock: increment(-item.quantity),
+            });
+          } catch (stockError) {
+            console.error(`Failed to update stock for product ${item.productId}:`, stockError);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error saving order to Firestore:", error);
+    }
+
     addOrder(order);
+
     if (appliedCoupon?.code) {
       markCouponUsed(appliedCoupon.code);
     }
     
     // Grant post-order eligible coupon reward
-    grantPostOrderReward();
+    const grantedCode = await grantPostOrderReward();
+    if (grantedCode) {
+      setRewardCouponCode(grantedCode);
+    }
 
     // Transition smoothly to delivery animation and clear purchased items from cart
     setTimeout(() => {
@@ -472,13 +530,92 @@ export default function Checkout() {
     setIsProcessing(true);
 
     const orderId = generateOrderId();
-    finishOrder(
-      orderId,
-      total,
-      subtotal,
-      discountAmount,
-      deliveryFee
-    );
+
+    const finalizeOrder = async (razorpayPaymentId?: string) => {
+      await finishOrder(
+        orderId,
+        total,
+        subtotal,
+        discountAmount,
+        deliveryFee,
+        razorpayPaymentId
+      );
+    };
+
+    if (paymentMethod === "card" || paymentMethod === "upi") {
+      const razorpayKey =
+        import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_YourTestKeyHere";
+
+      if (
+        typeof window !== "undefined" &&
+        (window as unknown as { Razorpay: unknown }).Razorpay
+      ) {
+        const options = {
+          key: razorpayKey,
+          amount: Math.round(total * 100),
+          currency: "INR",
+          name: "Leafly Tea Store",
+          description: `Ceremonial Order ${orderId}`,
+          image: "/leafly-logo.webp",
+          handler: function (response: {
+            razorpay_payment_id: string;
+            razorpay_order_id?: string;
+            razorpay_signature?: string;
+          }) {
+            finalizeOrder(response?.razorpay_payment_id);
+          },
+          prefill: {
+            name: shippingAddress.fullName,
+            email: email || currentUser?.email || "",
+            contact: phone,
+            method: paymentMethod === "upi" ? "upi" : "card",
+          },
+          notes: {
+            address: shippingAddress.addressLine1,
+            orderId: orderId,
+          },
+          theme: {
+            color: "#0b2b1e",
+          },
+          modal: {
+            ondismiss: function () {
+              setIsProcessing(false);
+              setIsBursting(false);
+              setErrors((prev) => ({
+                ...prev,
+                submit: "Payment cancelled. You can retry anytime.",
+              }));
+            },
+          },
+        };
+        const RazorpayClass = (
+          window as unknown as {
+            Razorpay: new (opts: unknown) => {
+              open: () => void;
+              on: (
+                event: string,
+                cb: (res: { error: { description: string } }) => void
+              ) => void;
+            };
+          }
+        ).Razorpay;
+        const rzp = new RazorpayClass(options);
+        rzp.on("payment.failed", function (response) {
+          console.error("Razorpay payment failed:", response.error);
+          setIsProcessing(false);
+          setIsBursting(false);
+          setErrors((prev) => ({
+            ...prev,
+            submit: `Payment failed: ${response.error?.description || "Transaction declined."}`,
+          }));
+        });
+        rzp.open();
+      } else {
+        await finalizeOrder();
+      }
+    } else {
+      await finalizeOrder();
+    }
   };
 
   if (items.length === 0 && deliveryPhase === "idle" && !isProcessing) {
@@ -510,7 +647,7 @@ export default function Checkout() {
   if (deliveryPhase === "coupon") {
     return (
       <CouponRewardAnimation
-        couponCode="LEAFLY2026"
+        couponCode={rewardCouponCode}
         onComplete={() => {
           navigate("/order-success");
         }}
@@ -629,7 +766,7 @@ export default function Checkout() {
               <label className="checkout-field">
                 <span>Country</span>
                 <select
-                  className="leafly-auth-select"
+                  className="checkout-select"
                   value={shippingAddress.country}
                   onChange={(event) => handleCountryChange(event.target.value)}
                   aria-invalid={Boolean(errors.country)}
@@ -645,7 +782,7 @@ export default function Checkout() {
                 <span>State / Province</span>
                 {shippingAddress.country === "India" ? (
                   <select
-                    className="leafly-auth-select"
+                    className="checkout-select"
                     value={shippingAddress.state}
                     onChange={(event) => handleStateChange(event.target.value)}
                     aria-invalid={Boolean(errors.state)}
@@ -670,7 +807,7 @@ export default function Checkout() {
                 <span>City</span>
                 {shippingAddress.country === "India" && availableCities.length > 0 ? (
                   <select
-                    className="leafly-auth-select"
+                    className="checkout-select"
                     value={shippingAddress.city}
                     onChange={(event) => updateAddressField("city", event.target.value)}
                     aria-invalid={Boolean(errors.city)}
@@ -703,24 +840,13 @@ export default function Checkout() {
                 {errors.postalCode && <small>{errors.postalCode}</small>}
               </label>
 
-              <label className="checkout-field" style={{ gridColumn: "1 / -1" }}>
+              <label className="checkout-field full-width">
                 <span>Delivery Instructions (Optional)</span>
                 <textarea
-                  rows={2}
+                  rows={3}
                   placeholder="Apartment number, gate instructions, preferred delivery location, etc."
                   value={deliveryInstructions}
                   onChange={(event) => setDeliveryInstructions(event.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    borderRadius: "var(--leafly-radius-md)",
-                    border: "1px solid var(--leafly-border)",
-                    background: "rgba(255, 255, 255, 0.6)",
-                    color: "var(--leafly-text)",
-                    fontSize: "var(--leafly-text-sm)",
-                    fontFamily: "inherit",
-                    resize: "vertical"
-                  }}
                 />
               </label>
             </div>
@@ -812,10 +938,10 @@ export default function Checkout() {
                   value="cod"
                   checked={paymentMethod === "cod"}
                   onChange={() => setPaymentMethod("cod")}
-                  aria-label="Cash on Delivery - Pay when your order is delivered"
+                  aria-label="Pay on Delivery - Pay when your order is delivered"
                 />
                 <span className="checkout-option-content">
-                  <strong className="checkout-option-title">CASH ON DELIVERY</strong>
+                  <strong className="checkout-option-title">PAY ON DELIVERY</strong>
                   <small className="checkout-option-desc">Pay when your order is delivered</small>
                 </span>
               </label>
@@ -880,7 +1006,7 @@ export default function Checkout() {
                 <input
                   id="checkout-coupon-input"
                   type="text"
-                  placeholder="Enter coupon code (e.g. LEAFLY2026)"
+                  placeholder="Enter Coupon Code"
                   value={couponInput}
                   onChange={(event) => {
                     setCouponInput(event.target.value);

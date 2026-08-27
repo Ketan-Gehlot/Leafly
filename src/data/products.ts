@@ -7,13 +7,12 @@ export type TeaCategory =
   | "Green"
   | "White"
   | "Black"
-  | "Oolong"
-  | "Pu-erh";
+  | "Oolong";
 
 export type ProductVariantKey = "100g" | "250g";
 
 export type ProductVariant = {
-  weight: ProductVariantKey;
+  weight: ProductVariantKey | string;
   price: number;
   oldPrice?: number;
 };
@@ -31,8 +30,13 @@ export type Product = {
   variants: {
     "100g": ProductVariant;
     "250g": ProductVariant;
+    [key: string]: ProductVariant | undefined;
   };
-  badge: "Premium" | "Popular" | "Bestseller";
+  badge: "Premium" | "Popular" | "Bestseller" | string;
+  customTag?: {
+    text: string;
+    color: string;
+  };
   image: string;
   rating?: number;
   reviewCount?: number;
@@ -157,10 +161,10 @@ export const products: Product[] = [
   },
   {
     id: 7,
-    name: "Mountain Pu-erh",
-    category: "Pu-erh",
+    name: "Assam Vintage Reserve",
+    category: "Black",
     origin: "Assam",
-    caffeine: "Medium",
+    caffeine: "High",
     weight: "100g",
     price: 1099,
     variants: {
@@ -168,7 +172,7 @@ export const products: Product[] = [
       "250g": { weight: "250g", price: 2449, oldPrice: 2749 },
     },
     badge: "Bestseller",
-    image: "/leafly-puer-tea.webp",
+    image: "/leafly-black-tea.webp",
     rating: 4.9,
     reviewCount: 175,
   },
