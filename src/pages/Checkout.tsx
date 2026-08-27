@@ -88,18 +88,9 @@ export default function Checkout() {
   } | null>(null);
 
   const [deliveryMethod, setDeliveryMethod] = useState<"standard" | "express">("standard");
-  const [paymentMethod, setPaymentMethod] = useState<"pod" | "cod" | "upi" | "card">("pod");
+  const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "cod">("upi");
   const [saveAddress, setSaveAddress] = useState(true);
   const [deliveryInstructions, setDeliveryInstructions] = useState("");
-
-  // Card payment form state
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [cardName, setCardName] = useState("");
-
-  // UPI form state
-  const [upiId, setUpiId] = useState("");
 
   // Order submission feedback state
   const [isProcessing, setIsProcessing] = useState(false);
@@ -351,30 +342,6 @@ export default function Checkout() {
       nextErrors.phone = "Please enter a valid phone number with country code.";
     }
 
-    if (paymentMethod === "card") {
-      if (!cardNumber.trim()) {
-        nextErrors.cardNumber = "Card number is required.";
-      }
-      if (!expiry.trim()) {
-        nextErrors.expiry = "Expiry is required.";
-      }
-      if (!cvv.trim()) {
-        nextErrors.cvv = "CVV is required.";
-      }
-      if (!cardName.trim()) {
-        nextErrors.cardName = "Name on card is required.";
-      }
-    }
-
-    if (paymentMethod === "upi") {
-      const cleanUpi = upiId.trim();
-      if (!cleanUpi) {
-        nextErrors.upiId = "UPI ID (VPA) is required.";
-      } else if (!/^[\w.-]+@[\w.-]+$/.test(cleanUpi)) {
-        nextErrors.upiId = "Please enter a valid UPI ID (e.g. yourname@okaxis).";
-      }
-    }
-
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -388,10 +355,10 @@ export default function Checkout() {
   ) => {
     const resolvedPaymentMethod =
       paymentMethod === "card"
-        ? "Card"
+        ? "Debit / Credit Card / NetBanking"
         : paymentMethod === "upi"
           ? "UPI"
-          : "Pay on Delivery";
+          : "Cash on Delivery";
 
     const order: Order = {
       id: orderId,
@@ -400,8 +367,8 @@ export default function Checkout() {
       customerEmail: email.trim() || currentUser?.email || undefined,
       customerPhone: phone.trim() || currentUser?.phone || undefined,
       createdAt: new Date().toISOString(),
-      status: resolvedPaymentMethod === "Pay on Delivery" ? "Confirmed" : "Processing",
-      orderStatus: resolvedPaymentMethod === "Pay on Delivery" ? "Confirmed" : "Processing",
+      status: resolvedPaymentMethod === "Cash on Delivery" ? "Confirmed" : "Processing",
+      orderStatus: resolvedPaymentMethod === "Cash on Delivery" ? "Confirmed" : "Processing",
       items: items.map((item) => ({
         id: item.id || `${item.product.id}-${item.variant}`,
         productId: item.product.id,
@@ -422,7 +389,7 @@ export default function Checkout() {
         deliveryMethod === "express" ? "Express Delivery" : "Standard Delivery",
       deliveryInstructions: deliveryInstructions.trim() || undefined,
       paymentMethod: resolvedPaymentMethod,
-      paymentStatus: resolvedPaymentMethod === "Pay on Delivery" ? "Pay on Delivery" : "Pending",
+      paymentStatus: resolvedPaymentMethod === "Cash on Delivery" ? "Pay on Delivery" : "Pending",
       shippingAddress: {
         fullName: shippingAddress.fullName.trim(),
         addressLine1: shippingAddress.addressLine1.trim(),
@@ -807,116 +774,52 @@ export default function Checkout() {
               <p>PAYMENT METHOD</p>
             </div>
 
-            <div className="checkout-option-list payment-options">
-              <label className="checkout-option">
+            <div className="checkout-option-list payment-options" role="radiogroup" aria-label="Payment Method Selection">
+              <label className={`checkout-option ${paymentMethod === "upi" ? "selected" : ""}`}>
                 <input
                   type="radio"
                   name="paymentMethod"
-                  checked={paymentMethod === "cod"}
-                  onChange={() => setPaymentMethod("cod")}
-                />
-                <span>
-                  <strong>PAY ON DELIVERY</strong>
-                </span>
-              </label>
-
-              <label className="checkout-option">
-                <input
-                  type="radio"
-                  name="paymentMethod"
+                  value="upi"
                   checked={paymentMethod === "upi"}
                   onChange={() => setPaymentMethod("upi")}
+                  aria-label="UPI - Pay using UPI apps like Google Pay, PhonePe, Paytm, BHIM, etc."
                 />
-                <span>
-                  <strong>UPI</strong>
+                <span className="checkout-option-content">
+                  <strong className="checkout-option-title">UPI</strong>
+                  <small className="checkout-option-desc">Pay using UPI apps like Google Pay, PhonePe, Paytm, BHIM, etc.</small>
                 </span>
               </label>
 
-              <label className="checkout-option">
+              <label className={`checkout-option ${paymentMethod === "card" ? "selected" : ""}`}>
                 <input
                   type="radio"
                   name="paymentMethod"
+                  value="card"
                   checked={paymentMethod === "card"}
                   onChange={() => setPaymentMethod("card")}
+                  aria-label="Debit card, credit card, or net banking - Pay securely using your card or net banking"
                 />
-                <span>
-                  <strong>CARD / ONLINE</strong>
+                <span className="checkout-option-content">
+                  <strong className="checkout-option-title">DEBIT CARD / CREDIT CARD / NETBANKING</strong>
+                  <small className="checkout-option-desc">Pay securely using your card or net banking</small>
+                </span>
+              </label>
+
+              <label className={`checkout-option ${paymentMethod === "cod" ? "selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  checked={paymentMethod === "cod"}
+                  onChange={() => setPaymentMethod("cod")}
+                  aria-label="Cash on Delivery - Pay when your order is delivered"
+                />
+                <span className="checkout-option-content">
+                  <strong className="checkout-option-title">CASH ON DELIVERY</strong>
+                  <small className="checkout-option-desc">Pay when your order is delivered</small>
                 </span>
               </label>
             </div>
-
-            {paymentMethod === "card" && (
-              <div className="checkout-field-grid">
-                <label className="checkout-field full-width">
-                  <span>Card Number</span>
-                  <input
-                    type="text"
-                    value={cardNumber}
-                    onChange={(event) => setCardNumber(event.target.value)}
-                    aria-invalid={Boolean(errors.cardNumber)}
-                  />
-                  {errors.cardNumber && <small>{errors.cardNumber}</small>}
-                </label>
-
-                <label className="checkout-field">
-                  <span>Expiry</span>
-                  <input
-                    type="text"
-                    value={expiry}
-                    onChange={(event) => setExpiry(event.target.value)}
-                    aria-invalid={Boolean(errors.expiry)}
-                  />
-                  {errors.expiry && <small>{errors.expiry}</small>}
-                </label>
-
-                <label className="checkout-field">
-                  <span>CVV</span>
-                  <input
-                    type="password"
-                    value={cvv}
-                    onChange={(event) => setCvv(event.target.value)}
-                    aria-invalid={Boolean(errors.cvv)}
-                  />
-                  {errors.cvv && <small>{errors.cvv}</small>}
-                </label>
-
-                <label className="checkout-field full-width">
-                  <span>Name on Card</span>
-                  <input
-                    type="text"
-                    value={cardName}
-                    onChange={(event) => setCardName(event.target.value)}
-                    aria-invalid={Boolean(errors.cardName)}
-                  />
-                  {errors.cardName && <small>{errors.cardName}</small>}
-                </label>
-              </div>
-            )}
-
-            {paymentMethod === "upi" && (
-              <div style={{ marginTop: "16px", padding: "16px", background: "#ffffff", borderRadius: "12px", border: "1px solid rgba(201, 162, 75, 0.35)" }}>
-                <label className="checkout-field full-width">
-                  <span>Enter Your UPI ID (VPA)</span>
-                  <input
-                    type="text"
-                    placeholder="e.g. yourname@okhdfcbank or 9820012345@upi"
-                    value={upiId}
-                    onChange={(event) => setUpiId(event.target.value)}
-                    aria-invalid={Boolean(errors.upiId)}
-                  />
-                  {errors.upiId && <small>{errors.upiId}</small>}
-                </label>
-                <p style={{ margin: "8px 0 0", fontSize: "11.5px", color: "rgba(11, 43, 30, 0.68)", lineHeight: 1.4 }}>
-                  ✦ A ceremonial payment request will be sent to your UPI app upon order confirmation.
-                </p>
-              </div>
-            )}
-
-            {paymentMethod === "cod" && (
-              <div className="checkout-cod-message" style={{ marginTop: "14px", padding: "12px 16px", background: "rgba(201, 162, 75, 0.12)", border: "1px solid rgba(201, 162, 75, 0.3)", borderRadius: "10px", color: "#0b2b1e", fontSize: "13px" }}>
-                🌿 Pay securely with cash or UPI at your doorstep upon ceremonial delivery. No advance payment required.
-              </div>
-            )}
           </div>
         </section>
 
