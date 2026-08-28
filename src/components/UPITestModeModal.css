@@ -1,0 +1,257 @@
+/* UPI Test Mode Modal Styles - Direct App Redirect */
+
+.leafly-upi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 43, 30, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: leaflyModalFadeIn 200ms ease;
+}
+
+@keyframes leaflyModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.leafly-upi-modal-container {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(11, 43, 30, 0.35);
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  animation: leaflyCardScale 220ms ease;
+}
+
+@keyframes leaflyCardScale {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.leafly-upi-modal-header {
+  background: #0b2b1e;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(201, 162, 75, 0.3);
+}
+
+.leafly-upi-modal-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  color: #c9a24b;
+}
+
+.leafly-upi-modal-dot {
+  font-size: 12px;
+}
+
+.leafly-upi-modal-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 150ms ease;
+}
+
+.leafly-upi-modal-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.leafly-upi-modal-body {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.leafly-upi-app-icon-large {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.leafly-upi-phonepe-badge.large {
+  width: 52px;
+  height: 52px;
+  font-size: 26px;
+}
+
+.leafly-upi-paytm-badge.large {
+  width: 60px;
+  height: 34px;
+  font-size: 14px;
+}
+
+.leafly-upi-bhim-badge.large {
+  width: 60px;
+  height: 38px;
+  font-size: 13px;
+}
+
+.leafly-upi-vpa-badge-large {
+  width: 56px;
+  height: 56px;
+  background: #0b2b1e;
+  border-radius: 50%;
+  color: #c9a24b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.leafly-upi-modal-title {
+  font-family: var(--leafly-font-heading, "Playfair Display", Georgia, serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: #0b2b1e;
+  margin: 0 0 6px 0;
+}
+
+.leafly-upi-modal-subtitle {
+  font-size: 13px;
+  color: rgba(11, 43, 30, 0.75);
+  margin: 0 0 16px 0;
+}
+
+.leafly-upi-test-badge {
+  background: rgba(201, 162, 75, 0.12);
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+}
+
+.leafly-upi-test-pill {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #8c6a1e;
+  margin-bottom: 4px;
+}
+
+.leafly-upi-test-badge p {
+  font-size: 11px;
+  color: rgba(11, 43, 30, 0.8);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.leafly-upi-vpa-display {
+  background: #f8f6f0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: #0b2b1e;
+}
+
+.leafly-upi-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.leafly-upi-intent-btn {
+  background: #0b2b1e;
+  color: #ffffff;
+  border: none;
+  padding: 13px 20px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(11, 43, 30, 0.2);
+  transition: all 180ms ease;
+}
+
+.leafly-upi-intent-btn:hover:not(:disabled) {
+  background: #143e2d;
+  transform: translateY(-1px);
+}
+
+.leafly-upi-intent-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.leafly-upi-redirect-notice {
+  font-size: 11.5px;
+  color: rgba(11, 43, 30, 0.8);
+  background: #fdfbf7;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px dashed rgba(201, 162, 75, 0.4);
+  line-height: 1.4;
+}
+
+.leafly-upi-test-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(11, 43, 30, 0.1);
+}
+
+.leafly-upi-confirm-test-btn {
+  background: #1b5e20;
+  color: #ffffff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.leafly-upi-confirm-test-btn:hover {
+  background: #2e7d32;
+  transform: translateY(-1px);
+}
+
+.leafly-upi-cancel-btn {
+  background: none;
+  border: none;
+  color: rgba(11, 43, 30, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.leafly-upi-cancel-btn:hover {
+  color: #b00020;
+}

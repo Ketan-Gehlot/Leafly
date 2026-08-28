@@ -2,7 +2,8 @@
 import { useMemo, useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../context/OrderContext";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, isValidGmailAddress, GMAIL_ERROR_MESSAGE } from "../context/AuthContext";
+import { validatePhoneNumber } from "../lib/validation";
 import mainImage from "../assets/main.webp";
 import image2 from "../assets/image2.webp";
 import image3 from "../assets/image3.webp";
@@ -356,27 +357,20 @@ export default function Profile() {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(details.email.trim())) {
-      setDetailsError("Please enter a valid email address.");
+    if (!isValidGmailAddress(details.email)) {
+      setDetailsError(GMAIL_ERROR_MESSAGE);
       return;
     }
 
     const cleanPhone = details.phone ? details.phone.trim() : "";
     let normalizedPhone: string | null = null;
     if (cleanPhone) {
-      const cleanDigits = cleanPhone.replace(/\D/g, "");
-      if (cleanDigits.length < 8) {
-        setDetailsError("Please enter a valid phone number with country code.");
+      const phoneRes = validatePhoneNumber(cleanPhone, cleanPhone.startsWith("+1") ? "US" : cleanPhone.startsWith("+44") ? "GB" : "India");
+      if (!phoneRes.isValid) {
+        setDetailsError(phoneRes.error || "Please enter a valid mobile number.");
         return;
       }
-      if (cleanPhone.startsWith("+")) {
-        normalizedPhone = cleanPhone;
-      } else if (cleanDigits.length === 10) {
-        normalizedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
-      } else {
-        normalizedPhone = `+${cleanDigits}`;
-      }
+      normalizedPhone = phoneRes.formatted;
     }
 
     try {

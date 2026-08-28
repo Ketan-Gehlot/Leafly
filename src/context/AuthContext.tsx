@@ -17,11 +17,17 @@ import { auth, googleProvider, db } from "../lib/firebase";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import type { AuthUser, SignupProfileData } from "../types/contracts";
 
+import { isValidGmailAddress, GMAIL_ERROR_MESSAGE } from "../lib/validation";
+
 export type { AuthUser, SignupProfileData };
+export { isValidGmailAddress, GMAIL_ERROR_MESSAGE };
 
 export function formatAuthError(error: unknown): string {
   if (!error) return "An unexpected error occurred.";
   const message = error instanceof Error ? error.message : String(error);
+  if (message.includes(GMAIL_ERROR_MESSAGE)) {
+    return GMAIL_ERROR_MESSAGE;
+  }
   if (
     message.includes("user-not-found") ||
     message.includes("No account found") ||
@@ -47,7 +53,7 @@ export function formatAuthError(error: unknown): string {
     return "Password is too weak. Please use at least 6 characters.";
   }
   if (message.includes("invalid-email") || message.includes("auth/invalid-email") || message.includes("INVALID_EMAIL")) {
-    return "Please enter a valid email address.";
+    return GMAIL_ERROR_MESSAGE;
   }
   if (message.includes("user-disabled") || message.includes("auth/user-disabled") || message.includes("USER_DISABLED")) {
     return "This account has been disabled. Please contact support.";
@@ -229,20 +235,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, pass: string) => {
+    const cleanEmail = email.trim();
+    if (!isValidGmailAddress(cleanEmail)) {
+      throw new Error(GMAIL_ERROR_MESSAGE);
+    }
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), pass);
+      await signInWithEmailAndPassword(auth, cleanEmail, pass);
     } finally {
       setLoading(false);
     }
   };
 
   const signup = async (email: string, pass: string, profileData?: SignupProfileData | string) => {
+    const cleanEmail = email.trim();
+    if (!isValidGmailAddress(cleanEmail)) {
+      throw new Error(GMAIL_ERROR_MESSAGE);
+    }
     setLoading(true);
     try {
-      const result = await createUserWithEmailAndPassword(auth, email.trim(), pass);
+      const result = await createUserWithEmailAndPassword(auth, cleanEmail, pass);
       const rawName = typeof profileData === "string" ? profileData : profileData?.name || profileData?.fullName;
-      const displayName = rawName?.trim() || email.split("@")[0];
+      const displayName = rawName?.trim() || cleanEmail.split("@")[0];
       const favoriteTea = typeof profileData === "object" ? profileData.favoriteTea : undefined;
 
       if (result.user && displayName) {
@@ -326,7 +340,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const sendPasswordReset = async (email: string) => {
-    await sendPasswordResetEmail(auth, email.trim());
+    const cleanEmail = email.trim();
+    if (!isValidGmailAddress(cleanEmail)) {
+      throw new Error(GMAIL_ERROR_MESSAGE);
+    }
+    await sendPasswordResetEmail(auth, cleanEmail);
   };
 
   const updateUserProfile = async (updates: Partial<AuthUser> & Record<string, unknown>) => {

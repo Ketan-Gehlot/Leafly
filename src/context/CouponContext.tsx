@@ -4,15 +4,19 @@ import {
   useContext,
   useEffect,
   useState,
+  useMemo,
   type ReactNode,
 } from "react";
 import type { UserCoupon, CouponValidationResult } from "../types/contracts";
 import { useAuth } from "./AuthContext";
+import { useOrderContext } from "./OrderContext";
+import { isFirstOrderEligible, isFirstOrderCouponCode } from "../lib/validation";
 
 export type { UserCoupon, CouponValidationResult };
 
 type CouponContextType = {
   coupons: UserCoupon[];
+  isFirstOrder: boolean;
   addCoupon: (coupon: Omit<UserCoupon, "id" | "earnedAt">) => Promise<void>;
   grantPostOrderReward: () => Promise<string | null>;
   markCouponUsed: (code: string) => Promise<void>;
@@ -23,12 +27,12 @@ type CouponContextType = {
 export const LEAFLY10_COUPON: UserCoupon = {
   id: "coupon-leafly10",
   code: "Leafly10",
-  title: "Leafly Signature Discount",
+  title: "Leafly First-Harvest Welcome",
   discountType: "percentage",
   discountValue: 10,
   minOrderValue: 0,
   status: "available",
-  applicableCondition: "10% OFF on your entire harvest order",
+  applicableCondition: "10% OFF on your very first harvest order",
   expiryDate: "31 Dec 2026",
   earnedAt: new Date().toISOString(),
 };
@@ -39,11 +43,26 @@ const COUPON_STORAGE_PREFIX = "leafly_coupons_";
 
 export function CouponProvider({ children }: { children: ReactNode }) {
   const { currentUser } = useAuth();
-  const [coupons, setCoupons] = useState<UserCoupon[]>([LEAFLY10_COUPON]);
+  const { orders } = useOrderContext();
+
+  // Determine true first-order eligibility strictly from authenticated order history
+  const isFirstOrder = useMemo(() => isFirstOrderEligible(orders), [orders]);
+
+  const [coupons, setCoupons] = useState<UserCoupon[]>([
+    {
+      ...LEAFLY10_COUPON,
+      status: isFirstOrder ? "available" : "used",
+    },
+  ]);
 
   useEffect(() => {
+    const baseFirstOrderCoupon: UserCoupon = {
+      ...LEAFLY10_COUPON,
+      status: isFirstOrder ? "available" : "used",
+    };
+
     if (!currentUser?.uid) {
-      setCoupons([LEAFLY10_COUPON]);
+      setCoupons([baseFirstOrderCoupon]);
       return;
     }
 
@@ -51,15 +70,22 @@ export function CouponProvider({ children }: { children: ReactNode }) {
       const storageKey = `${COUPON_STORAGE_PREFIX}${currentUser.uid}`;
       const saved = localStorage.getItem(storageKey);
       if (saved) {
-        setCoupons(JSON.parse(saved));
+        const parsed: UserCoupon[] = JSON.parse(saved);
+        // Ensure first-order coupon status reflects true order history
+        const updated = parsed.map((c) =>
+          isFirstOrderCouponCode(c.code)
+            ? { ...c, status: isFirstOrder ? ("available" as const) : ("used" as const) }
+            : c
+        );
+        setCoupons(updated);
       } else {
-        setCoupons([LEAFLY10_COUPON]);
-        localStorage.setItem(storageKey, JSON.stringify([LEAFLY10_COUPON]));
+        setCoupons([baseFirstOrderCoupon]);
+        localStorage.setItem(storageKey, JSON.stringify([baseFirstOrderCoupon]));
       }
     } catch {
-      setCoupons([LEAFLY10_COUPON]);
+      setCoupons([baseFirstOrderCoupon]);
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, isFirstOrder]);
 
   const addCoupon = async (newCoupon: Omit<UserCoupon, "id" | "earnedAt">) => {
     if (!currentUser?.uid) return;
@@ -79,7 +105,7 @@ export function CouponProvider({ children }: { children: ReactNode }) {
   };
 
   const grantPostOrderReward = async (): Promise<string | null> => {
-    return "Leafly10";
+    return "HARVEST15";
   };
 
   const markCouponUsed = async (code: string) => {
@@ -111,9 +137,8 @@ export function CouponProvider({ children }: { children: ReactNode }) {
   };
 
   /**
-   * ONLY 'Leafly10' is accepted.
-   * Gives exactly 10% discount on order subtotal.
-   * All other coupon codes return an invalid coupon error and 0 discount.
+   * Validates a coupon against the customer's order history and eligibility rules.
+   * First-order coupons (e.g. Leafly10) are strictly rejected if customer has already placed an order.
    */
   const validateUserCoupon = (inputCode: string, subtotal: number): CouponValidationResult => {
     const trimmed = inputCode.trim();
@@ -128,15 +153,44 @@ export function CouponProvider({ children }: { children: ReactNode }) {
       };
     }
 
-    if (trimmed.toLowerCase() === "leafly10") {
-      const discountAmount = Math.round(subtotal * 0.1);
+    const normalized = trimmed.toUpperCase();
+
+    // 1. Check First-Order Welcome Coupons
+    if (isFirstOrderCouponCode(normalized)) {
+      if (!isFirstOrder) {
+        return {
+          isValid: false,
+          code: trimmed,
+          discountType: "percentage",
+          discountValue: 0,
+          minOrderValue: 0,
+          message: "This coupon is only valid on your first order.",
+        };
+      }
+
+      const discountPercentage = 10;
+      const discountAmount = Math.round((subtotal * discountPercentage) / 100);
       return {
         isValid: true,
         code: "Leafly10",
         discountType: "percentage",
-        discountValue: 10,
+        discountValue: discountPercentage,
         minOrderValue: 0,
         message: `Coupon Leafly10 applied! (10% OFF · ₹${discountAmount.toLocaleString("en-IN")} saved)`,
+      };
+    }
+
+    // 2. Check Returning Customer Reward Coupon
+    if (normalized === "HARVEST15") {
+      const discountPercentage = 15;
+      const discountAmount = Math.round((subtotal * discountPercentage) / 100);
+      return {
+        isValid: true,
+        code: "HARVEST15",
+        discountType: "percentage",
+        discountValue: discountPercentage,
+        minOrderValue: 0,
+        message: `Coupon HARVEST15 applied! (15% OFF · ₹${discountAmount.toLocaleString("en-IN")} saved)`,
       };
     }
 
@@ -146,7 +200,7 @@ export function CouponProvider({ children }: { children: ReactNode }) {
       discountType: "percentage",
       discountValue: 0,
       minOrderValue: 0,
-      message: "Invalid coupon code. Use 'Leafly10' to get 10% off your order.",
+      message: "Invalid coupon code.",
     };
   };
 
@@ -154,6 +208,7 @@ export function CouponProvider({ children }: { children: ReactNode }) {
     <CouponContext.Provider
       value={{
         coupons,
+        isFirstOrder,
         addCoupon,
         grantPostOrderReward,
         markCouponUsed,

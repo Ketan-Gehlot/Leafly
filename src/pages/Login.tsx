@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/leafly-logo.webp";
 import teapotImg from "../assets/glass-infuser-teapot.webp";
 import Footer from "../components/Footer";
-import { useAuth, formatAuthError } from "../context/AuthContext";
+import { useAuth, formatAuthError, isValidGmailAddress, GMAIL_ERROR_MESSAGE } from "../context/AuthContext";
 import "./Login.css";
 
 export default function Login() {
@@ -57,9 +57,8 @@ export default function Login() {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      setErrorMessage("Please enter a valid email address.");
+    if (!isValidGmailAddress(cleanEmail)) {
+      setErrorMessage(GMAIL_ERROR_MESSAGE);
       return;
     }
 
@@ -114,9 +113,8 @@ export default function Login() {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanForgot)) {
-      setForgotMessage({ type: "error", text: "Please enter a valid email address." });
+    if (!isValidGmailAddress(cleanForgot)) {
+      setForgotMessage({ type: "error", text: GMAIL_ERROR_MESSAGE });
       return;
     }
 
@@ -289,7 +287,7 @@ export default function Login() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@leafly.in"
+                      placeholder="name@gmail.com"
                       autoComplete="email"
                       required
                       disabled={isLoading}
@@ -438,7 +436,7 @@ export default function Login() {
                       type="email"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
-                      placeholder="name@leafly.in"
+                      placeholder="name@gmail.com"
                       required
                       disabled={forgotLoading}
                     />

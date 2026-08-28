@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components, react-hooks/set-state-in-effect */
 import { useState, useRef, useEffect, useMemo } from "react";
+import { getPhoneValidationRule } from "../lib/validation";
 import "./PhoneInput.css";
 
 export interface Country {
@@ -59,6 +60,8 @@ export const COUNTRIES: Country[] = [
 export interface PhoneInputProps {
   value: string;
   onChange: (value: string) => void;
+  country?: string;
+  onCountryChange?: (countryName: string) => void;
   error?: string;
   label?: string;
   required?: boolean;
@@ -70,6 +73,8 @@ export interface PhoneInputProps {
 export default function PhoneInput({
   value = "",
   onChange,
+  country,
+  onCountryChange,
   error,
   label = "Phone Number",
   required = false,
@@ -77,8 +82,12 @@ export default function PhoneInput({
   id = "phone-input",
   placeholder = "Enter phone number",
 }: PhoneInputProps) {
-  // Parse initial country or default to India (+91)
+  // Parse initial country or match with country prop or default to India (+91)
   const [selectedCountry, setSelectedCountry] = useState<Country>(() => {
+    if (country) {
+      const match = COUNTRIES.find((c) => c.name.toLowerCase() === country.toLowerCase() || c.code.toLowerCase() === country.toLowerCase());
+      if (match) return match;
+    }
     if (value) {
       const matched = COUNTRIES.find((c) => value.startsWith(c.dialCode));
       if (matched) return matched;
@@ -91,7 +100,7 @@ export default function PhoneInput({
     if (value.startsWith(selectedCountry.dialCode)) {
       return value.slice(selectedCountry.dialCode.length).trim();
     }
-    return value;
+    return value.replace(/\D/g, "");
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -99,6 +108,23 @@ export default function PhoneInput({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  // Sync with country prop when provided externally
+  useEffect(() => {
+    if (country) {
+      const match = COUNTRIES.find(
+        (c) => c.name.toLowerCase() === country.toLowerCase() || c.code.toLowerCase() === country.toLowerCase()
+      );
+      if (match && match.code !== selectedCountry.code) {
+        setSelectedCountry(match);
+        const rule = getPhoneValidationRule(match.code || match.name);
+        const cleanDigits = rawNumber.replace(/\D/g, "").slice(0, rule.maxDigits);
+        setRawNumber(cleanDigits);
+        const formatted = cleanDigits ? `${match.dialCode} ${cleanDigits}` : "";
+        onChange(formatted);
+      }
+    }
+  }, [country, selectedCountry.code, rawNumber, onChange]);
 
   // Filter countries by search query
   const filteredCountries = useMemo(() => {
@@ -146,26 +172,39 @@ export default function PhoneInput({
     const matched = COUNTRIES.find((c) => value.startsWith(c.dialCode));
     if (matched && matched.code !== selectedCountry.code) {
       setSelectedCountry(matched);
-      setRawNumber(value.slice(matched.dialCode.length).trim());
+      const digits = value.slice(matched.dialCode.length).replace(/\D/g, "");
+      setRawNumber(digits);
+    } else {
+      const digits = value.startsWith(selectedCountry.dialCode)
+        ? value.slice(selectedCountry.dialCode.length).replace(/\D/g, "")
+        : value.replace(/\D/g, "");
+      setRawNumber(digits);
     }
-  }, [value, selectedCountry.code]);
+  }, [value, selectedCountry.code, selectedCountry.dialCode]);
 
-  const handleCountrySelect = (country: Country) => {
-    setSelectedCountry(country);
+  const handleCountrySelect = (c: Country) => {
+    setSelectedCountry(c);
     setIsOpen(false);
     setSearchQuery("");
 
+    const rule = getPhoneValidationRule(c.code || c.name);
+    const cleanDigits = rawNumber.replace(/\D/g, "").slice(0, rule.maxDigits);
+    setRawNumber(cleanDigits);
+
     // Emit updated composite value
-    const formatted = rawNumber ? `${country.dialCode} ${rawNumber.trim()}` : "";
+    const formatted = cleanDigits ? `${c.dialCode} ${cleanDigits}` : "";
     onChange(formatted);
+    onCountryChange?.(c.name);
     triggerRef.current?.focus();
   };
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nextRaw = e.target.value.replace(/[^\d\s-]/g, "");
-    setRawNumber(nextRaw);
+    const rawDigits = e.target.value.replace(/\D/g, "");
+    const rule = getPhoneValidationRule(selectedCountry.code || selectedCountry.name);
+    const limitedDigits = rawDigits.slice(0, rule.maxDigits);
+    setRawNumber(limitedDigits);
 
-    const formatted = nextRaw.trim() ? `${selectedCountry.dialCode} ${nextRaw.trim()}` : "";
+    const formatted = limitedDigits ? `${selectedCountry.dialCode} ${limitedDigits}` : "";
     onChange(formatted);
   };
 

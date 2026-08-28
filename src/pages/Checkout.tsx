@@ -10,9 +10,12 @@ import {
 import DeliveryAnimation from "../components/DeliveryAnimation";
 import CouponRewardAnimation from "../components/CouponRewardAnimation";
 import PhoneInput from "../components/PhoneInput";
+import UPIPaymentSelector, { type UPIAppId } from "../components/UPIPaymentSelector";
+import UPITestModeModal from "../components/UPITestModeModal";
 import { calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import { useCoupons } from "../context/CouponContext";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, isValidGmailAddress, GMAIL_ERROR_MESSAGE } from "../context/AuthContext";
+import { validatePhoneNumber, isFirstOrderCouponCode } from "../lib/validation";
 import { COUNTRIES_LIST, INDIAN_STATES_AND_CITIES } from "../data/indianLocations";
 import { auth, db } from "../lib/firebase";
 import { doc, setDoc, updateDoc, increment } from "firebase/firestore";
@@ -91,7 +94,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, clearCart } = useCart();
   const { addOrder } = useOrderContext();
-  const { grantPostOrderReward, markCouponUsed, validateUserCoupon } = useCoupons();
+  const { grantPostOrderReward, markCouponUsed, validateUserCoupon, isFirstOrder } = useCoupons();
   const { currentUser, loading: authLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -109,8 +112,23 @@ export default function Checkout() {
     message: string;
   } | null>(null);
 
+  // Auto-discard first-order coupon if the customer is no longer first-order eligible
+  useEffect(() => {
+    if (!isFirstOrder && appliedCoupon && isFirstOrderCouponCode(appliedCoupon.code)) {
+      setAppliedCoupon(null);
+      setCouponFeedback({
+        type: "error",
+        message: "This coupon is only valid on your first order.",
+      });
+    }
+  }, [isFirstOrder, appliedCoupon]);
+
   const [deliveryMethod, setDeliveryMethod] = useState<"standard" | "express">("standard");
   const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "cod">("upi");
+  const [selectedUpiApp, setSelectedUpiApp] = useState<UPIAppId>("google_pay");
+  const [upiVpa, setUpiVpa] = useState("");
+  const [showUpiTestModal, setShowUpiTestModal] = useState(false);
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
   const [saveAddress, setSaveAddress] = useState(true);
   const [deliveryInstructions, setDeliveryInstructions] = useState("");
 
@@ -198,6 +216,20 @@ export default function Checkout() {
     return [];
   }, [shippingAddress.country, shippingAddress.state]);
 
+  const handlePhoneChange = (newPhone: string) => {
+    setPhone(newPhone);
+    const phoneRes = validatePhoneNumber(newPhone, shippingAddress.country);
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (phoneRes.isValid) {
+        delete next.phone;
+      } else if (newPhone.trim() && prev.phone) {
+        next.phone = phoneRes.error;
+      }
+      return next;
+    });
+  };
+
   const handleCountryChange = (newCountry: string) => {
     if (newCountry === "India") {
       const defaultState = "Maharashtra";
@@ -216,6 +248,18 @@ export default function Checkout() {
         city: "",
       }));
     }
+
+    // Immediately re-validate phone for the new country
+    const phoneRes = validatePhoneNumber(phone, newCountry);
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (phoneRes.isValid) {
+        delete next.phone;
+      } else if (phone.trim() && prev.phone) {
+        next.phone = phoneRes.error;
+      }
+      return next;
+    });
   };
 
   const handleStateChange = (newState: string) => {
@@ -294,12 +338,10 @@ export default function Checkout() {
 
   const validateCheckout = () => {
     const nextErrors: FormErrors = {};
-    const gmailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/i;
-
     if (!email.trim()) {
       nextErrors.email = "Email is required.";
-    } else if (!gmailRegex.test(email.trim())) {
-      nextErrors.email = "Please enter a valid Gmail address ending with @gmail.com.";
+    } else if (!isValidGmailAddress(email)) {
+      nextErrors.email = GMAIL_ERROR_MESSAGE;
     }
 
     const trimmedName = shippingAddress.fullName.trim();
@@ -353,16 +395,9 @@ export default function Checkout() {
       nextErrors.postalCode = "Please enter a valid postal code.";
     }
 
-    const cleanPhoneDigits = phone.replace(/\D/g, "");
-    if (!phone.trim()) {
-      nextErrors.phone = "Phone number is required.";
-    } else if (shippingAddress.country === "India") {
-      const last10 = cleanPhoneDigits.slice(-10);
-      if (last10.length !== 10 || !/^[6-9]\d{9}$/.test(last10)) {
-        nextErrors.phone = "Please enter a valid 10-digit Indian mobile number (e.g. 9820012345).";
-      }
-    } else if (cleanPhoneDigits.length < 8 || cleanPhoneDigits.length > 15) {
-      nextErrors.phone = "Please enter a valid phone number with country code.";
+    const phoneRes = validatePhoneNumber(phone, shippingAddress.country);
+    if (!phoneRes.isValid) {
+      nextErrors.phone = phoneRes.error || "Please enter a valid phone number.";
     }
 
     setErrors(nextErrors);
@@ -505,6 +540,31 @@ export default function Checkout() {
     }, 450);
   };
 
+  const handleUpiTestSuccess = async (paymentId: string) => {
+    setShowUpiTestModal(false);
+    setIsBursting(true);
+    setIsProcessing(true);
+    const orderId = pendingOrderId || generateOrderId();
+    await finishOrder(
+      orderId,
+      total,
+      subtotal,
+      discountAmount,
+      deliveryFee,
+      paymentId
+    );
+  };
+
+  const handleUpiTestCancel = () => {
+    setShowUpiTestModal(false);
+    setIsProcessing(false);
+    setIsBursting(false);
+    setErrors((prev) => ({
+      ...prev,
+      submit: "UPI payment cancelled. You can retry anytime.",
+    }));
+  };
+
   const handlePlaceOrder = async () => {
     if (isProcessing) {
       return;
@@ -513,6 +573,19 @@ export default function Checkout() {
     if (items.length === 0) {
       setErrors({ cart: "Your cart is empty. Add a tea to continue." });
       navigate("/shop");
+      return;
+    }
+
+    if (appliedCoupon && isFirstOrderCouponCode(appliedCoupon.code) && !isFirstOrder) {
+      setAppliedCoupon(null);
+      setCouponFeedback({
+        type: "error",
+        message: "This coupon is only valid on your first order.",
+      });
+      setErrors((prev) => ({
+        ...prev,
+        submit: "The applied coupon is only valid on your first order. Please remove it to continue.",
+      }));
       return;
     }
 
@@ -525,9 +598,6 @@ export default function Checkout() {
       }));
       return;
     }
-
-    setIsBursting(true);
-    setIsProcessing(true);
 
     const orderId = generateOrderId();
 
@@ -542,7 +612,26 @@ export default function Checkout() {
       );
     };
 
-    if (paymentMethod === "card" || paymentMethod === "upi") {
+    // 1. Dedicated UPI Payment Flow
+    if (paymentMethod === "upi") {
+      if (selectedUpiApp === "custom_vpa" && !upiVpa.trim()) {
+        setErrors((prev) => ({
+          ...prev,
+          upi: "Please enter a valid UPI ID (e.g. yourname@upi)",
+        }));
+        return;
+      }
+
+      setPendingOrderId(orderId);
+      setShowUpiTestModal(true);
+      return;
+    }
+
+    // 2. Card / NetBanking Payment Flow
+    if (paymentMethod === "card") {
+      setIsBursting(true);
+      setIsProcessing(true);
+
       const razorpayKey =
         import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_YourTestKeyHere";
 
@@ -568,7 +657,14 @@ export default function Checkout() {
             name: shippingAddress.fullName,
             email: email || currentUser?.email || "",
             contact: phone,
-            method: paymentMethod === "upi" ? "upi" : "card",
+            method: "card",
+          },
+          method: {
+            card: true,
+            netbanking: true,
+            upi: false,
+            wallet: false,
+            emi: false,
           },
           notes: {
             address: shippingAddress.addressLine1,
@@ -614,6 +710,9 @@ export default function Checkout() {
         await finalizeOrder();
       }
     } else {
+      // 3. Pay on Delivery (COD) Flow
+      setIsBursting(true);
+      setIsProcessing(true);
       await finalizeOrder();
     }
   };
@@ -719,7 +818,9 @@ export default function Checkout() {
                 id="checkout-phone"
                 label="Phone"
                 value={phone}
-                onChange={setPhone}
+                country={shippingAddress.country}
+                onCountryChange={handleCountryChange}
+                onChange={handlePhoneChange}
                 error={errors.phone}
                 required
               />
@@ -907,7 +1008,14 @@ export default function Checkout() {
                   name="paymentMethod"
                   value="upi"
                   checked={paymentMethod === "upi"}
-                  onChange={() => setPaymentMethod("upi")}
+                  onChange={() => {
+                    setPaymentMethod("upi");
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.upi;
+                      return next;
+                    });
+                  }}
                   aria-label="UPI - Pay using UPI apps like Google Pay, PhonePe, Paytm, BHIM, etc."
                 />
                 <span className="checkout-option-content">
@@ -915,6 +1023,31 @@ export default function Checkout() {
                   <small className="checkout-option-desc">Pay using UPI apps like Google Pay, PhonePe, Paytm, BHIM, etc.</small>
                 </span>
               </label>
+
+              {paymentMethod === "upi" && (
+                <UPIPaymentSelector
+                  totalAmount={total}
+                  selectedApp={selectedUpiApp}
+                  onSelectApp={(appId) => {
+                    setSelectedUpiApp(appId);
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.upi;
+                      return next;
+                    });
+                  }}
+                  vpaInput={upiVpa}
+                  onVpaChange={(vpa) => {
+                    setUpiVpa(vpa);
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.upi;
+                      return next;
+                    });
+                  }}
+                  error={errors.upi}
+                />
+              )}
 
               <label className={`checkout-option ${paymentMethod === "card" ? "selected" : ""}`}>
                 <input
@@ -931,6 +1064,20 @@ export default function Checkout() {
                 </span>
               </label>
 
+              {paymentMethod === "card" && (
+                <div className="checkout-card-payment-info" role="region" aria-label="Card Payment Information">
+                  <div className="checkout-card-badges">
+                    <span className="checkout-card-badge">VISA</span>
+                    <span className="checkout-card-badge">MasterCard</span>
+                    <span className="checkout-card-badge">RuPay</span>
+                    <span className="checkout-card-badge">NetBanking</span>
+                  </div>
+                  <p className="checkout-card-note">
+                    🔒 Secured by 256-bit bank-grade encryption. You will be redirected to the secure bank gateway upon clicking Place Order.
+                  </p>
+                </div>
+              )}
+
               <label className={`checkout-option ${paymentMethod === "cod" ? "selected" : ""}`}>
                 <input
                   type="radio"
@@ -945,6 +1092,12 @@ export default function Checkout() {
                   <small className="checkout-option-desc">Pay when your order is delivered</small>
                 </span>
               </label>
+
+              {paymentMethod === "cod" && (
+                <div className="checkout-cod-message">
+                  💵 Please keep exact cash or UPI QR payment ready at the time of delivery.
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -1096,6 +1249,18 @@ export default function Checkout() {
           </div>
         </aside>
       </div>
+
+      {showUpiTestModal && (
+        <UPITestModeModal
+          orderId={pendingOrderId || "ORD-TEST"}
+          amount={total}
+          selectedApp={selectedUpiApp}
+          vpa={selectedUpiApp === "custom_vpa" ? upiVpa : undefined}
+          onSuccess={handleUpiTestSuccess}
+          onCancel={handleUpiTestCancel}
+        />
+      )}
+
       <Footer />
     </main>
   );
