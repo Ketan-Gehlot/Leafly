@@ -33,6 +33,7 @@ const COMMUNITY_VIDEOS = [
     id: "vid-1",
     title: "Morning Ritual",
     videoSrc: ad1,
+    poster: image2,
     tag: "Morning Brew",
     description: "Experience whole leaf aroma awakening the morning calm.",
   },
@@ -40,6 +41,7 @@ const COMMUNITY_VIDEOS = [
     id: "vid-2",
     title: "Whole Leaf Craft",
     videoSrc: ad2,
+    poster: image3,
     tag: "Craft & Terroir",
     description: "Carefully sourced leaves steeped with patience and precision.",
   },
@@ -47,6 +49,7 @@ const COMMUNITY_VIDEOS = [
     id: "vid-3",
     title: "Evening Calm",
     videoSrc: ad3,
+    poster: image4,
     tag: "Evening Pause",
     description: "A restorative pause to slow down and savor the moment.",
   },
@@ -54,6 +57,7 @@ const COMMUNITY_VIDEOS = [
     id: "vid-4",
     title: "Artisan Tea Selection",
     videoSrc: ad4,
+    poster: image5,
     tag: "Single Estate",
     description: "Pure origin teas celebrating tradition and artisanal craft.",
   },
@@ -174,8 +178,9 @@ export default function About() {
               <div className="about-video-poster-wrap">
                 <video
                   src={item.videoSrc}
+                  poster={item.poster}
                   controls
-                  preload="metadata"
+                  preload="none"
                   playsInline
                   className="about-video-element"
                   aria-label={item.title}
