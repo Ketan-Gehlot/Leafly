@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
-import { type Product, type TeaCategory, type ProductVariant } from "../data/products";
+import { type Product, type TeaCategory } from "../data/products";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../lib/firebase";
 import { collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "firebase/firestore";
