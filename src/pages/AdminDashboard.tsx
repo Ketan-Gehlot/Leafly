@@ -144,19 +144,18 @@ export default function AdminDashboard() {
     if (cleanProduct.oldPrice === undefined) cleanProduct.oldPrice = null as unknown as number;
     if (cleanProduct.badge === undefined) cleanProduct.badge = null as unknown as "Popular";
 
-    // Generate selected variants
+    // Preserve manually entered variants
     const newVariants: Record<string, { weight: string; price: number; oldPrice?: number }> = {};
-    if (cleanProduct.variants?.["100g"]) {
-      newVariants["100g"] = { weight: "100g", price: cleanProduct.price, oldPrice: cleanProduct.oldPrice || undefined };
-    }
-    if (cleanProduct.variants?.["250g"]) {
-      newVariants["250g"] = { weight: "250g", price: Math.round(cleanProduct.price * 2.2), oldPrice: cleanProduct.oldPrice ? Math.round(cleanProduct.oldPrice * 2.2) : undefined };
-    }
-    if (cleanProduct.variants?.["500g"]) {
-      newVariants["500g"] = { weight: "500g", price: Math.round(cleanProduct.price * 4.2), oldPrice: cleanProduct.oldPrice ? Math.round(cleanProduct.oldPrice * 4.2) : undefined };
-    }
-    if (cleanProduct.variants?.["1kg"]) {
-      newVariants["1kg"] = { weight: "1kg", price: Math.round(cleanProduct.price * 8.0), oldPrice: cleanProduct.oldPrice ? Math.round(cleanProduct.oldPrice * 8.0) : undefined };
+    if (cleanProduct.variants) {
+      for (const [vKey, vData] of Object.entries(cleanProduct.variants)) {
+        if (vData) {
+          newVariants[vKey] = {
+            weight: vData.weight,
+            price: vData.price,
+            oldPrice: vData.oldPrice || undefined
+          };
+        }
+      }
     }
     // Ensure at least 100g is selected if none
     if (Object.keys(newVariants).length === 0) {
@@ -592,27 +591,67 @@ export default function AdminDashboard() {
               
               <div className="form-row">
                 <div className="form-group" style={{ width: "100%" }}>
-                  <label>Available Variants</label>
-                  <p style={{ fontSize: "0.85rem", color: "#666", marginBottom: "0.5rem" }}>Select the weights available for this product. Prices are automatically calculated from the base 100g price.</p>
-                  <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-                    {(["100g", "250g", "500g", "1kg"] as const).map(vKey => (
-                      <label key={vKey} style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-                        <input
-                          type="checkbox"
-                          checked={!!currentProduct.variants?.[vKey]}
-                          onChange={(e) => {
-                            const newVars: Record<string, ProductVariant | undefined> = { ...currentProduct.variants };
-                            if (e.target.checked) {
-                              newVars[vKey] = { weight: vKey, price: 0 };
-                            } else {
-                              delete newVars[vKey];
-                            }
-                            setCurrentProduct({ ...currentProduct, variants: newVars as unknown as Product["variants"] });
-                          }}
-                        />
-                        {vKey}
-                      </label>
-                    ))}
+                  <label>Available Variants & Pricing</label>
+                  <p style={{ fontSize: "0.85rem", color: "#666", marginBottom: "0.5rem" }}>Specify exactly which weights are available and set their specific prices (and optional old prices).</p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {(["100g", "250g", "500g", "1kg"] as const).map(vKey => {
+                      const isSelected = !!currentProduct.variants?.[vKey];
+                      const variantData = currentProduct.variants?.[vKey] || { weight: vKey, price: 0 };
+                      return (
+                        <div key={vKey} style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", background: "#f8f9fa", padding: "12px", borderRadius: "8px", border: "1px solid #eaeaea" }}>
+                          <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", width: "100px", fontWeight: "600" }}>
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={(e) => {
+                                const newVars = { ...currentProduct.variants };
+                                if (e.target.checked) {
+                                  newVars[vKey] = { weight: vKey, price: currentProduct.price || 0, oldPrice: currentProduct.oldPrice || undefined };
+                                } else {
+                                  delete newVars[vKey];
+                                }
+                                setCurrentProduct({ ...currentProduct, variants: newVars as unknown as Product["variants"] });
+                              }}
+                            />
+                            {vKey}
+                          </label>
+                          {isSelected && (
+                            <>
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                <label style={{ fontSize: "0.85rem" }}>Price (₹):</label>
+                                <input
+                                  type="number"
+                                  style={{ padding: "4px 8px", width: "100px", borderRadius: "4px", border: "1px solid #ccc" }}
+                                  value={variantData.price}
+                                  onChange={(e) => {
+                                    const newVars = { ...currentProduct.variants };
+                                    newVars[vKey] = { ...variantData, price: Number(e.target.value) };
+                                    setCurrentProduct({ ...currentProduct, variants: newVars as unknown as Product["variants"] });
+                                  }}
+                                  required
+                                />
+                              </div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                <label style={{ fontSize: "0.85rem" }}>Old Price (₹):</label>
+                                <input
+                                  type="number"
+                                  style={{ padding: "4px 8px", width: "100px", borderRadius: "4px", border: "1px solid #ccc" }}
+                                  value={variantData.oldPrice || ""}
+                                  placeholder="Optional"
+                                  onChange={(e) => {
+                                    const newVars = { ...currentProduct.variants };
+                                    const val = Number(e.target.value);
+                                    newVars[vKey] = { ...variantData, oldPrice: val || undefined };
+                                    if (!val) delete newVars[vKey].oldPrice;
+                                    setCurrentProduct({ ...currentProduct, variants: newVars as unknown as Product["variants"] });
+                                  }}
+                                />
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -745,11 +784,11 @@ export default function AdminDashboard() {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Customer</th>
+                      <th>Customer Info</th>
                       <th>Email Address</th>
-                      <th>Mobile Number</th>
-                      <th>Registered On</th>
-                      <th>Auth Method</th>
+                      <th>Phone / Mobile</th>
+                      <th>Sign Up Date</th>
+                      <th>Sign Up Method</th>
                       <th>Status</th>
                       <th>Actions</th>
                     </tr>

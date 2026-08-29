@@ -282,19 +282,9 @@ export default function Orders() {
                         {cancellingOrderId === order.id ? "Cancelling..." : "✖ Cancel Order"}
                       </button>
                     ) : (
-                      <button
-                        type="button"
-                        disabled={true}
-                        className="orders-action-btn orders-cancel-btn orders-cancel-btn-disabled"
-                        title="Your tea is being packed now, so you can no longer cancel this order. The cancellation window was 2 hours."
-                        onClick={() =>
-                          alert(
-                            "Your tea is being packed now, so you can no longer cancel this order. The cancellation window was 2 hours."
-                          )
-                        }
-                      >
-                        ✖ Cancel Window Expired
-                      </button>
+                      <span className="orders-action-btn orders-cancel-btn-disabled" style={{ border: "none", background: "none", color: "rgba(11, 43, 30, 0.5)", cursor: "default" }}>
+                        Cancellation window expired
+                      </span>
                     )
                   )}
                 </div>
