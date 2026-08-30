@@ -4,7 +4,7 @@ import { useProducts } from "../context/ProductContext";
 import { useTeaware } from "../context/TeawareContext";
 import { useGifting } from "../context/GiftingContext";
 import { useCoupons, type UserCoupon } from "../context/CouponContext";
-import { type Product, type TeaCategory, type ProductVariant } from "../data/products";
+import { type Product, type TeaCategory } from "../data/products";
 import { type TeawareItem, type TeawareCategory } from "../data/teaware";
 import { type GiftHamper } from "../data/gifting";
 import { useAuth } from "../context/AuthContext";

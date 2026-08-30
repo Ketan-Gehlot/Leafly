@@ -1,6 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { type TeawareCategory, type TeawareItem } from "../data/teaware";
 import { useTeaware } from "../context/TeawareContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -19,7 +18,7 @@ const categories: Array<"All Teaware" | TeawareCategory> = [
 
 export default function Teaware() {
   const navigate = useNavigate();
-  const { teaware, loading } = useTeaware();
+  const { teaware } = useTeaware();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const [category, setCategory] = useState<"All Teaware" | TeawareCategory>("All Teaware");

@@ -3,7 +3,6 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useCoupons } from "../context/CouponContext";
-import type { AppliedCoupon } from "../types/contracts";
 import {
   useOrderContext,
   type Order,
@@ -15,7 +14,7 @@ import PhoneInput from "../components/PhoneInput";
 import UPIPaymentSelector, { type UPIAppId } from "../components/UPIPaymentSelector";
 import UPITestModeModal from "../components/UPITestModeModal";
 import { calculateDiscount, type AppliedCoupon } from "../utils/coupon";
-import { useCoupons } from "../context/CouponContext";
+
 import { useAuth, isValidGmailAddress, GMAIL_ERROR_MESSAGE } from "../context/AuthContext";
 import { NotificationService } from "../lib/notifications";
 import { validatePhoneNumber, isFirstOrderCouponCode } from "../lib/validation";
@@ -99,11 +98,7 @@ export default function Checkout() {
   const { addOrder } = useOrderContext();
   const { grantPostOrderReward, markCouponUsed, validateUserCoupon, isFirstOrder } = useCoupons();
   const { currentUser, loading: authLoading, isAuthenticated } = useAuth();
-  const { validateUserCoupon } = useCoupons();
 
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
-  const [couponMessage, setCouponMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -1248,9 +1243,9 @@ export default function Checkout() {
                   <button type="button" onClick={handleRemoveCoupon} style={{ background: "none", border: "none", fontSize: "1.2rem", cursor: "pointer", color: "#e53e3e" }}>×</button>
                 </div>
               )}
-              {couponMessage && (
-                <small className={`checkout-coupon-message ${couponMessage.type}`} style={{ display: "block", marginTop: "8px", color: couponMessage.type === "error" ? "#e53e3e" : "#38a169" }}>
-                  {couponMessage.text}
+              {couponFeedback && (
+                <small className={`checkout-coupon-message ${couponFeedback.type}`} style={{ display: "block", marginTop: "8px", color: couponFeedback.type === "error" ? "#e53e3e" : "#38a169" }}>
+                  {couponFeedback.message}
                 </small>
               )}
             </div>

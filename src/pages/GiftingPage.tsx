@@ -1,9 +1,6 @@
 import { useState } from "react";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
-import image2 from "../assets/image2.webp";
-import image3 from "../assets/image3.webp";
-import image5 from "../assets/image5.webp";
 import PhoneInput from "../components/PhoneInput";
 import { Helmet } from "react-helmet-async";
 import "./GiftingPage.css";
