@@ -575,7 +575,7 @@ export default function Checkout() {
       clearCart();
       setIsProcessing(false);
       setIsBursting(false);
-    }
+    }, 450);
   };
 
   const handleUpiTestSuccess = async (paymentId: string) => {
