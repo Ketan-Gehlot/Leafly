@@ -2,6 +2,8 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useCoupons } from "../context/CouponContext";
+import type { AppliedCoupon } from "../types/contracts";
 import {
   useOrderContext,
   type Order,
@@ -15,6 +17,7 @@ import UPITestModeModal from "../components/UPITestModeModal";
 import { calculateDiscount, type AppliedCoupon } from "../utils/coupon";
 import { useCoupons } from "../context/CouponContext";
 import { useAuth, isValidGmailAddress, GMAIL_ERROR_MESSAGE } from "../context/AuthContext";
+import { NotificationService } from "../lib/notifications";
 import { validatePhoneNumber, isFirstOrderCouponCode } from "../lib/validation";
 import { COUNTRIES_LIST, INDIAN_STATES_AND_CITIES } from "../data/indianLocations";
 import { auth, db } from "../lib/firebase";
@@ -96,6 +99,11 @@ export default function Checkout() {
   const { addOrder } = useOrderContext();
   const { grantPostOrderReward, markCouponUsed, validateUserCoupon, isFirstOrder } = useCoupons();
   const { currentUser, loading: authLoading, isAuthenticated } = useAuth();
+  const { validateUserCoupon } = useCoupons();
+
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [couponMessage, setCouponMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -452,7 +460,7 @@ export default function Checkout() {
       })),
       subtotal: orderSubtotal,
       discount: orderDiscount,
-      couponCode: appliedCoupon?.code,
+      couponCode: appliedCoupon?.code || null,
       deliveryFee: orderDeliveryFee,
       total: orderTotal,
       deliveryMethod:
@@ -515,6 +523,37 @@ export default function Checkout() {
           }
         }
       }
+      
+      // Add to context (which handles saving to Firestore)
+      await addOrder(order);
+
+      // Clear the local cart
+      clearCart();
+
+      // Trigger Notifications (Fire and Forget)
+      NotificationService.sendOrderConfirmationEmail({
+        id: order.id,
+        customerName: order.shippingAddress.fullName,
+        email: order.customerEmail,
+        phone: order.customerPhone || "",
+        total: order.total
+      });
+
+      NotificationService.sendOrderConfirmationSMS({
+        id: order.id,
+        customerName: order.shippingAddress.fullName,
+        email: order.customerEmail,
+        phone: order.customerPhone || "",
+        total: order.total
+      });
+
+      // Navigate after burst animation
+      setTimeout(() => {
+        setIsProcessing(false);
+        setIsBursting(false);
+        setDeliveryPhase("delivery");
+      }, 450);
+      
     } catch (error) {
       console.error("Error saving order to Firestore:", error);
     }
@@ -536,8 +575,7 @@ export default function Checkout() {
       clearCart();
       setIsProcessing(false);
       setIsBursting(false);
-      setDeliveryPhase("delivery");
-    }, 450);
+    }
   };
 
   const handleUpiTestSuccess = async (paymentId: string) => {
@@ -1185,10 +1223,48 @@ export default function Checkout() {
           </div>
 
           <div className="checkout-total-box">
+            <div className="checkout-coupon-section" style={{ paddingBottom: "1.5rem", marginBottom: "1.5rem", borderBottom: "1px dashed rgba(11,43,30,0.2)" }}>
+              <div className="checkout-coupon-input-wrap" style={{ display: "flex", gap: "8px" }}>
+                <input
+                  type="text"
+                  placeholder="Gift card or discount code"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  disabled={Boolean(appliedCoupon)}
+                  style={{ flex: 1, padding: "0.5rem", border: "1px solid #ccc", borderRadius: "4px" }}
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyCoupon}
+                  disabled={Boolean(appliedCoupon) || !couponInput.trim()}
+                  style={{ padding: "0.5rem 1rem", background: "var(--leafly-forest)", color: "#fff", border: "none", borderRadius: "4px", cursor: Boolean(appliedCoupon) || !couponInput.trim() ? "not-allowed" : "pointer", opacity: Boolean(appliedCoupon) || !couponInput.trim() ? 0.5 : 1 }}
+                >
+                  Apply
+                </button>
+              </div>
+              {appliedCoupon && (
+                <div className="checkout-coupon-applied" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f0ede6", padding: "0.5rem", borderRadius: "4px", marginTop: "8px" }}>
+                  <span style={{ fontWeight: 600, color: "var(--leafly-forest)" }}>🏷️ {appliedCoupon.code}</span>
+                  <button type="button" onClick={handleRemoveCoupon} style={{ background: "none", border: "none", fontSize: "1.2rem", cursor: "pointer", color: "#e53e3e" }}>×</button>
+                </div>
+              )}
+              {couponMessage && (
+                <small className={`checkout-coupon-message ${couponMessage.type}`} style={{ display: "block", marginTop: "8px", color: couponMessage.type === "error" ? "#e53e3e" : "#38a169" }}>
+                  {couponMessage.text}
+                </small>
+              )}
+            </div>
+
             <div>
               <span>Subtotal</span>
               <strong>{currencyFormatter.format(subtotal)}</strong>
             </div>
+            {appliedCoupon && (
+              <div style={{ color: "#38a169" }}>
+                <span>Discount ({appliedCoupon.code})</span>
+                <strong>-{currencyFormatter.format(appliedCoupon.discountAmount)}</strong>
+              </div>
+            )}
             <div>
               <span>Delivery</span>
               <strong>{deliveryFee === 0 ? "Free" : currencyFormatter.format(deliveryFee)}</strong>

@@ -1,9 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { type TeawareCategory, type TeawareItem } from "../data/teaware";
+import { useTeaware } from "../context/TeawareContext";
 import { useWishlist } from "../context/WishlistContext";
-import { teawareProducts, type TeawareItem, type TeawareCategory } from "../data/teaware";
 import { getProductSlug } from "../data/products";
 import Footer from "../components/Footer";
+import { Helmet } from "react-helmet-async";
 import "./Teaware.css";
 
 const categories: Array<"All Teaware" | TeawareCategory> = [
@@ -16,12 +19,13 @@ const categories: Array<"All Teaware" | TeawareCategory> = [
 
 export default function Teaware() {
   const navigate = useNavigate();
+  const { teaware, loading } = useTeaware();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const [category, setCategory] = useState<"All Teaware" | TeawareCategory>("All Teaware");
   const [sortBy, setSortBy] = useState("Featured Collection");
-  const [selectedItem, setSelectedItem] = useState<TeawareItem | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<TeawareItem | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,7 +46,7 @@ export default function Teaware() {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    return teawareProducts
+    return teaware
       .filter((item) => {
         if (category !== "All Teaware" && item.category !== category) {
           return false;
@@ -53,7 +57,7 @@ export default function Teaware() {
         if (sortBy === "Name: A to Z") return a.name.localeCompare(b.name);
         return 0; // Featured
       });
-  }, [category, sortBy]);
+  }, [category, sortBy, teaware]);
 
   const clearFilters = () => {
     setCategory("All Teaware");
@@ -82,6 +86,10 @@ export default function Teaware() {
 
   return (
     <main className="teaware-page">
+      <Helmet>
+        <title>Artisan Teaware & Accessories | Leafly</title>
+        <meta name="description" content="Discover handcrafted borosilicate teapots, high-fired ceramic cups, organic bamboo trays, and airtight canisters." />
+      </Helmet>
       {/* =====================================================
           HERO
           ===================================================== */}

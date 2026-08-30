@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProducts } from "../context/ProductContext";
-import { type Product, type TeaCategory } from "../data/products";
+import { useTeaware } from "../context/TeawareContext";
+import { useGifting } from "../context/GiftingContext";
+import { useCoupons, type UserCoupon } from "../context/CouponContext";
+import { type Product, type TeaCategory, type ProductVariant } from "../data/products";
+import { type TeawareItem, type TeawareCategory } from "../data/teaware";
+import { type GiftHamper } from "../data/gifting";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../lib/firebase";
 import { collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "firebase/firestore";
@@ -23,12 +28,19 @@ export type AccountUser = {
 
 export default function AdminDashboard() {
   const { products, updateProduct, addProduct, loading: productsLoading } = useProducts();
+  const { teaware, updateTeaware, addTeaware, deleteTeaware, loading: teawareLoading } = useTeaware();
+  const { hampers, updateHamper, addHamper, deleteHamper, loading: hampersLoading } = useGifting();
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { globalCoupons, createGlobalCoupon, updateGlobalCoupon, deleteGlobalCoupon } = useCoupons();
   
-  const [activeTab, setActiveTab] = useState<"dashboard" | "products" | "orders" | "accounts">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "products" | "teaware" | "hampers" | "orders" | "accounts" | "coupons">("dashboard");
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>({});
+  const [isEditingTeaware, setIsEditingTeaware] = useState(false);
+  const [currentTeaware, setCurrentTeaware] = useState<Partial<TeawareItem>>({});
+  const [isEditingHamper, setIsEditingHamper] = useState(false);
+  const [currentHamper, setCurrentHamper] = useState<Partial<GiftHamper>>({});
   
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
@@ -40,6 +52,9 @@ export default function AdminDashboard() {
   const [accountSearchQuery, setAccountSearchQuery] = useState("");
   const [accountFilterProvider, setAccountFilterProvider] = useState("all");
   const [selectedAccount, setSelectedAccount] = useState<AccountUser | null>(null);
+
+  const [isEditingCoupon, setIsEditingCoupon] = useState(false);
+  const [currentCoupon, setCurrentCoupon] = useState<Partial<UserCoupon>>({});
 
   // Real-time Firestore orders synchronization
   useEffect(() => {
@@ -175,6 +190,86 @@ export default function AdminDashboard() {
     setIsEditing(false);
   };
 
+  const handleEditTeawareClick = (item: TeawareItem) => {
+    setCurrentTeaware(item);
+    setIsEditingTeaware(true);
+  };
+
+  const handleAddNewTeawareClick = () => {
+    setCurrentTeaware({
+      name: "",
+      category: "Teapots",
+      material: "",
+      capacity: "",
+      price: 0,
+      badge: "Popular",
+      image: "",
+      description: "",
+      features: [""],
+      rating: 5.0,
+      reviewCount: 0
+    });
+    setIsEditingTeaware(true);
+  };
+
+  const handleSaveTeaware = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanItem = { ...currentTeaware } as TeawareItem;
+    if (cleanItem.oldPrice === undefined) cleanItem.oldPrice = null as unknown as number;
+    if (cleanItem.capacity === undefined) cleanItem.capacity = "";
+
+    if (currentTeaware.id) {
+      await updateTeaware(cleanItem);
+    } else {
+      cleanItem.id = Date.now();
+      await addTeaware(cleanItem);
+    }
+    setIsEditingTeaware(false);
+  };
+
+  const handleDeleteTeaware = async (id: number | string) => {
+    if (window.confirm("Are you sure you want to delete this teaware item?")) {
+      await deleteTeaware(id);
+    }
+  };
+
+  const handleEditHamperClick = (hamper: GiftHamper) => {
+    setCurrentHamper(hamper);
+    setIsEditingHamper(true);
+  };
+
+  const handleAddNewHamperClick = () => {
+    setCurrentHamper({
+      name: "",
+      subtitle: "",
+      price: 0,
+      image: "",
+      includes: [""],
+      badge: ""
+    });
+    setIsEditingHamper(true);
+  };
+
+  const handleSaveHamper = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanHamper = { ...currentHamper } as GiftHamper;
+    if (cleanHamper.badge === undefined) cleanHamper.badge = "";
+
+    if (currentHamper.id) {
+      await updateHamper(cleanHamper);
+    } else {
+      cleanHamper.id = Date.now();
+      await addHamper(cleanHamper);
+    }
+    setIsEditingHamper(false);
+  };
+
+  const handleDeleteHamper = async (id: number | string) => {
+    if (window.confirm("Are you sure you want to delete this hamper?")) {
+      await deleteHamper(id);
+    }
+  };
+
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       await updateDoc(doc(db, "orders", orderId), { 
@@ -196,6 +291,41 @@ export default function AdminDashboard() {
       } catch (error) {
         console.error("Error deleting order:", error);
       }
+    }
+  };
+
+  const handleEditCoupon = (coupon: UserCoupon) => {
+    setCurrentCoupon(coupon);
+    setIsEditingCoupon(true);
+  };
+
+  const handleAddNewCoupon = () => {
+    setCurrentCoupon({
+      code: "",
+      title: "",
+      discountType: "percentage",
+      discountValue: 10,
+      minOrderValue: 0,
+      status: "available",
+      applicableCondition: "",
+      expiryDate: "",
+    });
+    setIsEditingCoupon(true);
+  };
+
+  const handleSaveCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (currentCoupon.id) {
+      await updateGlobalCoupon(currentCoupon as UserCoupon);
+    } else {
+      await createGlobalCoupon(currentCoupon as UserCoupon);
+    }
+    setIsEditingCoupon(false);
+  };
+
+  const handleDeleteCoupon = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this coupon?")) {
+      await deleteGlobalCoupon(id);
     }
   };
 
@@ -267,7 +397,7 @@ export default function AdminDashboard() {
     });
   }, [accounts, accountSearchQuery, accountFilterProvider]);
 
-  if (productsLoading || ordersLoading) {
+  if (productsLoading || ordersLoading || teawareLoading || hampersLoading) {
     return <div className="admin-layout"><main className="admin-main"><h2>Loading Admin Dashboard...</h2></main></div>;
   }
 
@@ -295,6 +425,20 @@ export default function AdminDashboard() {
           </button>
           <button 
             type="button"
+            className={activeTab === "teaware" ? "active" : ""} 
+            onClick={() => setActiveTab("teaware")}
+          >
+            Teaware
+          </button>
+          <button 
+            type="button"
+            className={activeTab === "hampers" ? "active" : ""} 
+            onClick={() => setActiveTab("hampers")}
+          >
+            Hampers
+          </button>
+          <button 
+            type="button"
             className={activeTab === "orders" ? "active" : ""} 
             onClick={() => setActiveTab("orders")}
           >
@@ -306,6 +450,13 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab("accounts")}
           >
             Accounts
+          </button>
+          <button 
+            type="button"
+            className={activeTab === "coupons" ? "active" : ""} 
+            onClick={() => setActiveTab("coupons")}
+          >
+            Coupons
           </button>
         </nav>
         
@@ -664,6 +815,259 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {activeTab === "teaware" && !isEditingTeaware && (
+          <div className="admin-products">
+            <div className="admin-products-header">
+              <h1>Manage Teaware</h1>
+              <button type="button" className="admin-btn-primary" onClick={handleAddNewTeawareClick}>+ Add New Teaware</button>
+            </div>
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teaware.map(item => (
+                    <tr key={item.id}>
+                      <td>
+                        <img src={item.image} alt={item.name} className="admin-table-img" />
+                      </td>
+                      <td>
+                        {item.name}
+                        {item.oldPrice ? (
+                          <span style={{ marginLeft: "8px", fontSize: "0.8rem", color: "#e53e3e", background: "#fed7d7", padding: "2px 6px", borderRadius: "4px" }}>
+                            Discounted
+                          </span>
+                        ) : null}
+                      </td>
+                      <td>{item.category}</td>
+                      <td>
+                        ₹{item.price.toLocaleString()}
+                        {item.oldPrice ? <span style={{ textDecoration: "line-through", color: "#a0aec0", marginLeft: "8px" }}>₹{item.oldPrice}</span> : null}
+                      </td>
+                      <td>
+                        <button type="button" className="admin-btn-secondary" onClick={() => handleEditTeawareClick(item)} style={{ marginRight: "8px" }}>Edit</button>
+                        <button type="button" className="admin-btn-secondary" style={{ color: "#e53e3e", borderColor: "#e53e3e" }} onClick={() => handleDeleteTeaware(item.id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "teaware" && isEditingTeaware && (
+          <div className="admin-edit-product">
+            <h1>{currentTeaware.id ? "Edit Teaware" : "Add New Teaware"}</h1>
+            <form className="admin-form" onSubmit={handleSaveTeaware}>
+              <div className="form-group">
+                <label>Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={currentTeaware.name || ""} 
+                  onChange={e => setCurrentTeaware({ ...currentTeaware, name: e.target.value })} 
+                />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Category</label>
+                  <select 
+                    value={currentTeaware.category || "Teapots"} 
+                    onChange={e => setCurrentTeaware({ ...currentTeaware, category: e.target.value as TeawareCategory })}
+                  >
+                    <option value="Teapots">Teapots</option>
+                    <option value="Tea Cups">Tea Cups</option>
+                    <option value="Serving & Trays">Serving & Trays</option>
+                    <option value="Storage & Accessories">Storage & Accessories</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Material</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={currentTeaware.material || ""} 
+                    onChange={e => setCurrentTeaware({ ...currentTeaware, material: e.target.value })} 
+                  />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={currentTeaware.price || ""} 
+                    onChange={e => setCurrentTeaware({ ...currentTeaware, price: Number(e.target.value) })} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Old Price (₹)</label>
+                  <input 
+                    type="number" 
+                    value={currentTeaware.oldPrice || ""} 
+                    onChange={e => setCurrentTeaware({ ...currentTeaware, oldPrice: Number(e.target.value) || undefined })} 
+                  />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Capacity / Size</label>
+                  <input 
+                    type="text" 
+                    value={currentTeaware.capacity || ""} 
+                    onChange={e => setCurrentTeaware({ ...currentTeaware, capacity: e.target.value })} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Image URL</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={currentTeaware.image || ""} 
+                    onChange={e => setCurrentTeaware({ ...currentTeaware, image: e.target.value })} 
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea 
+                  required 
+                  value={currentTeaware.description || ""} 
+                  onChange={e => setCurrentTeaware({ ...currentTeaware, description: e.target.value })} 
+                  rows={3}
+                />
+              </div>
+              <div className="form-actions">
+                <button type="button" className="admin-btn-secondary" onClick={() => setIsEditingTeaware(false)}>Cancel</button>
+                <button type="submit" className="admin-btn-primary">Save Teaware</button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {activeTab === "hampers" && !isEditingHamper && (
+          <div className="admin-products">
+            <div className="admin-products-header">
+              <h1>Manage Hampers</h1>
+              <button type="button" className="admin-btn-primary" onClick={handleAddNewHamperClick}>+ Add New Hamper</button>
+            </div>
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Subtitle</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {hampers.map(hamper => (
+                    <tr key={hamper.id}>
+                      <td>
+                        <img src={hamper.image} alt={hamper.name} className="admin-table-img" />
+                      </td>
+                      <td>
+                        {hamper.name}
+                        {hamper.badge && (
+                          <span style={{ marginLeft: "8px", fontSize: "0.8rem", color: "#d69e2e", background: "#fefcbf", padding: "2px 6px", borderRadius: "4px" }}>
+                            {hamper.badge}
+                          </span>
+                        )}
+                      </td>
+                      <td>{hamper.subtitle}</td>
+                      <td>₹{hamper.price.toLocaleString()}</td>
+                      <td>
+                        <button type="button" className="admin-btn-secondary" onClick={() => handleEditHamperClick(hamper)} style={{ marginRight: "8px" }}>Edit</button>
+                        <button type="button" className="admin-btn-secondary" style={{ color: "#e53e3e", borderColor: "#e53e3e" }} onClick={() => handleDeleteHamper(hamper.id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "hampers" && isEditingHamper && (
+          <div className="admin-edit-product">
+            <h1>{currentHamper.id ? "Edit Hamper" : "Add New Hamper"}</h1>
+            <form className="admin-form" onSubmit={handleSaveHamper}>
+              <div className="form-group">
+                <label>Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={currentHamper.name || ""} 
+                  onChange={e => setCurrentHamper({ ...currentHamper, name: e.target.value })} 
+                />
+              </div>
+              <div className="form-group">
+                <label>Subtitle</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={currentHamper.subtitle || ""} 
+                  onChange={e => setCurrentHamper({ ...currentHamper, subtitle: e.target.value })} 
+                />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price (₹)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={currentHamper.price || ""} 
+                    onChange={e => setCurrentHamper({ ...currentHamper, price: Number(e.target.value) })} 
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Badge</label>
+                  <input 
+                    type="text" 
+                    value={currentHamper.badge || ""} 
+                    onChange={e => setCurrentHamper({ ...currentHamper, badge: e.target.value })} 
+                    placeholder="e.g. MOST POPULAR"
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Image URL</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={currentHamper.image || ""} 
+                  onChange={e => setCurrentHamper({ ...currentHamper, image: e.target.value })} 
+                />
+              </div>
+              <div className="form-group">
+                <label>Includes (comma separated)</label>
+                <textarea 
+                  required 
+                  value={(currentHamper.includes || []).join(", ")} 
+                  onChange={e => setCurrentHamper({ ...currentHamper, includes: e.target.value.split(",").map(i => i.trim()) })} 
+                  rows={3}
+                  placeholder="e.g. 1x Assam Orthodox, 1x Brass Infuser, Tasting Journal"
+                />
+              </div>
+              <div className="form-actions">
+                <button type="button" className="admin-btn-secondary" onClick={() => setIsEditingHamper(false)}>Cancel</button>
+                <button type="submit" className="admin-btn-primary">Save Hamper</button>
+              </div>
+            </form>
+          </div>
+        )}
+
         {activeTab === "orders" && (
           <div className="admin-products">
             <div className="admin-products-header">
@@ -859,6 +1263,101 @@ export default function AdminDashboard() {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* COUPONS SECTION */}
+        {activeTab === "coupons" && !isEditingCoupon && (
+          <div className="admin-products">
+            <div className="admin-products-header">
+              <h1>Manage Coupons</h1>
+              <button type="button" className="admin-btn-primary" onClick={handleAddNewCoupon}>+ Add New Coupon</button>
+            </div>
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Title</th>
+                    <th>Discount</th>
+                    <th>Min Order</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {globalCoupons.map(coupon => (
+                    <tr key={coupon.id}>
+                      <td><strong>{coupon.code}</strong></td>
+                      <td>{coupon.title}</td>
+                      <td>{coupon.discountValue}{coupon.discountType === 'percentage' ? '%' : '₹'}</td>
+                      <td>₹{coupon.minOrderValue}</td>
+                      <td>
+                        <span className={`admin-status-badge ${coupon.status === 'available' ? 'positive' : 'negative'}`}>
+                          {coupon.status}
+                        </span>
+                      </td>
+                      <td>
+                        <button type="button" className="admin-btn-secondary" onClick={() => handleEditCoupon(coupon)}>Edit</button>
+                        <button type="button" className="admin-btn-secondary" style={{ color: "#e53e3e", borderColor: "#e53e3e", marginLeft: "8px" }} onClick={() => handleDeleteCoupon(coupon.id)}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {globalCoupons.length === 0 && (
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: "center", padding: "2rem" }}>No global coupons found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "coupons" && isEditingCoupon && (
+          <div className="admin-edit-product">
+            <h1>{currentCoupon.id ? "Edit Coupon" : "Add New Coupon"}</h1>
+            <form className="admin-form" onSubmit={handleSaveCoupon}>
+              <div className="form-group">
+                <label>Coupon Code</label>
+                <input type="text" required value={currentCoupon.code || ""} onChange={e => setCurrentCoupon({ ...currentCoupon, code: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Title / Description</label>
+                <input type="text" required value={currentCoupon.title || ""} onChange={e => setCurrentCoupon({ ...currentCoupon, title: e.target.value })} />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Discount Type</label>
+                  <select value={currentCoupon.discountType || "percentage"} onChange={e => setCurrentCoupon({ ...currentCoupon, discountType: e.target.value as "percentage" | "fixed" })}>
+                    <option value="percentage">Percentage (%)</option>
+                    <option value="fixed">Fixed Amount (₹)</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Discount Value</label>
+                  <input type="number" required value={currentCoupon.discountValue || 0} onChange={e => setCurrentCoupon({ ...currentCoupon, discountValue: Number(e.target.value) })} />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Min Order Value (₹)</label>
+                  <input type="number" required value={currentCoupon.minOrderValue || 0} onChange={e => setCurrentCoupon({ ...currentCoupon, minOrderValue: Number(e.target.value) })} />
+                </div>
+                <div className="form-group">
+                  <label>Status</label>
+                  <select value={currentCoupon.status || "available"} onChange={e => setCurrentCoupon({ ...currentCoupon, status: e.target.value as "available" | "expired" | "used" })}>
+                    <option value="available">Available</option>
+                    <option value="expired">Expired</option>
+                    <option value="used">Used / Disabled</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form-actions">
+                <button type="button" className="admin-btn-secondary" onClick={() => setIsEditingCoupon(false)}>Cancel</button>
+                <button type="submit" className="admin-btn-primary">Save Coupon</button>
+              </div>
+            </form>
           </div>
         )}
 
